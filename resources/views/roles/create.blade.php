@@ -30,7 +30,28 @@
                         <tbody>
 
                             <?php
-                            $modules = ['User', 'Customer', 'Vendor', 'Role', 'Branch', 'Branch Sales Target', 'Tax', 'Unit', 'Product', 'Quotations', 'Expense', 'Expense Category', 'Returns', 'Category', 'Brand', 'Cash Register', 'Calendar Event', 'Notification', 'Profile'];
+                                $modules = [
+                                    'User',
+                                    'Customer',
+                                    'Vendor',
+                                    'Role',
+                                    // 'Branch',
+                                    // 'Branch Sales Target',
+                                    'Tax',
+                                    'Unit',
+                                    'Product',
+                                    'Talent',
+                                    // 'Quotations',
+                                    // 'Expense',
+                                    // 'Expense Category',
+                                    'Returns',
+                                    'Category',
+                                    'Brand',
+                                    // 'Cash Register',
+                                    // 'Calendar Event',
+                                    // 'Notification',
+                                    'Profile',
+                                ];
                             ?>
                             @foreach ($modules as $module)
                                 <tr>
@@ -57,7 +78,7 @@
                                 </tr>
                             @endforeach
 
-                            <tr>
+                            {{-- <tr>
                                 <td class="form-control-label">{{ __('Account') }}</td>
                                 <td>
                                     <div class="row">
@@ -76,7 +97,7 @@
 
                                     </div>
                                 </td>
-                            </tr>
+                            </tr> --}}
                         </tbody>
                     </table>
                 </div>

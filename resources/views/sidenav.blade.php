@@ -43,7 +43,7 @@ $cust_theme_bg = App\Models\Utility::getValByName('cust_theme_bg');
            
         </a>
     </div>
-    <div class="navbar-content">
+    <div class="navbar-content mb-5">
         <ul class="dash-navbar">
             <li class="dash-item  {{ Request::segment(1) == '' ? 'active' : '' }}">
                 <a href="{{ route('home') }}" class="dash-link"><span class="dash-micon"><i
@@ -150,9 +150,51 @@ $cust_theme_bg = App\Models\Utility::getValByName('cust_theme_bg');
                             </li>
                         @endcan
 
+                        @can('Manage Voucher')
+                            <li class="dash-item dash-hasmenu">
+                                <a class="dash-link" href="{{ route('vouchers.index') }}">{{ __('Voucher') }}</a>
+                            </li>
+                        @endcan
+
                     </ul>
                 </li>
             @endif
+
+            @if (Gate::check('Manage Talent') || Gate::check('Manage Talent Grade'))
+                <li class="dash-item dash-hasmenu">
+                    <a href="#" class="dash-link"><span class="dash-micon"><i
+                                class="ti ti-brand-producthunt"></i></span><span
+                            class="dash-mtext">{{ __('Talents') }}</span><span class="dash-arrow"><i
+                                data-feather="chevron-right"></i></span></a>
+
+
+
+                    <ul class="dash-submenu">
+
+                        @can('Manage Talent')
+                            <li class="dash-item dash-hasmenu">
+                                <a class="dash-link" href="{{ route('talents.index') }}">{{ __('Talents') }}</a>
+                            </li>
+                        @endcan
+
+                        @can('Manage Talent Grade')
+                            <li class="dash-item dash-hasmenu">
+                                <a class="dash-link" href="{{ route('talent-grades.index') }}">{{ __('Talent Grade') }}</a>
+                            </li>
+                        @endcan
+                    </ul>
+                </li>
+            @endif
+
+            @can('Manage Room')
+                <li class="dash-item ">
+                    <a href="{{ route('rooms.index') }}"
+                        class="dash-link {{ Request::segment(1) == 'rooms' ? 'active' : '' }}"><span
+                            class="dash-micon"><i class="ti ti-user"></i></span><span
+                            class="dash-mtext">{{ __('Rooms') }}</span>
+                    </a>
+                </li>
+            @endcan
 
             @can('Manage Purchases')
                 <li class="dash-item dash-hasmenu">
@@ -225,20 +267,12 @@ $cust_theme_bg = App\Models\Utility::getValByName('cust_theme_bg');
                 </li>
             @endcan
 
-            @can('Manage Quotations')
-            <li class="dash-item {{ \Request::route()->getName() == 'quotations.index' || \Request::route()->getName() == 'quotations.edit' || \Request::route()->getName() == 'quotations.create' ? ' active' : '' }}">
-                <a href="{{ !empty(\Auth::user()->getDefualtViewRouteByModule('quotations')) ? route(\Auth::user()->getDefualtViewRouteByModule('quotations')) : route('quotations.index') }}" class="dash-link ">
-                    <span class="dash-micon"><i class="ti ti-currency-pound"></i></span><span class="dash-mtext">{{ __('Quotations') }}</span>
-                </a>
-            </li>
-
-                {{-- <li class="dash-item ">
-                    <a href="{{ route('quotations.index') }}"
-                        class="dash-link {{ Request::segment(1) ==  'quotations' ? 'active' : '' }}"><span
-                            class="dash-micon"><i class="ti ti-currency-pound"></i></span><span
-                            class="dash-mtext">{{ __('Quotations') }}</span>
+            {{-- @can('Manage Quotations')
+                <li class="dash-item {{ \Request::route()->getName() == 'quotations.index' || \Request::route()->getName() == 'quotations.edit' || \Request::route()->getName() == 'quotations.create' ? ' active' : '' }}">
+                    <a href="{{ !empty(\Auth::user()->getDefualtViewRouteByModule('quotations')) ? route(\Auth::user()->getDefualtViewRouteByModule('quotations')) : route('quotations.index') }}" class="dash-link ">
+                        <span class="dash-micon"><i class="ti ti-currency-pound"></i></span><span class="dash-mtext">{{ __('Quotations') }}</span>
                     </a>
-                </li> --}}
+                </li>
             @endcan
 
             @if (Gate::check('Manage Expense') || Gate::check('Manage Expense Category'))
@@ -289,23 +323,15 @@ $cust_theme_bg = App\Models\Utility::getValByName('cust_theme_bg');
                             class="dash-mtext">{{ __('Notifications') }}</span>
                     </a>
                 </li>
-            @endcan
+            @endcan --}}
 
-            @can('Manage Plan')
-            <li class="dash-item {{ \Request::route()->getName() == 'plans'  || \Request::route()->getName() == 'stripe' || \Request::route()->getName() == 'plans.show' || \Request::route()->getName() == 'plans.edit' ? ' active' : '' }}">
-                <a href="{{ route('plans.index') }}" class="dash-link">
-                    <span class="dash-micon"><i class="ti ti-award"></i></span><span class="dash-mtext">{{ __('Plans') }}</span>
-                </a>
-            </li>
-            
-                {{-- <li class="dash-item ">
-                    <a href="{{ route('plans.index') }}"
-                        class="dash-link {{ Request::segment(1) == 'plans' ? 'active' : '' }}"><span
-                            class="dash-micon"><i class="ti ti-trophy"></i></span><span
-                            class="dash-mtext">{{ __('Plans') }}</span>
+            {{-- @can('Manage Plan')
+                <li class="dash-item {{ \Request::route()->getName() == 'plans'  || \Request::route()->getName() == 'stripe' || \Request::route()->getName() == 'plans.show' || \Request::route()->getName() == 'plans.edit' ? ' active' : '' }}">
+                    <a href="{{ route('plans.index') }}" class="dash-link">
+                        <span class="dash-micon"><i class="ti ti-award"></i></span><span class="dash-mtext">{{ __('Plans') }}</span>
                     </a>
-                </li> --}}
-            @endcan
+                </li>
+            @endcan --}}
 
 
             @if (Auth::user()->isSuperAdmin())
@@ -353,33 +379,16 @@ $cust_theme_bg = App\Models\Utility::getValByName('cust_theme_bg');
                             <span class="dash-micon"><i class="ti ti-gift"></i></span><span class="dash-mtext">{{ __('Coupons') }}</span>
                         </a>
                     </li>
-                    {{-- <a href="{{ route('coupons.index') }}"
-                        class="dash-link {{ Request::segment(1) == 'coupons' || \Request::route()->getName() == 'coupons.view' ? 'active' : '' }}"><span
-                            class="dash-micon"><i class="ti ti-gift"></i></span><span
-                            class="dash-mtext">{{ __('Coupons') }}</span>
-                    </a> --}}
                 </li>
             @endcan
 
 
-            @can('Manage Order')
+            {{-- @can('Manage Order')
                 <li class="dash-item dash-hasmenu">
                     <a href="{{ route('order.index') }}"
                         class="dash-link {{ Request::segment(1) == 'orders' ? 'active' : '' }}"><span
                             class="dash-micon"><i class="ti ti-calendar-plus"></i></span><span
                             class="dash-mtext">{{ __('Orders') }}</span>
-                    </a>
-                </li>
-            @endcan
-
-
-            {{-- @can('Manage Language') --}}
-            {{-- @if (Auth::user()->isSuperAdmin())
-                <li class="dash-item dash-hasmenu">
-                    <a href="{{ route('manage.language', Auth::user()->lang) }}"
-                        class="dash-link {{ Request::segment(1) == 'manage-language' ? 'active' : '' }}"><span
-                            class="dash-micon"><i class="ti ti-language"></i></span><span
-                            class="dash-mtext">{{ __('Language') }}</span>
                     </a>
                 </li>
             @endcan --}}
@@ -435,12 +444,12 @@ $cust_theme_bg = App\Models\Utility::getValByName('cust_theme_bg');
                             </li>
                         @endcan
 
-                        @can('Manage Expense')
+                        {{-- @can('Manage Expense')
                             <li class="dash-item dash-hasmenu">
                                 <a class="dash-link"
                                     href="{{ route('expense.analysis') }}">{{ __('Expense Report') }}</a>
                             </li>
-                        @endcan
+                        @endcan --}}
 
                         @can('Manage Customer')
                             <li class="dash-item dash-hasmenu">
@@ -500,26 +509,32 @@ $cust_theme_bg = App\Models\Utility::getValByName('cust_theme_bg');
                                 </li>
                             @endcan
 
-                            @can('Manage Branch')
+                            @if (Auth::user()->isSuperAdmin())
                                 <li class="dash-item dash-hasmenu">
                                     <a class="dash-link"
                                         href="{{ route('branches.index') }}">{{ __('Branches') }}</a>
                                 </li>
-                            @endcan
+                            @endif
 
-                            @can('Manage Cash Register')
+                            @if (Auth::user()->isSuperAdmin())
                                 <li class="dash-item dash-hasmenu">
                                     <a class="dash-link"
                                         href="{{ route('cashregisters.index') }}">{{ __('Cash Registers') }}</a>
                                 </li>
-                            @endcan
+                            @endif
 
-                            @can('Manage Branch Sales Target')
+                            @if (Auth::user()->isSuperAdmin())
                                 <li class="dash-item dash-hasmenu">
                                     <a class="dash-link"
                                         href="{{ route('branchsalestargets.index') }}">{{ __('Branch Sales Target') }}</a>
                                 </li>
-                            @endcan
+                            @endif
+
+                            <br>
+                            <li class="dash-item dash-hasmenu">
+                            </li>
+                            <li class="dash-item dash-hasmenu">
+                            </li>
 
                         </ul>
                     </li>

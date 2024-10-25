@@ -152,7 +152,7 @@ if (\Auth::user()->type == 'Super Admin') {
                         <div class="col-lg-5 ps-lg-0">
                             <div class="card m-0" style="min-height: 100px;">
                                 <div class="card-header p-2">
-                                     <div class="row">
+                                     <div class="row" hidden>
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 {{ Form::label('branch_id', __('Branch'), ['class' => 'col-form-label']) }}
@@ -369,16 +369,16 @@ if (\Auth::user()->type == 'Super Admin') {
             $('#error_branch_id').empty();
             $('#error_cash_register_id').empty();
 
-            if(!c_id){
-                $('#error_cash_register_id').text('Cash register is require')
-            }
-            if(!b_id){
-                $('#error_branch_id').text('Branch is require')
-            }
+            // if(!c_id){
+            //     $('#error_cash_register_id').text('Cash register is require')
+            // }
+            // if(!b_id){
+            //     $('#error_branch_id').text('Branch is require')
+            // }
 
-            if(b_id && c_id ){
+            // if(b_id && c_id ){
                 $( "#pos_pay" ).trigger( "click" );
-            }
+            // }
             
 
 
@@ -785,8 +785,8 @@ if (\Auth::user()->type == 'Super Admin') {
                     method: 'POST',
                     data: {
                         vc_name: $('#vc_name_hidden').val(),
-                        branch_id: $('#branch_id').val(),
-                        cash_register_id: $('#cash_register_id').val(),
+                        // branch_id: $('#branch_id').val(),
+                        // cash_register_id: $('#cash_register_id').val(),
                     },
                     beforeSend: function() {
                         ele.remove();
@@ -809,78 +809,78 @@ if (\Auth::user()->type == 'Super Admin') {
 
 
 
-            $.ajax({
-                url: '{{ route('user.type') }}',
-                dataType: 'json',
-                success: function(data) {
-                    console.log(data);
-                    if (data) {
+            // $.ajax({
+            //     url: '{{ route('user.type') }}',
+            //     dataType: 'json',
+            //     success: function(data) {
+            //         console.log(data);
+            //         if (data) {
 
-                        if (data[0].isOwner = 'false') {
-                            $.ajax({
-                                url: '{{ route('get.branches') }}',
-                                dataType: 'json',
-                                success: function(data) {
+            //             if (data[0].isOwner = 'false') {
+            //                 $.ajax({
+            //                     url: '{{ route('get.branches') }}',
+            //                     dataType: 'json',
+            //                     success: function(data) {
 
-                                    if (data.length == 0) {
-                                        // $('#branchModal').modal('show');  
-                                        $('#branchModal .branch-warning').show();
-                                    } else {
-                                        // $('#branchModal .select-warning').show();
+            //                         if (data.length == 0) {
+            //                             // $('#branchModal').modal('show');  
+            //                             $('#branchModal .branch-warning').show();
+            //                         } else {
+            //                             // $('#branchModal .select-warning').show();
 
-                                        $('#branchModal ').modal('show');
-                                        // $('#branchModal .select-warning').modal();
-                                        $.each(data, function(key, value) {
-                                            $('#branch_id')
-                                                .append($("<option></option>")
-                                                    .attr("value", value.id)
-                                                    .text(value.name));
-                                        });
+            //                             $('#branchModal ').modal('show');
+            //                             // $('#branchModal .select-warning').modal();
+            //                             $.each(data, function(key, value) {
+            //                                 $('#branch_id')
+            //                                     .append($("<option></option>")
+            //                                         .attr("value", value.id)
+            //                                         .text(value.name));
+            //                             });
 
-                                    }
+            //                         }
 
-                                    if ($('[data-toggle="select"]').length > 0) {
-                                        $("select option[value='']").prop('disabled', !$(
-                                            "select option[value='']").prop(
-                                            'disabled'));
-                                        $('[data-toggle="select"]').select2({});
-                                    }
-                                    $('#branchModal').modal({
-                                        backdrop: 'static',
-                                        keyboard: false
-                                    })
-                                },
-                                error: function(data) {
-                                    data = data.responseJSON;
-                                    show_toastr('{{ __('Error') }}', data.error,
-                                        'error');
-                                }
-                            });
-                        } else if (data[0].isUser = 'false') {
+            //                         if ($('[data-toggle="select"]').length > 0) {
+            //                             $("select option[value='']").prop('disabled', !$(
+            //                                 "select option[value='']").prop(
+            //                                 'disabled'));
+            //                             $('[data-toggle="select"]').select2({});
+            //                         }
+            //                         $('#branchModal').modal({
+            //                             backdrop: 'static',
+            //                             keyboard: false
+            //                         })
+            //                     },
+            //                     error: function(data) {
+            //                         data = data.responseJSON;
+            //                         show_toastr('{{ __('Error') }}', data.error,
+            //                             'error');
+            //                     }
+            //                 });
+            //             } else if (data[0].isUser = 'false') {
 
-                            $('#display-branch').text(data[0].branchname);
-                            $('#display-cash-register').text(data[0].cashregistername);
+            //                 $('#display-branch').text(data[0].branchname);
+            //                 $('#display-cash-register').text(data[0].cashregistername);
 
-                            $('#branch_id')
-                                .append($("<option></option>")
-                                    .attr("value", data[0].branch_id)
-                                    .text(data[0].branchname));
-                            $('#cash_register_id')
-                                .append($("<option></option>")
-                                    .attr("value", data[0].cash_register_id)
-                                    .text(data[0].cashregistername));
-                            $('#branch_id').val(data[0].branch_id);
-                            $('#cash_register_id').val(data[0].cash_register_id);
-                            $('#display-bnc').removeClass('d-none');
-                            $('#display-bnc').show();
-                        }
-                    }
-                },
-                error: function(data) {
-                    data = data.responseJSON;
-                    show_toastr('{{ __('Error') }}', data.error, 'error');
-                }
-            });
+            //                 $('#branch_id')
+            //                     .append($("<option></option>")
+            //                         .attr("value", data[0].branch_id)
+            //                         .text(data[0].branchname));
+            //                 $('#cash_register_id')
+            //                     .append($("<option></option>")
+            //                         .attr("value", data[0].cash_register_id)
+            //                         .text(data[0].cashregistername));
+            //                 $('#branch_id').val(data[0].branch_id);
+            //                 $('#cash_register_id').val(data[0].cash_register_id);
+            //                 $('#display-bnc').removeClass('d-none');
+            //                 $('#display-bnc').show();
+            //             }
+            //         }
+            //     },
+            //     error: function(data) {
+            //         data = data.responseJSON;
+            //         show_toastr('{{ __('Error') }}', data.error, 'error');
+            //     }
+            // });
 
 
             $(document).on('change', '#branch_id', function(e) {

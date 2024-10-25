@@ -614,9 +614,106 @@ class UsersTableSeeder extends Seeder
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s'),
             ],
+            [
+                'name' => 'Manage Talent',
+                'guard_name' => 'web',
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
+            ],
+            [
+                'name' => 'Create Talent',
+                'guard_name' => 'web',
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
+            ],
+            [
+                'name' => 'Edit Talent',
+                'guard_name' => 'web',
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
+            ],
+            [
+                'name' => 'Delete Talent',
+                'guard_name' => 'web',
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
+            ],[
+                'name' => 'Manage Talent Grade',
+                'guard_name' => 'web',
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
+            ],
+            [
+                'name' => 'Create Talent Grade',
+                'guard_name' => 'web',
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
+            ],
+            [
+                'name' => 'Edit Talent Grade',
+                'guard_name' => 'web',
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
+            ],
+            [
+                'name' => 'Delete Talent Grade',
+                'guard_name' => 'web',
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
+            ],
+            [
+                'name' => 'Manage Room',
+                'guard_name' => 'web',
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
+            ],
+            [
+                'name' => 'Create Room',
+                'guard_name' => 'web',
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
+            ],
+            [
+                'name' => 'Edit Room',
+                'guard_name' => 'web',
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
+            ],
+            [
+                'name' => 'Delete Room',
+                'guard_name' => 'web',
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
+            ],[
+                'name' => 'Manage Voucher',
+                'guard_name' => 'web',
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
+            ],
+            [
+                'name' => 'Create Voucher',
+                'guard_name' => 'web',
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
+            ],
+            [
+                'name' => 'Edit Voucher',
+                'guard_name' => 'web',
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
+            ],
+            [
+                'name' => 'Delete Voucher',
+                'guard_name' => 'web',
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
+            ]
           ];
 
-          Permission::insert($allPermissions);
+          $uniqueBy = ['name', 'guard_name'];
+
+        //   Permission::insert($allPermissions);
+        Permission::upsert($allPermissions, $uniqueBy, ['updated_at']);
 
         $super_admin_permissions = [
             ['name' => 'Manage User'],
@@ -651,23 +748,27 @@ class UsersTableSeeder extends Seeder
             ['name' => 'Manage Order'],
         ];
 
-        $super_admin_role             = new Role();
-        $super_admin_role->name       = 'Super Admin';
-        $super_admin_role->created_by = 0;
-        $super_admin_role->save();
+        $super_admin_role = Role::firstOrCreate(
+            ['name' => 'Super Admin'], 
+            ['created_by' => 0]
+        );
 
         $super_admin_role ->givePermissionTo($super_admin_permissions);
 
-        $super_admin = User::create([
-                'name' => 'super admin',
+        $super_admin = User::firstOrCreate(
+            [
                 'email' => 'superadmin@example.com',
-                'password' => '1234',
+            ],
+            [
+                'name' => 'super admin',
+                'password' => bcrypt('password'),
                 'parent_id' => 0,
                 'type' => 'Super Admin',
                 'is_active' => 1,
                 'user_status' => 1,
                 'lang' => 'en',
-            ]);
+            ]
+        );
 
         $super_admin->assignRole($super_admin_role);
 
@@ -757,34 +858,54 @@ class UsersTableSeeder extends Seeder
             ['name' => 'Delete Notification'],
             ['name' => 'Manage Plan'],
             ['name' => 'Buy Plan'],
-            ['name' => 'Manage Order'],   
+            ['name' => 'Manage Order'], 
+            ['name' => 'Manage Talent'],
+            ['name' => 'Create Talent'],
+            ['name' => 'Edit Talent'],
+            ['name' => 'Delete Talent'],
+            ['name' => 'Manage Talent Grade'],
+            ['name' => 'Create Talent Grade'],
+            ['name' => 'Edit Talent Grade'],
+            ['name' => 'Delete Talent Grade'],  
+            ['name' => 'Manage Room'],
+            ['name' => 'Create Room'],
+            ['name' => 'Edit Room'],
+            ['name' => 'Delete Room'],
+            ['name' => 'Manage Voucher'],
+            ['name' => 'Create Voucher'],
+            ['name' => 'Edit Voucher'],
+            ['name' => 'Delete Voucher'], 
           ];
 
-        $owner_role             = new Role();
-        $owner_role->name       = 'Owner';
-        $owner_role->created_by = $super_admin->id;
-        $owner_role->save();
+          $owner_role = Role::firstOrCreate(
+            ['name' => 'Owner'], 
+            ['created_by' => $super_admin->id] 
+        );
 
         $owner_role ->givePermissionTo($owner_permissions);
 
-        $owner = User::create([
-                'name' => 'owner',
-                'email' => 'owner@example.com',
-                'password' => '1234',
+        $owner = User::firstOrCreate(
+            [
+                'email' => 'admin@example.com', 
+            ],
+            [
+                'name' => 'admin',
+                'password' => bcrypt('password'),
                 'parent_id' => $super_admin->id,
                 'type' => 'Owner',
                 'plan_id' => 1,
                 'is_active' => 1,
                 'user_status' => 1,
                 'lang' => 'en',
-            ]);
+            ]
+        );
 
         $owner->assignRole($owner_role);
 
-        $employee_role             = new Role();
-        $employee_role->name       = 'Employee';
-        $employee_role->created_by = $owner->id;
-        $employee_role->save();
+        $employee_role = Role::firstOrCreate(
+            ['name' => 'Employee'], // Attributes to check for existence
+            ['created_by' => $owner->id] // Attributes to set if creating a new record
+        );
 
         $employee_permissions = [
             ['name' => 'Edit Profile'],
@@ -859,7 +980,11 @@ class UsersTableSeeder extends Seeder
 
         ];
 
-        DB::table('settings')->insert($data);
+        $uniqueBy = ['name'];
+
+        $updateColumns = ['value', 'created_by', 'updated_at'];
+        
+        DB::table('settings')->upsert($data, $uniqueBy, $updateColumns);
 
     }
 }

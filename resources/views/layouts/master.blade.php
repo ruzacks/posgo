@@ -97,7 +97,7 @@ $company_logo = Utility::get_superadmin_logo();
  
                     
                     <div class="collapse navbar-collapse" id="navbarTogglerDemo01" style="flex-grow: 0;"> 
-                        <ul class="navbar-nav align-items-center ms-auto mb-2 mb-lg-0">
+                        {{-- <ul class="navbar-nav align-items-center ms-auto mb-2 mb-lg-0">
                             <li class="nav-item">
                                 <a class="nav-link active" href="#">{{ __('Support') }}</a>
                             </li>
@@ -108,7 +108,7 @@ $company_logo = Utility::get_superadmin_logo();
                                 <a class="nav-link" href="#">{{ __('Privacy') }}</a>
                             </li>
                             
-                        </ul>
+                        </ul> --}}
                         <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                             <li class="nav-item">
                                 <select name="language" id="language" class="btn btn-primary ms-2 me-2"
@@ -147,11 +147,11 @@ $company_logo = Utility::get_superadmin_logo();
                     @yield('content')
                     <div class="col-xl-6 img-card-side">
                         <div class="auth-img-content">
-                            <img src="{{ asset('assets/images/auth/img-auth-3.svg') }}" alt=""
-                                class="img-fluid">
-                            <h3 class="text-white mb-4 mt-5">“Attention is the new currency”</h3>
-                            <p class="text-white">The more effortless the writing looks, the more effort the writer
-                                actually put into the process.</p>
+                            <script src="https://unpkg.com/@dotlottie/player-component@latest/dist/dotlottie-player.mjs" type="module"></script> 
+
+                            <dotlottie-player src="https://lottie.host/be75cfdf-e14d-442a-a9a8-09d59e101603/OIK8KPIuCG.json" background="transparent" speed="1" style="width: 400px; height: 400px;" loop autoplay></dotlottie-player>                            
+                            
+                            <h4 class="text-white mb-4 mt-5">Effortless Entertainment Management! Handle Rooms, Billing, and Services with Ease.</h4>
                         </div>
                     </div>
                 </div>

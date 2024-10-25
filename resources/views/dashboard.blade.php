@@ -73,7 +73,7 @@
 
         <div class="col-sm-12">
             <div class="row">
-                <div class="col-xxl-7">
+                <div class="col-xxl-12">
                     <div class="row">
                         <div class="col-lg-3 col-6">
                             <div class="card" style="min-height: 225px;">
@@ -129,7 +129,7 @@
                         </div>
                     </div>
 
-                    <div class="col-xxl-12">
+                    {{-- <div class="col-xxl-12">
 
                         <div class="card">
                             <div class="card-header">
@@ -173,10 +173,10 @@
                                 </ul>
                             @endif
                         </div>
-                    </div>
+                    </div> --}}
                 </div>
 
-                <div class="col-xxl-5">
+                {{-- <div class="col-xxl-5">
                     <div class="card">
                         <div class="card-header">
 
@@ -193,7 +193,7 @@
                             <div id="traffic-chart"></div>
                         </div>
                     </div>
-                </div>
+                </div> --}}
 
                 <div class="col-xxl-7">
                     <div class="card">

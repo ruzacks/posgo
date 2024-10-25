@@ -52,6 +52,19 @@ Route::get('get-customer-email/{search?}', [CustomerController::class,'getCustom
 
 Route::resource('customers', CustomerController::class)->middleware(['auth','XSS']);
 
+// Route::get('search-talents/{search?}', [TalentController::class,'searchTalents'])->name('search.talents')->middleware(['auth', 'XSS']);
+// Route::get('get-talent-email/{search?}', [TalentController::class,'getTalentEmail'])->name('get.talent.email')->middleware(['auth', 'XSS']);
+
+Route::resource('talents', TalentController::class)->middleware(['auth','XSS']);
+Route::resource('talent-grades', TalentGradeController::class)->middleware(['auth','XSS']);
+
+
+Route::resource('rooms', RoomController::class)->middleware(['auth','XSS']);
+
+Route::resource('vouchers', VoucherController::class)->middleware(['auth','XSS']);
+
+
+
 Route::get('search-vendors/{search?}', [VendorController::class,'searchVendors'])->name('search.vendors')->middleware(['auth', 'XSS']);
 // Route::get('search-vendors/{search?}', 'VendorController@searchVendors')->name('search.vendors')->middleware(['auth', 'XSS']);
 Route::resource('vendors', VendorController::class)->middleware(['auth','XSS']);
@@ -373,6 +386,12 @@ Route::get('request_cancel/{id}', [PlanRequestController::class,'cancelRequest']
 Route::get('export/customer', [CustomerController::class,'export'])->name('customer.export');
 Route::get('import/customer/file', [CustomerController::class,'importFile'])->name('customer.file.import');
 Route::post('import/customer', [CustomerController::class,'import'])->name('customers.import');
+
+
+Route::get('export/talent', [TalentController::class,'export'])->name('talent.export');
+Route::get('import/talent/file', [TalentController::class,'importFile'])->name('talent.file.import');
+Route::post('import/talent', [TalentController::class,'import'])->name('talents.import');
+
 
 
 // Route::get('export/customer', 'CustomerController@export')->name('customer.export');

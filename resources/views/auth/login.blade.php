@@ -83,13 +83,13 @@
                             <button type="submit" class="btn btn-primary btn-block mt-2"
                                 id="login_button">{{ __('Login') }}</button>
                         </div>
-                        @if (Utility::getValByName('disable_signup_button') == 'on')
+                        {{-- @if (Utility::getValByName('disable_signup_button') == 'on')
                             <div class="my-4 text-center">
                                 <p>{{ __("Don't have an account?") }} <a
                                         href="{{ route('register', $lang) }}">{{ __('Register') }}</a></p>
 
                             </div>
-                        @endif
+                        @endif --}}
                     </div>
                 </form>
             </div>

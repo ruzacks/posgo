@@ -28,6 +28,45 @@ $cust_theme_bg = App\Models\Utility::getValByName('cust_theme_bg');
                         </div>
                     </a>
                 </li>
+                <li class="dropdown dash-h-item drp-language">
+                    <a class="dash-head-link dropdown-toggle arrow-none me-0" data-bs-toggle="dropdown" href="#"
+                        role="button" aria-haspopup="false" aria-expanded="false">
+                        <i class="ti ti-world nocolor"></i>
+                        <span class="drp-text hide-mob">{{ Str::upper($currantLang) }}</span>
+                        <i class="ti ti-chevron-down drp-arrow nocolor"></i>
+                    </a>
+                    <div class="dropdown-menu dash-h-dropdown">
+
+                        @foreach ($languages as $language)  
+
+                    
+                            {{-- <a href="{{ route('change.language', $language) }}"
+                                class="dropdown-item @if ($language == $currantLang) active-language @endif">
+                                <span> {{ Str::upper($language) }}</span>
+                            </a>   --}}
+
+                            <a href="{{ route('change.language', $language) }}"
+                            class="dropdown-item {{ basename(App::getLocale()) == $language ? 'text-primary' : '' }}">{{ Str::upper($language) }}</a>
+    
+
+                        @endforeach
+                        @if (\Auth::user()->type == 'Super Admin') 
+                            <hr class="dropdown-divider">
+                            @can('Manage Language')
+                                <a class="dropdown-item text-primary"
+                                    href="{{ route('manage.language', [isset($currantLang) ? $currantLang : 'en']) }}">{{ __('Manage language') }}</a>
+                            @endcan
+                        @endif
+
+                    </div>
+                </li>
+
+            </ul>
+        </div>
+        <div class="ms-auto">
+            
+            <ul class="list-unstyled">
+                
                 <li class="dropdown dash-h-item drp-company">
                     <a class="dash-head-link dropdown-toggle arrow-none me-0" data-bs-toggle="dropdown"
                             href="#"
@@ -69,44 +108,6 @@ $cust_theme_bg = App\Models\Utility::getValByName('cust_theme_bg');
                             {!! Form::open(['method' => 'POST', 'id' => 'logout-form1', 'route' => ['logout'], 'style' => 'display:none']) !!}
                             {!! Form::close() !!}
                         </a>
-                    </div>
-                </li>
-
-            </ul>
-        </div>
-        <div class="ms-auto">
-            <ul class="list-unstyled">
-
-                <li class="dropdown dash-h-item drp-language">
-                    <a class="dash-head-link dropdown-toggle arrow-none me-0" data-bs-toggle="dropdown" href="#"
-                        role="button" aria-haspopup="false" aria-expanded="false">
-                        <i class="ti ti-world nocolor"></i>
-                        <span class="drp-text hide-mob">{{ Str::upper($currantLang) }}</span>
-                        <i class="ti ti-chevron-down drp-arrow nocolor"></i>
-                    </a>
-                    <div class="dropdown-menu dash-h-dropdown dropdown-menu-end">
-
-                        @foreach ($languages as $language)  
-
-                    
-                            {{-- <a href="{{ route('change.language', $language) }}"
-                                class="dropdown-item @if ($language == $currantLang) active-language @endif">
-                                <span> {{ Str::upper($language) }}</span>
-                            </a>   --}}
-
-                            <a href="{{ route('change.language', $language) }}"
-                            class="dropdown-item {{ basename(App::getLocale()) == $language ? 'text-primary' : '' }}">{{ Str::upper($language) }}</a>
-    
-
-                        @endforeach
-                        @if (\Auth::user()->type == 'Super Admin') 
-                            <hr class="dropdown-divider">
-                            @can('Manage Language')
-                                <a class="dropdown-item text-primary"
-                                    href="{{ route('manage.language', [isset($currantLang) ? $currantLang : 'en']) }}">{{ __('Manage language') }}</a>
-                            @endcan
-                        @endif
-
                     </div>
                 </li>
 
