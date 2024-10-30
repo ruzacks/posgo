@@ -203,6 +203,8 @@ $cust_theme_bg = App\Models\Utility::getValByName('cust_theme_bg');
                 </li>
             @endcan
 
+            @if(1<0)
+
             @can('Manage Purchases')
                 <li class="dash-item dash-hasmenu">
                     <a href="#navbar-purchases"
@@ -546,6 +548,8 @@ $cust_theme_bg = App\Models\Utility::getValByName('cust_theme_bg');
                         </ul>
                     </li>
                 @endif
+            @endif
+
             @endif
 
 

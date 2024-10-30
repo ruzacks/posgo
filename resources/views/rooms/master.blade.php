@@ -34,24 +34,24 @@
                         {{ Form::open(['url' => 'update-number-rooms', 'enctype' => 'multipart/form-data', 'method' => 'POST']) }}
                         <div class="row">
                             <div class="form-group col-md-4">
-                                <a href="{{ route('rooms.detail', ['type' => 'hall']) }}" class="breadcrumb-item">
-                                    {{ Form::label('Hall', __('Hall'), ['class' => 'col-form-label']) }}
+                                <a href="{{ route('rooms.detail', ['type' => 'hall']) }}" class="badge bg-primary text-white d-inline-flex align-items-center">
+                                    <i class="ti ti-search me-1"></i> {{ __('Hall') }}
                                 </a>
-                                {{ Form::number('hall', $numberOfRooms->hall ?? null, ['class' => 'form-control', 'placeholder' => __('Enter Hall Number'), 'step' => '1']) }}
+                                {{ Form::number('hall', $numberOfRooms->hall ?? null, ['class' => 'form-control mt-2', 'placeholder' => __('Enter Hall Number'), 'step' => '1']) }}
                             </div>
                             <div class="form-group col-md-4">
-                                <a href="{{ route('rooms.detail', ['type' => 'room']) }}" class="breadcrumb-item">
-                                    {{ Form::label('Room', __('Room'), ['class' => 'col-form-label']) }}
+                                <a href="{{ route('rooms.detail', ['type' => 'room']) }}" class="badge bg-primary text-white d-inline-flex align-items-center">
+                                    <i class="ti ti-search me-1"></i> {{ __('Room') }}
                                 </a>
-                                {{ Form::number('room', $numberOfRooms->room ?? null, ['class' => 'form-control', 'placeholder' => __('Enter Room Number'), 'step' => '1']) }}
+                                {{ Form::number('room', $numberOfRooms->room ?? null, ['class' => 'form-control mt-2', 'placeholder' => __('Enter Room Number'), 'step' => '1']) }}
                             </div>
                             <div class="form-group col-md-4">
-                                <a href="{{ route('rooms.detail', ['type' => 'vip']) }}" class="breadcrumb-item">
-                                    {{ Form::label('VIP', __('VIP'), ['class' => 'col-form-label']) }}
+                                <a href="{{ route('rooms.detail', ['type' => 'vip']) }}" class="badge bg-primary text-white d-inline-flex align-items-center">
+                                    <i class="ti ti-search me-1"></i> {{ __('VIP') }}
                                 </a>
-                                {{ Form::number('vip', $numberOfRooms->vip ?? null, ['class' => 'form-control', 'placeholder' => __('Enter VIP Number'), 'step' => '1']) }}
+                                {{ Form::number('vip', $numberOfRooms->vip ?? null, ['class' => 'form-control mt-2', 'placeholder' => __('Enter VIP Number'), 'step' => '1']) }}
                             </div>
-                        </div>
+                        </div>                        
                         <div class="row">
                             <div class="col-md-1">
                                 <input class="btn btn-primary" type="submit" value="{{ __('Edit') }}">
