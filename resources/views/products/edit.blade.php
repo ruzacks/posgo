@@ -12,26 +12,51 @@
         <div class="form-group col-md-6">
             {{ Form::label('category_id', __('Category'), ['class' => 'col-form-label']) }}
             <div class="input-group">
-                {{ Form::select('category_id', $categories, null, ['class' => 'form-control', 'data-toggle' => 'select']) }}
+                {{ Form::select('category_id', $categories, null, ['class' => 'form-control', 'data-toggle' => 'select', 'required' => '']) }}
             </div>
         </div>
-        <div class="form-group col-md-6">
-            {{ Form::label('brand_id', __('Brand'), ['class' => 'col-form-label']) }}
-            <div class="input-group">
-                {{ Form::select('brand_id', $brands, null, ['class' => 'form-control', 'data-toggle' => 'select']) }}
-            </div>
-        </div>
-        <div class="form-group col-md-6">
-            {{ Form::label('tax_id', __('Tax'), ['class' => 'col-form-label']) }}
-            <div class="input-group">
-                {{ Form::select('tax_id', $taxes, null, ['class' => 'form-control', 'data-toggle' => 'select']) }}
-            </div>
-        </div>
+        
         <div class="form-group col-md-6">
             {{ Form::label('unit_id', __('Unit'), ['class' => 'col-form-label']) }}
             <div class="input-group">
-                {{ Form::select('unit_id', $units, null, ['class' => 'form-control', 'data-toggle' => 'select']) }}
+                {{ Form::select('unit_id', $units, null, ['class' => 'form-control', 'data-toggle' => 'select', 'required' => '']) }}
             </div>
+        </div>
+
+        <div class="form-group col-md-6">
+            <div class="row">
+                <div class="col-md-6">
+                    {{ Form::label('is_consigment', __('Consigment'), ['class' => 'col-form-label']) }}
+                    <div class="form-check">
+                        {{ Form::checkbox('is_consigment', 1, null, ['class' => 'form-check-input', 'id' => 'is_consigment']) }}
+                        {{ Form::label('is_consigment', __('Yes'), ['class' => 'form-check-label']) }}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    {{ Form::label('is_stock', __('With Stock'), ['class' => 'col-form-label']) }}
+                    <div class="form-check">
+                        {{ Form::checkbox('is_stock', 1, null, ['class' => 'form-check-input', 'id' => 'is_stock']) }}
+                        {{ Form::label('is_stock', __('Yes'), ['class' => 'form-check-label']) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group col-md-6">
+            {{ Form::label('vendor_id', __('Vendor'), ['class' => 'col-form-label']) }}
+            <div class="input-group">
+                {{ Form::select('vendor_id', $vendors, null, ['class' => 'form-control', 'data-toggle' => 'select']) }}
+            </div>
+        </div>
+
+        <div class="form-group col-md-6">
+            {{ Form::label('min_stock', __('Minimum Stock'), ['class' => 'col-form-label']) }}
+            {{ Form::number('min_stock', null, ['class' => 'form-control', 'placeholder' => __('Enter new Minimum Stock'), 'step' => '0.01', 'id' => 'min_stock', 'readonly' => 'readonly']) }}
+        </div>
+        
+        <div class="form-group col-md-6">
+            {{ Form::label('max_stock', __('Maximum Stock'), ['class' => 'col-form-label']) }}
+            {{ Form::number('max_stock', null, ['class' => 'form-control', 'placeholder' => __('Enter new Maximum Stock'), 'step' => '0.01', 'id' => 'max_stock', 'readonly' => 'readonly']) }}
         </div>
 
         <div class="mb-4 col-md-6">
@@ -87,3 +112,37 @@
     <input class="btn btn-primary" type="submit" value="{{ __('Edit') }}">
 </div>
 {{ Form::close() }}
+
+<script>
+    // Function to toggle readonly properties based on current state
+    function toggleReadOnlyFields() {
+        const isStockChecked = document.getElementById('is_stock').checked;
+        document.getElementById('min_stock').readOnly = !isStockChecked;
+        document.getElementById('max_stock').readOnly = !isStockChecked;
+
+        const selectedOption = document.getElementById('category_id').selectedOptions[0].text;
+        const isPaket = selectedOption.includes('PAKET');
+        const unitElement = document.getElementById('unit_id');
+        document.getElementById('purchase_price').readOnly = isPaket;
+        // document.getElementById('sale_price').readOnly = isPaket;
+
+        if (isPaket) {
+            const paketOption = Array.from(unitElement.options).find(option => option.text.includes('PAKET'));
+            
+            if (paketOption) {
+                unitElement.value = paketOption.value;
+            }
+
+            unitElement.setAttribute('readonly', 'readonly');
+        } else {
+            unitElement.removeAttribute('readonly');
+        }
+    }
+
+    // Attach event listeners
+    document.getElementById('is_stock').addEventListener('change', toggleReadOnlyFields);
+    document.getElementById('category_id').addEventListener('change', toggleReadOnlyFields);
+
+    // Initialize on page load
+    toggleReadOnlyFields();
+</script>

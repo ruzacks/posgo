@@ -15,10 +15,6 @@
             ) }}
         </div>
     </div>
-    <div class="form-group col-md-6">
-        {{ Form::label('price', __('Price per Hour'), ['class' => 'col-form-label']) }}
-        {{ Form::text('price', null, ['class' => 'form-control', 'maxlength' => '15', 'placeholder' => __('Enter price per hour')]) }}
-    </div>
 </div>
 </div>
  <div class="modal-footer">

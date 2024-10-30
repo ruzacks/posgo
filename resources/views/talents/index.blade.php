@@ -10,17 +10,6 @@
 
 @section('action-btn')
 
-    <a href="{{ route('talent.export') }}" class="btn btn-sm btn-primary btn-icon m-1" data-bs-toggle="tooltip"
-        title="{{ __('Export') }}">
-        <i class="ti ti-file-export text-white"></i>
-    </a>
-
-    <a href="#" class="btn btn-sm btn-primary btn-icon" data-url="{{ route('talent.file.import') }}"
-        data-bs-toggle="tooltip" data-bs-toggle="tooltip" title="{{ __('Import') }}" data-ajax-popup="true"
-        data-title="{{ __('Import talent CSV file') }}">
-        <i class="ti ti-file-import text-white"></i>
-    </a>
-
     @can('Create Talent')
         <a href="#" data-ajax-popup="true" data-size="lg" data-bs-toggle="tooltip" data-title="{{ __('Add New Talent') }}"
             title="{{ __(' New Talent') }}" data-url="{{ route('talents.create') }}"
@@ -48,9 +37,11 @@
                                 <thead>
                                     <tr>
                                         <th>#</th>
+                                        <th>{{ __('Code') }}</th>
                                         <th>{{ __('Name') }}</th>
                                         <th>{{ __('Phone') }}</th>
-                                        <th>{{ __('Date/Time Added') }} </th>
+                                        <th style="text-align: center">{{ __('Grade') }} </th>
+                                        <th style="text-align: center">{{ __('Agency') }} </th>
                                         <th width="200px">{{ __('Action') }}</th>
                                     </tr>
                                 </thead>
@@ -58,9 +49,11 @@
                                     @foreach ($talents as $key => $talent)
                                         <tr>
                                             <td>{{ $key + 1 }}</td>
+                                            <td>{{ $talent->code }}</td>
                                             <td>{{ $talent->name }}</td>
                                             <td>{{ $talent->phone_number }}</td>
-                                            <td>{{ Auth::user()->datetimeFormat($talent->created_at) }}</td>
+                                            <td style="text-align: center">{{ $talent->talentGrade() }}</td>
+                                            <td style="text-align: center">{{ $talent->talentAgency() }}</td>
                                             <td class="Action">
                                                 @if ($talent->is_active == 1)
                                                     @can('Edit Talent')

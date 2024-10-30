@@ -25,11 +25,11 @@
                     @csrf
                     <div class="">
                         <div class="form-group mb-3">
-                            <label class="form-label">{{ __('Email') }}</label>
-                            <input id="email" type="email" placeholder="{{ __('Email') }}"
-                                class="form-control @error('email') is-invalid @enderror" name="email"
-                                value="{{ old('email') }}" required autocomplete="email" autofocus>
-                            @error('email')
+                            <label class="form-label">{{ __('Name') }}</label>
+                            <input id="naem" type="text" placeholder="{{ __('Name') }}"
+                                class="form-control @error('name') is-invalid @enderror" name="name"
+                                value="{{ old('name') }}" required autocomplete="name" autofocus>
+                            @error('name')
                                 <span class="invalid-feedback" role="alert">
                                     <small>{{ $message }}</small>
                                 </span>
@@ -53,7 +53,7 @@
                                 </span>
                             @enderror
                         </div>
-                        <div class="form-group mb-4">
+                        {{-- <div class="form-group mb-4">
                             <div class="mb-3">
                                 <div class="text-left">
                                     @if (Route::has('password.request'))
@@ -65,7 +65,7 @@
                                 </div>
                             </div>
 
-                        </div>
+                        </div> --}}
 
                         @if (env('RECAPTCHA_MODULE') == 'yes')
                             <div class="form-group mb-3">

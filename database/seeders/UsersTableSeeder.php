@@ -684,7 +684,8 @@ class UsersTableSeeder extends Seeder
                 'guard_name' => 'web',
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s'),
-            ],[
+            ],
+            [
                 'name' => 'Manage Voucher',
                 'guard_name' => 'web',
                 'created_at' => date('Y-m-d H:i:s'),
@@ -704,6 +705,30 @@ class UsersTableSeeder extends Seeder
             ],
             [
                 'name' => 'Delete Voucher',
+                'guard_name' => 'web',
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
+            ],
+            [
+                'name' => 'Manage Agency',
+                'guard_name' => 'web',
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
+            ],
+            [
+                'name' => 'Create Agency',
+                'guard_name' => 'web',
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
+            ],
+            [
+                'name' => 'Edit Agency',
+                'guard_name' => 'web',
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
+            ],
+            [
+                'name' => 'Delete Agency',
                 'guard_name' => 'web',
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s'),
@@ -874,7 +899,11 @@ class UsersTableSeeder extends Seeder
             ['name' => 'Manage Voucher'],
             ['name' => 'Create Voucher'],
             ['name' => 'Edit Voucher'],
-            ['name' => 'Delete Voucher'], 
+            ['name' => 'Delete Voucher'],
+            ['name' => 'Manage Agency'],
+            ['name' => 'Create Agency'],
+            ['name' => 'Edit Agency'],
+            ['name' => 'Delete Agency'],  
           ];
 
           $owner_role = Role::firstOrCreate(

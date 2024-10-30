@@ -481,11 +481,6 @@ class SaleController extends Controller
 
         $customerdetails = [
             ucfirst('Client'),
-            '+216 654654',
-            'Hankenshire',
-            'New York' . 'New York',
-            'USA',
-            '999999',
         ];
 
         $items = [];
@@ -493,16 +488,16 @@ class SaleController extends Controller
             $item             = new \stdClass();
             $item->name       = 'Item ' . $i;
             $item->quantity   = 2;
-            $item->price      = '$100.00';
+            $item->price      = 'Rp.100.00';
             $item->tax        = '0%';
-            $item->tax_amount = '$0.0';
-            $item->subtotal   = '$200.00';
+            $item->tax_amount = 'Rp.0.0';
+            $item->subtotal   = 'Rp.200.00';
             $items[]          = $item;
         }
 
         $sale->invoice_id = 1;
         $sale->items      = $items;
-        $sale->subtotal   = '$600.00';
+        $sale->subtotal   = 'Rp.600.00';
         $sale->created_at = date('Y-m-d H:i:s');
 
         $preview    = 1;

@@ -495,11 +495,6 @@ class PurchaseController extends Controller
 
         $vendordetails = [
             ucfirst('Client'),
-            '+216 654654',
-            'Hankenshire',
-            'New York' . 'New York',
-            'USA',
-            '999999',
         ];
 
         $items = [];
@@ -507,16 +502,16 @@ class PurchaseController extends Controller
             $item             = new \stdClass();
             $item->name       = 'Item ' . $i;
             $item->quantity   = 2;
-            $item->price      = '$100.00';
+            $item->price      = 'Rp.100.00';
             $item->tax        = '0%';
-            $item->tax_amount = '$0.0';
-            $item->subtotal   = '$200.00';
+            $item->tax_amount = 'Rp.0.0';
+            $item->subtotal   = 'Rp.200.00';
             $items[]          = $item;
         }
 
         $purchase->invoice_id = 1;
         $purchase->items      = $items;
-        $purchase->subtotal   = '$600.00';
+        $purchase->subtotal   = 'Rp.600.00';
         $purchase->created_at = date('Y-m-d H:i:s');
 
         $preview = 1;

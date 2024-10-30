@@ -96,7 +96,7 @@ $wasabi_storage_validations   = explode(',', $wasabi_storage_validation);
                                 </a>
                             @endif
 
-                            @if(Auth::user()->isUsers())
+                            @if(Auth::user()->isSuperAdmin())
                                 @can('System Settings')
                                     <a href="#system-settings"
                                         class="list-group-item list-group-item-action border-0">{{ __('System Settings') }}
@@ -113,7 +113,8 @@ $wasabi_storage_validations   = explode(',', $wasabi_storage_validation);
                             @endcan
 
 
-                            @if (Auth::user()->parent_id == 1)
+                            {{-- @if (Auth::user()->parent_id == 1) --}}
+                            @if(Auth::user()->isSuperAdmin())
                             <a href="#email-notification-settings"
                                 class="list-group-item list-group-item-action border-0">{{ __('Email Notification Settings') }}<div
                                     class="float-end"><i class="ti ti-chevron-right"></i></div></a>
@@ -139,12 +140,12 @@ $wasabi_storage_validations   = explode(',', $wasabi_storage_validation);
                                 </a>
                             @endcan
 
-                            @can('Manage Quotations')
+                            {{-- @can('Manage Quotations')
                                 <a href="#quotation-invoice-settings"
                                     class="list-group-item list-group-item-action border-0">{{ __('Quotation Invoice') }}
                                     <div class="float-end"><i class="ti ti-chevron-right"></i></div>
                                 </a>
-                            @endcan
+                            @endcan --}}
 
                             @if (Auth::user()->isSuperAdmin())
                             <a href="#storage-settings" class="list-group-item list-group-item-action border-0">{{ __('Storage Settings') }}
@@ -172,105 +173,6 @@ $wasabi_storage_validations   = explode(',', $wasabi_storage_validation);
                                                 <div class="row mt-2">
                                                     @if (Auth::user()->isSuperAdmin())
 
-                                                    {{-- <div class="col-4">
-                                                        <div class="card">
-                                                            <div class="card-header">
-                                                                <h5 class="small-title">{{ __('Dark Logo') }}</h5>
-                                                            </div>
-                                                            <div class="card-body setting-card setting-logo-box p-3">
-                                                                <div class="row">
-                                                                    <div class="col-12">
-                                                                        <div class="logo-content logo-set-bg  text-center py-2">
-                                                                            <a href="{{ asset(Storage::url('logo/logo-dark.png')) }}" target="_blank">
-                                                                                <img src="{{ asset(Storage::url('logo/logo-dark.png')) }}"
-                                                                                class="logo logo-sm" style="width: 50%" id="blah"
-                                                                                style="filter: drop-shadow(2px 3px 7px #011c4b);">
-                                                                            </a>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="col-12">
-            
-                                                                        <div class="choose-files mt-5">
-                                                                            <label for="logo_dark">
-                                                                                <div class=" bg-primary edit-logo_dark"> <i
-                                                                                        class="ti ti-upload px-1"></i>{{ __('Choose file here') }}
-                                                                                </div>
-                                                                                <input type="file" class="form-control file d-none" name="logo_dark" id="logo_dark" data-filename="edit-logo_dark" accept=".jpeg,.jpg,.png" onchange="document.getElementById('blah').src = window.URL.createObjectURL(this.files[0])">
-
-                                                                            </label>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>  
-                                                    <div class="col-4">
-                                                        <div class="card">
-                                                            <div class="card-header">
-                                                                <h5 class="small-title">{{ __('Light Logo') }}</h5>
-                                                            </div>
-                                                            <div class="card-body setting-card setting-logo-box p-3">
-                                                                <div class="row">
-                                                                    <div class="col-12">
-                                                                        <div class="logo-content logo-set-bg  text-center py-2">
-                                                                            <a href="{{ asset(Storage::url('logo/logo-light.png')) }}" target="_blank">
-                                                                                <img src="{{ asset(Storage::url('logo/logo-light.png')) }}"
-                                                                                    class="logo logo-sm img_setting" id="blah1"
-                                                                                    style="filter: drop-shadow(2px 3px 7px #011c4b);">
-                                                                                </a>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="col-12">
-            
-                                                                        <div class="choose-files mt-5">
-                                                                            <label for="logo_light">
-                                                                                <div class=" bg-primary edit-logo_light"> <i
-                                                                                        class="ti ti-upload px-1"></i>{{ __('Choose file here') }}
-                                                                                </div>
-                                                                                <input type="file"
-                                                                                    class="form-control file d-none"
-                                                                                    name="logo_light" id="logo_light"
-                                                                                    data-filename="edit-logo_light" 
-                                                                                    onchange="document.getElementById('blah1').src = window.URL.createObjectURL(this.files[0])">
-                                                                            </label>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>         
-                                                    <div class="col-4">
-                                                        <div class="card">
-                                                            <div class="card-header">
-                                                                <h5 class="small-title">{{ __('Favicon') }}</h5>
-                                                            </div>
-                                                            <div class="card-body setting-card setting-logo-box p-3">
-                                                                <div class="row">
-                                                                    <div class="col-12">
-                                                                        <div class="logo-content logo-set-bg  text-center py-2">
-                                                                            <a href="{{ asset(Storage::url('logo/logo-light.png')) }}" target="_blank">
-                                                                                <img src="{{ asset(Storage::url('logo/favicon.png')) }}"
-                                                                                    width="50px" id="blah2"
-                                                                                    class="logo logo-sm img_setting">
-                                                                                </a>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="col-12">
-                                                                        <div class="choose-files mt-5">
-                                                                            <label for="favicon m-auto">
-                                                                                <div class=" bg-primary favicon "> <i
-                                                                                        class="ti ti-upload px-1"></i>{{ __('Choose file here') }}
-                                                                                </div>
-                                                                                <input type="file"
-                                                                                    class="form-control file d-none" name="favicon" id="favicon"  data-filename="edit-favicon" 
-                                                                                    onchange="document.getElementById('blah2').src = window.URL.createObjectURL(this.files[0])">
-                                                                            </label>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>   --}}
                                                         <div class="col-lg-4 col-sm-6 col-md-6">
                                                             <div class="card">
                                                                 <div class="card-header">
@@ -505,8 +407,8 @@ $wasabi_storage_validations   = explode(',', $wasabi_storage_validation);
                                                             </div>
                                                         </div>
                         
-
-                                                        <div class="col-lg-4 col-sm-6 col-md-6">
+                                                        {{-- CHANGE THIS ONLY FOR SUPERADMIN --}}
+                                                        {{-- <div class="col-lg-4 col-sm-6 col-md-6">
                                                             <div class="form-group">
                                                                 {{ Form::label('footer_text', __('Footer Text'), ['class' => 'col-form-label text-dark']) }}
                                                                 {{ Form::text('footer_text', isset($settings['footer_text']) && !empty($settings['footer_text']) ? $settings['footer_text'] : env('FOOTER_TEXT'), ['class' => 'form-control', 'placeholder' => __('Footer Text')]) }}
@@ -516,9 +418,9 @@ $wasabi_storage_validations   = explode(',', $wasabi_storage_validation);
                                                                     </span>
                                                                 @enderror
                                                             </div>
-                                                        </div>
+                                                        </div>  --}}
 
-                                                        <div class="col-3 ">
+                                                        {{-- <div class="col-3 ">
                                                             <div class="col switch-width">
                                                                 <div class="form-group ml-2 mr-3">
                                                                     <div class="custom-control custom-switch">
@@ -533,7 +435,8 @@ $wasabi_storage_validations   = explode(',', $wasabi_storage_validation);
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                        </div>
+                                                        </div> --}}
+                                                        
                                                         
                                                         <h4 class="small-title">{{ __('Theme Customizer') }}</h4>
                                                         <div class="setting-card setting-logo-box p-3">
@@ -576,7 +479,9 @@ $wasabi_storage_validations   = explode(',', $wasabi_storage_validation);
                                                                             style="display: none;">
                                                                     </div>
                                                                 </div>
-                                                                <div class="col-4 my-auto">
+
+                                                                {{-- CHANGE THIS ONLY FOR SUPERADMIN --}}
+                                                                <div class="col-4 my-auto" hidden>
                                                                     <h6 class="ms-0">
                                                                         <i data-feather="layout"
                                                                             class="me-2"></i>{{ __('Sidebar settings') }}
@@ -2158,7 +2063,7 @@ $wasabi_storage_validations   = explode(',', $wasabi_storage_validation);
                             </div>
                         @endif
 
-                        @if (Auth::user()->isUsers())
+                        @if(Auth::user()->isSuperAdmin())
                             @can('System Settings')
                                 <div id="system-settings" class="card">
 
@@ -2395,7 +2300,8 @@ $wasabi_storage_validations   = explode(',', $wasabi_storage_validation);
                         @endcan
 
 
-                        @if (Auth::user()->parent_id == 1)
+                        {{-- @if (Auth::user()->parent_id == 1) --}}
+                        @if(Auth::user()->isSuperAdmin())
                         <div id="email-notification-settings" class="card">
                             
                             <div class="col-md-12">
@@ -2563,8 +2469,8 @@ $wasabi_storage_validations   = explode(',', $wasabi_storage_validation);
                                 </div>
                             </div>
                         @endcan
-
-                        @can('Manage Quotations')
+                        
+                        {{-- @can('Manage Quotations')
                             <div id="quotation-invoice-settings" class="card">
                                 <div class="card-header">
                                     <h3 class="h5">{{ __('Quotation invoice') }}</h3>
@@ -2613,7 +2519,7 @@ $wasabi_storage_validations   = explode(',', $wasabi_storage_validation);
 
                                 </div>
                             </div>
-                        @endcan
+                        @endcan --}}
 
 
                         @if (Auth::user()->isSuperAdmin())

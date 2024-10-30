@@ -47,43 +47,81 @@ class Product extends Model
         return $results[0]->tax_id;
     }
 
+    // public function getTotalProductQuantity()
+    // {
+    //     $totalquantity = $purchasedquantity = $selledquantity = 0;
+       
+    //     $authuser = Auth::user();
+    //     $product_id = $this->id;
+
+    //     $purchases = Purchase::where('created_by', $authuser->getCreatedBy());
+
+    //     if ($authuser->isUser())
+    //     {
+    //         $purchases = $purchases->where('branch_id', $authuser->branch_id)->where('cash_register_id', $authuser->cash_register_id);
+    //     }
+
+    //     foreach($purchases->get() as $purchase)
+    //     {
+    //         $purchaseditem = PurchasedItems::select('quantity')->where('purchase_id', $purchase->id)->where('product_id', $product_id)->first();
+    //         $purchasedquantity += $purchaseditem != null ? $purchaseditem->quantity : 0;
+    //     }
+
+    //     $sells = Sale::where('created_by', $authuser->getCreatedBy());
+
+    //     if ($authuser->isUser())
+    //     {
+    //         $sells = $sells->where('branch_id', $authuser->branch_id)->where('cash_register_id', $authuser->cash_register_id);
+    //     }
+
+    //     foreach($sells->get() as $sell)
+    //     {
+    //         $selleditem = SelledItems::select('quantity')->where('sell_id', $sell->id)->where('product_id', $product_id)->first();
+    //         $selledquantity += $selleditem != null ? $selleditem->quantity : 0;
+    //     }
+
+    //     $totalquantity = $purchasedquantity - $selledquantity;
+    //     // dd($totalquantity);
+    //     return $totalquantity;
+    // }
+
     public function getTotalProductQuantity()
     {
-        $totalquantity = $purchasedquantity = $selledquantity = 0;
-       
         $authuser = Auth::user();
         $product_id = $this->id;
 
-        $purchases = Purchase::where('created_by', $authuser->getCreatedBy());
+        // Optimize purchase quantity query
+        $purchasedquantityQuery = PurchasedItems::where('product_id', $product_id)
+            ->whereHas('purchase', function ($query) use ($authuser) {
+                $query->where('created_by', $authuser->getCreatedBy());
 
-        if ($authuser->isUser())
-        {
-            $purchases = $purchases->where('branch_id', $authuser->branch_id)->where('cash_register_id', $authuser->cash_register_id);
-        }
+                if ($authuser->isUser()) {
+                    $query->where('branch_id', $authuser->branch_id)
+                        ->where('cash_register_id', $authuser->cash_register_id);
+                }
+            });
 
-        foreach($purchases->get() as $purchase)
-        {
-            $purchaseditem = PurchasedItems::select('quantity')->where('purchase_id', $purchase->id)->where('product_id', $product_id)->first();
-            $purchasedquantity += $purchaseditem != null ? $purchaseditem->quantity : 0;
-        }
+        $purchasedquantity = $purchasedquantityQuery->sum('quantity'); // Aggregate sum instead of foreach
 
-        $sells = Sale::where('created_by', $authuser->getCreatedBy());
+        // Optimize sold quantity query
+        $selledquantityQuery = SelledItems::where('product_id', $product_id)
+            ->whereHas('sale', function ($query) use ($authuser) {
+                $query->where('created_by', $authuser->getCreatedBy());
 
-        if ($authuser->isUser())
-        {
-            $sells = $sells->where('branch_id', $authuser->branch_id)->where('cash_register_id', $authuser->cash_register_id);
-        }
+                if ($authuser->isUser()) {
+                    $query->where('branch_id', $authuser->branch_id)
+                        ->where('cash_register_id', $authuser->cash_register_id);
+                }
+            });
 
-        foreach($sells->get() as $sell)
-        {
-            $selleditem = SelledItems::select('quantity')->where('sell_id', $sell->id)->where('product_id', $product_id)->first();
-            $selledquantity += $selleditem != null ? $selleditem->quantity : 0;
-        }
+        $selledquantity = $selledquantityQuery->sum('quantity'); // Aggregate sum instead of foreach
 
+        // Calculate total quantity
         $totalquantity = $purchasedquantity - $selledquantity;
-        // dd($totalquantity);
+
         return $totalquantity;
     }
+
 
     public function getProductQuantityByBranch($data)
     {

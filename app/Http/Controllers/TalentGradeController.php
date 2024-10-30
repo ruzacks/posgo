@@ -14,7 +14,7 @@ class TalentGradeController extends Controller
         if(Auth::user()->can('Manage Talent Grade'))
         {
             $talentGrades = TalentGrade::where('created_by', Auth::user()->id)
-                                    ->orderBy('id', 'DESC')
+                                    ->orderBy('id', 'ASC')
                                     ->get();
 
             return view('talent-grades.index')->with('talentGrades', $talentGrades);
@@ -44,7 +44,9 @@ class TalentGradeController extends Controller
             $validator = Validator::make(
                 $request->all(), [
                     'name' => 'required|max:100|unique:talent_grades,name,NULL,id,created_by,' . Auth::user()->id,
-                    'price' => 'nullable|numeric|min:0',
+                    'talent_price' => 'nullable|numeric|min:0',
+                    'agency_price' => 'nullable|numeric|min:0',
+                    'office_price' => 'nullable|numeric|min:0',
                 ]
             );
 
@@ -55,7 +57,9 @@ class TalentGradeController extends Controller
 
             $grade = new TalentGrade();
             $grade->name = $request->name;
-            $grade->price = $request->price ?: null;
+            $grade->talent_price = $request->talent_price ?: null;
+            $grade->agency_price = $request->agency_price ?: null;
+            $grade->office_price = $request->office_price ?: null;
             $grade->created_by = Auth::user()->getCreatedBy();
             $grade->save();
 
@@ -91,7 +95,9 @@ class TalentGradeController extends Controller
             $validator = Validator::make(
                 $request->all(), [
                     'name' => 'required|max:100|unique:talent_grades,name,' . $talentGrade->id . ',id,created_by,' . Auth::user()->id,
-                    'price' => 'nullable|numeric|min:0',
+                    'talent_price' => 'nullable|numeric|min:0',
+                    'agency_price' => 'nullable|numeric|min:0',
+                    'office_price' => 'nullable|numeric|min:0',
                 ]
             );
 
@@ -101,7 +107,9 @@ class TalentGradeController extends Controller
             }
 
             $talentGrade->name = $request->name;
-            $talentGrade->price = $request->price ?: null;
+            $talentGrade->talent_price = $request->talent_price ?: null;
+            $talentGrade->agency_price = $request->agency_price ?: null;
+            $talentGrade->office_price = $request->office_price ?: null;
             $talentGrade->save();
 
             return redirect()->route('talent-grades.index')->with('success', __('Talent grade updated successfully.'));

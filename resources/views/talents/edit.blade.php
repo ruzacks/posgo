@@ -2,6 +2,10 @@
 <div class="modal-body">
 <div class="row">
     <div class="form-group col-md-6">
+        {{ Form::label('code', __('Code'), ['class' => 'col-form-label']) }}
+        {{ Form::text('code', null, ['class' => 'form-control', 'placeholder' => __('Enter code'), 'required'=>'required', 'readonly'=>'']) }}
+    </div>
+    <div class="form-group col-md-6">
         {{ Form::label('name', __('Name'), ['class' => 'col-form-label']) }}
         {{ Form::text('name', null, ['class' => 'form-control', 'placeholder' => __('Enter new talent name'), 'required'=>'required']) }}
     </div>
@@ -16,8 +20,10 @@
         </div>
     </div>
     <div class="form-group col-md-6">
-        {{ Form::label('price', __('Price per Hour'), ['class' => 'col-form-label']) }}
-        {{ Form::text('price', null, ['class' => 'form-control', 'maxlength' => '15', 'placeholder' => __('Enter price per hour')]) }}
+        {{ Form::label('agency_id', __('Agency'), ['class' => 'col-form-label']) }}
+        <div class="input-group">
+            {{ Form::select('agency_id', $agencies, null, ['class' => 'form-control', 'data-toggle' => 'select']) }}
+        </div>
     </div>
     <div class="form-group col-md-6">
         {{ Form::label('address', __('Address'), ['class' => 'col-form-label']) }}

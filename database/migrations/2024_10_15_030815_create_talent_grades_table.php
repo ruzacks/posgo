@@ -16,7 +16,9 @@ return new class extends Migration
         Schema::create('talent_grades', function (Blueprint $table) {
             $table->id();
             $table->string('name'); // e.g., 'Beginner', 'Expert', etc.
-            $table->float('price')->nullable();
+            $table->float('talent_price')->nullable();
+            $table->float('office_price')->nullable();
+            $table->float('agency_price')->nullable();
             $table->integer('created_by')->default('0');
             $table->timestamps();
         });

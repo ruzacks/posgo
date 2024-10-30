@@ -46,7 +46,7 @@ class VendorController extends Controller
                 $request->all(),
                 [
                     'name' => 'required|max:120',
-                    'email' => 'required|email|max:100|unique:vendors,email,NULL,id,created_by,' . Auth::user()->getCreatedBy(),
+                    'code' => 'required|unique:vendors,code,' . ($request->id ?? 'NULL') . ',id',
                     'phone_number' => 'required|min:10|max:15',
                 ]
             );
@@ -70,6 +70,7 @@ class VendorController extends Controller
 
             if ($plan->max_vendors == -1 || $total_vendor < $plan->max_vendors) {
                 $vendor['name']         = $request->name;
+                $vendor['code']         = $request->code;
                 $vendor['email']        = $request->email;
                 $vendor['phone_number'] = $request->phone_number;
                 $vendor['address']      = $request->address;
@@ -83,21 +84,21 @@ class VendorController extends Controller
                 $vendor = Vendor::create($vendor);
 
                
-                    $vendor->type = 'Vendor';  
+                    // $vendor->type = 'Vendor';  
 
-                    $uArr = [   
-                        'app_name'  =>env('APP_NAME'),
-                        'app_url'=> env('APP_URL'),
-                        'vendor_name' => $request->name,
-                        'vendor_email' =>$request->email,
-                        'vendor_phone_number' =>$request->phone_number,
-                        'vendor_address' =>$request->address,
-                        'vendor_country'=> $request->country,
-                        'vendor_zipcode'=> $request->zipcode,
-                      ];
+                    // $uArr = [   
+                    //     'app_name'  =>env('APP_NAME'),
+                    //     'app_url'=> env('APP_URL'),
+                    //     'vendor_name' => $request->name,
+                    //     'vendor_email' =>$request->email,
+                    //     'vendor_phone_number' =>$request->phone_number,
+                    //     'vendor_address' =>$request->address,
+                    //     'vendor_country'=> $request->country,
+                    //     'vendor_zipcode'=> $request->zipcode,
+                    //   ];
                 
                     
-                    $resp = Utility::sendEmailTemplate('new_vendor', [$vendor->id => $vendor->email], $uArr);
+                    // $resp = Utility::sendEmailTemplate('new_vendor', [$vendor->id => $vendor->email], $uArr);
 
                 // dd($resp);
 
@@ -133,9 +134,8 @@ class VendorController extends Controller
                 $request->all(),
                 [
                     'name' => 'required|max:120',
-                    'email' => 'required|email|max:100|unique:vendors,email,' . $vendor->id . ',id,created_by,' . Auth::user()->getCreatedBy(),
+                    'code' => 'required|unique:vendors,code,' . ($request->id ?? 'NULL') . ',id',
                     'phone_number' => 'required|min:10|max:15',
-                    // numeric
                 ]
             );
 
@@ -151,6 +151,7 @@ class VendorController extends Controller
             }
 
             $vendor['name']         = $request->name;
+            $vendor['code']         = $request->code;
             $vendor['email']        = $request->email;
             $vendor['phone_number'] = $request->phone_number;
             $vendor['address']      = $request->address;

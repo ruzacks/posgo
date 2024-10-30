@@ -18,35 +18,68 @@
             <?php echo e(Form::label('category_id', __('Category'), ['class' => 'col-form-label'])); ?>
 
             <div class="input-group">
-                <?php echo e(Form::select('category_id', $categories, null, ['class' => 'form-control', 'data-toggle' => 'select'])); ?>
+                <?php echo e(Form::select('category_id', $categories, null, ['class' => 'form-control', 'data-toggle' => 'select', 'required' => ''])); ?>
 
             </div>
         </div>
-        <div class="form-group col-md-6">
-            <?php echo e(Form::label('brand_id', __('Brand'), ['class' => 'col-form-label'])); ?>
-
-            <div class="input-group">
-                <?php echo e(Form::select('brand_id', $brands, null, ['class' => 'form-control', 'data-toggle' => 'select'])); ?>
-
-            </div>
-        </div>
-        <div class="form-group col-md-6">
-            <?php echo e(Form::label('tax_id', __('Tax'), ['class' => 'col-form-label'])); ?>
-
-            <div class="input-group">
-                <?php echo e(Form::select('tax_id', $taxes, null, ['class' => 'form-control', 'data-toggle' => 'select'])); ?>
-
-            </div>
-        </div>
+        
         <div class="form-group col-md-6">
             <?php echo e(Form::label('unit_id', __('Unit'), ['class' => 'col-form-label'])); ?>
 
             <div class="input-group">
-                <?php echo e(Form::select('unit_id', $units, null, ['class' => 'form-control', 'data-toggle' => 'select'])); ?>
+                <?php echo e(Form::select('unit_id', $units, null, ['class' => 'form-control', 'data-toggle' => 'select', 'required' => ''])); ?>
 
             </div>
         </div>
 
+        <div class="form-group col-md-6">
+            <div class="row">
+                <div class="col-md-6">
+                    <?php echo e(Form::label('is_consigment', __('Consigment'), ['class' => 'col-form-label'])); ?>
+
+                    <div class="form-check">
+                        <?php echo e(Form::checkbox('is_consigment', 1, false, ['class' => 'form-check-input', 'id' => 'is_consigment'])); ?>
+
+                        <?php echo e(Form::label('is_consigment', __('Yes'), ['class' => 'form-check-label'])); ?>
+
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <?php echo e(Form::label('is_stock', __('With Stock'), ['class' => 'col-form-label'])); ?>
+
+                    <div class="form-check">
+                        <?php echo e(Form::checkbox('is_stock', 1, false, ['class' => 'form-check-input', 'id' => 'is_stock'])); ?>
+
+                        <?php echo e(Form::label('is_stock', __('Yes'), ['class' => 'form-check-label'])); ?>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group col-md-6">
+            <?php echo e(Form::label('vendor_id', __('Vendor'), ['class' => 'col-form-label'])); ?>
+
+            <div class="input-group">
+                <?php echo e(Form::select('vendor_id', $vendors, null, ['class' => 'form-control', 'data-toggle' => 'select'])); ?>
+
+            </div>
+        </div>
+
+        <div class="form-group col-md-6">
+            <?php echo e(Form::label('min_stock', __('Minimum Stock'), ['class' => 'col-form-label'])); ?>
+
+            <?php echo e(Form::number('min_stock', null, ['class' => 'form-control', 'placeholder' => __('Enter new Minimum Stock'), 'step' => '0.01', 'id' => 'min_stock', 'readonly' => 'readonly'])); ?>
+
+        </div>
+        
+        <div class="form-group col-md-6">
+            <?php echo e(Form::label('max_stock', __('Maximum Stock'), ['class' => 'col-form-label'])); ?>
+
+            <?php echo e(Form::number('max_stock', null, ['class' => 'form-control', 'placeholder' => __('Enter new Maximum Stock'), 'step' => '0.01', 'id' => 'max_stock', 'readonly' => 'readonly'])); ?>
+
+        </div>
+        
         <div class="mb-4 col-md-6">
             <div class="choose-files mt-3">
                 <label for="image">
@@ -98,4 +131,34 @@
 </div>
 <?php echo e(Form::close()); ?>
 
+
+<script>
+    document.getElementById('is_stock').addEventListener('change', function() {
+        const isStockChecked = this.checked;
+        document.getElementById('min_stock').readOnly = !isStockChecked;
+        document.getElementById('max_stock').readOnly = !isStockChecked;
+    });
+
+    document.getElementById('category_id').addEventListener('change', function() {
+        const selectedOption = this.options[this.selectedIndex].text;
+        const isPaket = selectedOption.includes('PAKET');
+        const unitElement = document.getElementById('unit_id');
+        
+        document.getElementById('purchase_price').readOnly = isPaket;
+        // document.getElementById('sale_price').readOnly = isPaket;
+
+         // Set and lock unit if "PAKET" is selected
+        if (isPaket) {
+            const paketOption = Array.from(unitElement.options).find(option => option.text.includes('PAKET'));
+            
+            if (paketOption) {
+                unitElement.value = paketOption.value;
+            }
+
+            unitElement.setAttribute('readonly', 'readonly');
+        } else {
+            unitElement.removeAttribute('readonly');
+        }
+    });
+</script>
 <?php /**PATH D:\xampp8\htdocs\posgo\resources\views/products/create.blade.php ENDPATH**/ ?>

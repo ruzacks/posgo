@@ -58,8 +58,12 @@ Route::resource('customers', CustomerController::class)->middleware(['auth','XSS
 Route::resource('talents', TalentController::class)->middleware(['auth','XSS']);
 Route::resource('talent-grades', TalentGradeController::class)->middleware(['auth','XSS']);
 
+Route::resource('agencies', AgencyController::class)->middleware(['auth','XSS']);
 
 Route::resource('rooms', RoomController::class)->middleware(['auth','XSS']);
+Route::post('update-number-rooms', [RoomController::class, 'numberOfRoomUpdate'])->middleware(['auth', 'XSS']);
+route::get('room-detail/{type}',[RoomController::class, 'detailRooms'])->name('rooms.detail')->middleware(['auth', 'XSS']);
+route::get('create-room/{type}',[RoomController::class, 'createRoom'])->name('rooms.type.create')->middleware(['auth', 'XSS']);
 
 Route::resource('vouchers', VoucherController::class)->middleware(['auth','XSS']);
 
@@ -99,6 +103,11 @@ Route::get('product-categories', [CategoryController::class,'getProductCategorie
 
 Route::resource('products', ProductController::class)->middleware(['auth','XSS']);
 
+Route::get('edit-package/{product}', [PackageDetailController::class, 'editPackage'])->name('edit.package')->middleware(['auth','XSS']);
+Route::get('package-items', [PackageDetailController::class, 'packageItems'])->name('package.items')->middleware(['auth','XSS']);
+
+Route::put('edit-package/{product}', [PackageDetailController::class, 'updatePackage'])->name('update.package')->middleware(['auth','XSS']);
+Route::get('package-add-talent', [PackageDetailController::class, 'addTalent'])->name('package.add.talent')->middleware(['auth','XSS']);
 
 Route::resource('categories', CategoryController::class)->middleware(['auth','XSS']);
 
@@ -290,7 +299,7 @@ Route::group(
 
         // Route::post('/test', ['as' => 'test.email', 'uses' => 'SystemController@testEmail']);
         // Route::post('/test/send', ['as' => 'test.email.send', 'uses' => 'SystemController@testEmailSend']);
-        
+
         Route::resource('settings', SystemController::class);
 
         Route::post('system-settings', [SystemController::class,'saveSystemSettings'])->name('system.settings');
@@ -454,7 +463,7 @@ Route::resource('email_template', EmailTemplateController::class)->middleware(
     [
         'auth',
         // 'XSS',
-        // 'revalidate',    
+        // 'revalidate',
     ]
 );
 

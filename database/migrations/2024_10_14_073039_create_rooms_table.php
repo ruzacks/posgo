@@ -15,9 +15,9 @@ return new class extends Migration
     {
         Schema::create('rooms', function (Blueprint $table) {
             $table->id();
-            $table->string('room_code')->unique();
-            $table->string('room_type');
-            $table->string('price');
+            $table->string('code')->unique();
+            $table->string('type');
+            $table->string('status')->default('available');
             $table->integer('is_active')->default('0');
             $table->integer('created_by')->default('0');
             $table->timestamps();

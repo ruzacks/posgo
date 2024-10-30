@@ -214,21 +214,35 @@ function wcqib_refresh_quantity_increments() {
 String.prototype.getDecimals || (String.prototype.getDecimals = function() {
     var a = this,
         b = ("" + a).match(/(?:\.(\d+))?(?:[eE]([+-]?\d+))?$/);
-    return b ? Math.max(0, (b[1] ? b[1].length : 0) - (b[2] ? +b[2] : 0)) : 0
-}), jQuery(document).ready(function() {
-    wcqib_refresh_quantity_increments()
-}), jQuery(document).on("updated_wc_div", function() {
-    wcqib_refresh_quantity_increments()
-}), jQuery(document).on("click", ".plus, .minus", function() {
-    var a = jQuery(this).closest(".quantity").find('input[name="quantity"], input[name="quantity[]"]'),
+    return b ? Math.max(0, (b[1] ? b[1].length : 0) - (b[2] ? +b[2] : 0)) : 0;
+});
+
+jQuery(document).ready(function() {
+    wcqib_refresh_quantity_increments();
+});
+
+jQuery(document).on("updated_wc_div", function() {
+    wcqib_refresh_quantity_increments();
+});
+
+jQuery(document).on("click", ".plus, .minus", function() {
+    var a = jQuery(this).closest(".quantity").find('input[name="quantity"], input[name="quantity[]"], input[name="fixed_quantity[]"], input[name="optional_quantity[]"]'),
         b = parseFloat(a.val()),
         c = parseFloat(a.attr("max")),
         d = parseFloat(a.attr("min")),
         e = a.attr("step");
-    b && "" !== b && "NaN" !== b || (b = 0), "" !== c && "NaN" !== c || (c = ""), "" !== d && "NaN" !== d || (d = 0), "any" !== e && "" !== e && void 0 !== e && "NaN" !== parseFloat(e) || (e = 1), jQuery(this).is(".plus") ? c && b >= c ? a.val(c) : a.val((b + parseFloat(e)).toFixed(e.getDecimals())) : d && b <= d ? a.val(d) : b > 0 && a.val((b - parseFloat(e)).toFixed(e.getDecimals())), a.trigger("change")
+    
+    b && "" !== b && "NaN" !== b || (b = 0);
+    "" !== c && "NaN" !== c || (c = "");
+    "" !== d && "NaN" !== d || (d = 0);
+    "any" !== e && "" !== e && void 0 !== e && "NaN" !== parseFloat(e) || (e = 1);
+    
+    jQuery(this).is(".plus") ? c && b >= c ? a.val(c) : a.val((b + parseFloat(e)).toFixed(e.getDecimals())) 
+                             : d && b <= d ? a.val(d) : b > 0 && a.val((b - parseFloat(e)).toFixed(e.getDecimals()));
+    a.trigger("change");
 });
 
-$(document).on('click', 'input[name="quantity"], input[name="quantity[]"]', function(e) {
+$(document).on('keydown', 'input[name="quantity"], input[name="quantity[]"], input[name="fixed_quantity[]"], input[name="optional_quantity[]"]', function(e) {
     // Allow: backspace, delete, tab, escape, enter and .
     if ($.inArray(e.keyCode, [46, 8, 9, 27, 13, 190]) !== -1 ||
         // Allow: Ctrl+A
@@ -243,6 +257,7 @@ $(document).on('click', 'input[name="quantity"], input[name="quantity[]"]', func
         e.preventDefault();
     }
 });
+
 
 $(document).on('keypress', 'input[name="phone_number"]', function(e) {
     if (e.which != 8 && e.which != 0 && (e.which < 48 || e.which > 57)) {

@@ -15,12 +15,13 @@ return new class extends Migration
     {
         Schema::create('talent', function (Blueprint $table) {
             $table->id();
+            $table->string('code')->unique();
             $table->string('name');
             $table->string('phone_number');
             $table->string('address');
-            $table->float('price');
             $table->integer('is_active')->default('0');
             $table->integer('grade_id')->default('0');
+            $table->integer('agency_id')->default('0');
             $table->integer('created_by')->default('0');
             $table->timestamps();
         });

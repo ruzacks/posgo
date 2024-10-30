@@ -11,7 +11,7 @@
 @section('action-btn')
 
 
-    <a href="{{ route('vendors.export') }}" class="btn btn-sm btn-primary btn-icon" data-bs-toggle="tooltip"
+    {{-- <a href="{{ route('vendors.export') }}" class="btn btn-sm btn-primary btn-icon" data-bs-toggle="tooltip"
         title="{{ __('Export') }}">
         <i class="ti ti-file-export text-white"></i>
     </a>
@@ -20,7 +20,7 @@
         data-bs-toggle="tooltip" title="{{ __('Import') }}" data-ajax-popup="true"
         data-title="{{ __('Import vendor CSV file') }}">
         <i class="ti ti-file-import text-white"></i>
-    </a>
+    </a> --}}
 
     @can('Create Vendor')
         <a href="#" data-ajax-popup="true" data-size="lg" data-bs-toggle="tooltip" data-title="{{ __('Add New Vendor') }}"
@@ -50,9 +50,9 @@
                                 <thead>
                                     <tr>
                                         <th>#</th>
+                                        <th>{{ __('Code') }}</th>
                                         <th>{{ __('Name') }}</th>
-                                        <th>{{ __('Email') }}</th>
-                                        <th>{{ __('Date/Time Added') }}</th>
+                                        <th>{{ __('Phone') }}</th>
                                         <th width="200px">{{ __('Action') }}</th>
                                     </tr>
                                 </thead>
@@ -60,9 +60,9 @@
                                     @foreach ($vendors as $key => $vendor)
                                         <tr>
                                             <td>{{ $key + 1 }}</td>
+                                            <td>{{ $vendor->code }}</td>
                                             <td>{{ $vendor->name }}</td>
-                                            <td>{{ $vendor->email }}</td>
-                                            <td>{{ Auth::user()->datetimeFormat($vendor->created_at) }}</td>
+                                            <td>{{ $vendor->phone_number }}</td>
                                             <td class="Action">
                                                 @if ($vendor->is_active == 1)
                                                     @can('Edit Vendor')

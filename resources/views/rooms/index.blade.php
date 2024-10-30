@@ -11,8 +11,8 @@
 @section('action-btn')
 
     @can('Create Room')
-        <a href="#" data-ajax-popup="true" data-size="lg" data-bs-toggle="tooltip" data-title="{{ __('Add New Room') }}"
-            title="{{ __(' New Room') }}" data-url="{{ route('rooms.create') }}"
+        <a href="{{ route('rooms.type.create', ['type' => $type]) }}" data-ajax-popup="false" data-size="lg" data-bs-toggle="tooltip" data-title="{{ __('Add New Room') }}"
+            title="{{ __(' New Room') }}" data-url="{{ route('rooms.type.create', ['type' => $type]) }}"
             class="btn btn-sm btn-primary btn-icon m-1">
             <span class=""><i class="ti ti-plus text-white"></i></span>
         </a>
@@ -22,7 +22,9 @@
 
 @section('breadcrumb')
     <li class="breadcrumb-item"><a href="{{ route('home') }}">{{ __('Home') }}</a></li>
-    <li class="breadcrumb-item">{{ __('Room') }}</li>
+    <li class="breadcrumb-item"><a href="{{ route('rooms.index') }}">{{ __('Room') }}</a></li>
+    <li class="breadcrumb-item">{{ ucfirst($type) }}</li>
+
 @endsection
 
 @section('content')
@@ -38,9 +40,7 @@
                                     <tr>
                                         <th>#</th>
                                         <th>{{ __('Room Code') }}</th>
-                                        <th>{{ __('Room Type') }}</th>
-                                        <th>{{ __('Room Price') }}</th>
-                                        <th>{{ __('Date/Time Added') }} </th>
+                                        <th>{{ __('Room Status') }}</th>
                                         <th width="200px">{{ __('Action') }}</th>
                                     </tr>
                                 </thead>
@@ -48,10 +48,8 @@
                                     @foreach ($rooms as $key => $room)
                                         <tr>
                                             <td>{{ $key + 1 }}</td>
-                                            <td>{{ $room->room_code }}</td>
-                                            <td>{{ $room->room_type }}</td>
-                                            <td>{{ $room->price }}</td>
-                                            <td>{{ Auth::user()->datetimeFormat($room->created_at) }}</td>
+                                            <td>{{ $room->code }}</td>
+                                            <td>{{ $room->status }}</td>
                                             <td class="Action">
                                                 @if ($room->is_active == 1)
                                                     @can('Edit Room')

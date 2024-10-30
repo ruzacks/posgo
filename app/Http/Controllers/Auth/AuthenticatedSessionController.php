@@ -113,43 +113,6 @@ class AuthenticatedSessionController extends Controller
 
             if ($user->isOwner()) {
                 $free_plan = Plan::where('price', '=', '0.0')->first();
-
-                // if ($user->plan_id != $free_plan->id) { 
-                //     if (date('Y-m-d') > $user->plan_expire_date) {
-                //         // dd($user->plan_expire_date , date('Y-m-d')); 
-                //         $user->plan_id          = $free_plan->id;
-                //         $user->plan_expire_date = null;
-                //         // dd($user);
-                //         $user->save();
-
-                //         $users     = User::where('parent_id', '=', Auth::user()->getCreatedBy())->get();
-                //         $customers = Customer::where('created_by', '=', Auth::user()->getCreatedBy())->get();
-                //         $vendors   = Vendor::where('created_by', '=', Auth::user()->getCreatedBy())->get();
-
-                //         $userCount = 0;
-                //         foreach ($users as $user) {
-                //             $userCount++;
-                //             $user->is_active = $free_plan->max_users == -1 || $userCount <= $free_plan->max_users ? 1 : 0;
-                //             $user->save();
-                //         }
-
-                //         $customerCount = 0;
-                //         foreach ($customers as $customer) {
-                //             $customerCount++;
-                //             $customer->is_active = $free_plan->max_customers == -1 || $customerCount <= $free_plan->max_customers ? 1 : 0;
-                //             $customer->save();
-                //         }
-
-                //         $vendorCount = 0;
-                //         foreach ($vendors as $vendor) {
-                //             $vendorCount++;
-                //             $vendor->is_active = $free_plan->max_vendors == -1 || $vendorCount <= $free_plan->max_vendors ? 1 : 0;
-                //             $vendor->save();
-                //         }
-
-                //         return redirect()->route('home')->with('error', 'Your plan expired limit is over, please upgrade your plan.');
-                //     }
-                // }
             }
 
             return redirect()->intended('/');

@@ -98,7 +98,7 @@ $wasabi_storage_validations   = explode(',', $wasabi_storage_validation);
                                 </a>
                             <?php endif; ?>
 
-                            <?php if(Auth::user()->isUsers()): ?>
+                            <?php if(Auth::user()->isSuperAdmin()): ?>
                                 <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('System Settings')): ?>
                                     <a href="#system-settings"
                                         class="list-group-item list-group-item-action border-0"><?php echo e(__('System Settings')); ?>
@@ -117,7 +117,8 @@ $wasabi_storage_validations   = explode(',', $wasabi_storage_validation);
                             <?php endif; ?>
 
 
-                            <?php if(Auth::user()->parent_id == 1): ?>
+                            
+                            <?php if(Auth::user()->isSuperAdmin()): ?>
                             <a href="#email-notification-settings"
                                 class="list-group-item list-group-item-action border-0"><?php echo e(__('Email Notification Settings')); ?><div
                                     class="float-end"><i class="ti ti-chevron-right"></i></div></a>
@@ -145,13 +146,7 @@ $wasabi_storage_validations   = explode(',', $wasabi_storage_validation);
                                 </a>
                             <?php endif; ?>
 
-                            <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('Manage Quotations')): ?>
-                                <a href="#quotation-invoice-settings"
-                                    class="list-group-item list-group-item-action border-0"><?php echo e(__('Quotation Invoice')); ?>
-
-                                    <div class="float-end"><i class="ti ti-chevron-right"></i></div>
-                                </a>
-                            <?php endif; ?>
+                            
 
                             <?php if(Auth::user()->isSuperAdmin()): ?>
                             <a href="#storage-settings" class="list-group-item list-group-item-action border-0"><?php echo e(__('Storage Settings')); ?>
@@ -181,7 +176,6 @@ $wasabi_storage_validations   = explode(',', $wasabi_storage_validation);
                                                 <div class="row mt-2">
                                                     <?php if(Auth::user()->isSuperAdmin()): ?>
 
-                                                    
                                                         <div class="col-lg-4 col-sm-6 col-md-6">
                                                             <div class="card">
                                                                 <div class="card-header">
@@ -445,44 +439,11 @@ unset($__errorArgs, $__bag); ?>
                                                             </div>
                                                         </div>
                         
+                                                        
+                                                        
 
-                                                        <div class="col-lg-4 col-sm-6 col-md-6">
-                                                            <div class="form-group">
-                                                                <?php echo e(Form::label('footer_text', __('Footer Text'), ['class' => 'col-form-label text-dark'])); ?>
-
-                                                                <?php echo e(Form::text('footer_text', isset($settings['footer_text']) && !empty($settings['footer_text']) ? $settings['footer_text'] : env('FOOTER_TEXT'), ['class' => 'form-control', 'placeholder' => __('Footer Text')])); ?>
-
-                                                                <?php $__errorArgs = ['footer_text'];
-$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
-if ($__bag->has($__errorArgs[0])) :
-if (isset($message)) { $__messageOriginal = $message; }
-$message = $__bag->first($__errorArgs[0]); ?>
-                                                                    <span class="invalid-footer_text" role="alert">
-                                                                        <strong class="text-danger"><?php echo e($message); ?></strong>
-                                                                    </span>
-                                                                <?php unset($message);
-if (isset($__messageOriginal)) { $message = $__messageOriginal; }
-endif;
-unset($__errorArgs, $__bag); ?>
-                                                            </div>
-                                                        </div>
-
-                                                        <div class="col-3 ">
-                                                            <div class="col switch-width">
-                                                                <div class="form-group ml-2 mr-3">
-                                                                    <div class="custom-control custom-switch">
-                                                                        <label
-                                                                            class="form-check-label col-form-label text-dark"
-                                                                            for="SITE_RTL"><?php echo e(__('Enable RTL')); ?></label>
-                                                                        <br>
-                                                                        <input type="checkbox" data-toggle="switchbutton"
-                                                                            data-onstyle="primary" name="SITE_RTL"
-                                                                            id="SITE_RTL"
-                                                                            <?php echo e(Utility::getValByName('SITE_RTL') == 'on' ? 'checked="checked"' : ''); ?>>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
+                                                        
+                                                        
                                                         
                                                         <h4 class="small-title"><?php echo e(__('Theme Customizer')); ?></h4>
                                                         <div class="setting-card setting-logo-box p-3">
@@ -526,7 +487,9 @@ unset($__errorArgs, $__bag); ?>
                                                                             style="display: none;">
                                                                     </div>
                                                                 </div>
-                                                                <div class="col-4 my-auto">
+
+                                                                
+                                                                <div class="col-4 my-auto" hidden>
                                                                     <h6 class="ms-0">
                                                                         <i data-feather="layout"
                                                                             class="me-2"></i><?php echo e(__('Sidebar settings')); ?>
@@ -2198,7 +2161,7 @@ unset($__errorArgs, $__bag); ?>
                             </div>
                         <?php endif; ?>
 
-                        <?php if(Auth::user()->isUsers()): ?>
+                        <?php if(Auth::user()->isSuperAdmin()): ?>
                             <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('System Settings')): ?>
                                 <div id="system-settings" class="card">
 
@@ -2488,7 +2451,8 @@ unset($__errorArgs, $__bag); ?>
                         <?php endif; ?>
 
 
-                        <?php if(Auth::user()->parent_id == 1): ?>
+                        
+                        <?php if(Auth::user()->isSuperAdmin()): ?>
                         <div id="email-notification-settings" class="card">
                             
                             <div class="col-md-12">
@@ -2669,60 +2633,8 @@ unset($__errorArgs, $__bag); ?>
                                 </div>
                             </div>
                         <?php endif; ?>
-
-                        <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('Manage Quotations')): ?>
-                            <div id="quotation-invoice-settings" class="card">
-                                <div class="card-header">
-                                    <h3 class="h5"><?php echo e(__('Quotation invoice')); ?></h3>
-                                </div>
-                                <div class="d-flex">
-                                    <div class="invoice_color_pallate">
-                                        <?php echo e(Form::model($settings, ['route' => 'template.settings', 'method' => 'POST'])); ?>
-
-
-                                        <div class="form-group">
-                                            <label for="address"
-                                                class='form-label text-dark'><?php echo e(__('Invoice Template')); ?></label>
-                                            <select class="form-control" data-toggle="select"
-                                                name="quotation_invoice_template">
-                                                <?php $__currentLoopData = \App\Models\Utility::templateData()['templates']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $template): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                    <option value="<?php echo e($key); ?>"
-                                                        <?php echo e(isset($settings['quotation_invoice_template']) && $settings['quotation_invoice_template'] == $key ? 'selected' : ''); ?>>
-                                                        <?php echo e($template); ?></option>
-                                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                            </select>
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="form-label form-label text-dark"><?php echo e(__('Color Input')); ?></label>
-                                            <div class="row gutters-xs">
-                                                <?php $__currentLoopData = \App\Models\Utility::templateData()['colors']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $color): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                    <div class="col-auto">
-                                                        <label class="colorinput">
-                                                            <input name="quotation_invoice_color" type="radio"
-                                                                value="<?php echo e($color); ?>" class="colorinput-input"
-                                                                <?php echo e(isset($settings['quotation_invoice_color']) && $settings['quotation_invoice_color'] == $color ? 'checked' : ''); ?>>
-                                                            <span class="colorinput-color"
-                                                                style="background: #<?php echo e($color); ?>"></span>
-                                                        </label>
-                                                    </div>
-                                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                            </div>
-                                        </div>
-                                        <?php echo e(Form::submit(__('Save Changes'), ['class' => 'btn btn-primary'])); ?>
-
-
-                                        <?php echo e(Form::close()); ?>
-
-
-                                    </div>
-                                    <div class="main_invoice">
-                                        <iframe id="quotation_invoice_frame" class="w-100 h-1050" frameborder="0"
-                                            src="<?php echo e(route('quotation.invoice.preview', [$settings['quotation_invoice_template'], $settings['quotation_invoice_color']])); ?>"></iframe>
-                                    </div>
-
-                                </div>
-                            </div>
-                        <?php endif; ?>
+                        
+                        
 
 
                         <?php if(Auth::user()->isSuperAdmin()): ?>

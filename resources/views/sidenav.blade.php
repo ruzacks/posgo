@@ -87,7 +87,7 @@ $cust_theme_bg = App\Models\Utility::getValByName('cust_theme_bg');
                 @endif
             @endif
 
-            @can('Manage Customer')
+            {{-- @can('Manage Customer')
                 <li class="dash-item ">
                     <a href="{{ route('customers.index') }}"
                         class="dash-link {{ Request::segment(1) == 'customers' ? 'active' : '' }}"><span
@@ -95,7 +95,7 @@ $cust_theme_bg = App\Models\Utility::getValByName('cust_theme_bg');
                             class="dash-mtext">{{ __('Customers') }}</span>
                     </a>
                 </li>
-            @endcan
+            @endcan --}}
 
 
             @can('Manage Vendor')
@@ -132,17 +132,17 @@ $cust_theme_bg = App\Models\Utility::getValByName('cust_theme_bg');
                             </li>
                         @endcan
 
-                        @can('Manage Brand')
+                        {{-- @can('Manage Brand')
                             <li class="dash-item dash-hasmenu">
                                 <a class="dash-link" href="{{ route('brands.index') }}">{{ __('Brands') }}</a>
                             </li>
-                        @endcan
+                        @endcan --}}
 
-                        @can('Manage Tax')
+                        {{-- @can('Manage Tax')
                             <li class="dash-item dash-hasmenu">
                                 <a class="dash-link" href="{{ route('taxes.index') }}">{{ __('Tax') }}</a>
                             </li>
-                        @endcan
+                        @endcan --}}
 
                         @can('Manage Unit')
                             <li class="dash-item dash-hasmenu">
@@ -150,11 +150,11 @@ $cust_theme_bg = App\Models\Utility::getValByName('cust_theme_bg');
                             </li>
                         @endcan
 
-                        @can('Manage Voucher')
+                        {{-- @can('Manage Voucher')
                             <li class="dash-item dash-hasmenu">
                                 <a class="dash-link" href="{{ route('vouchers.index') }}">{{ __('Voucher') }}</a>
                             </li>
-                        @endcan
+                        @endcan --}}
 
                     </ul>
                 </li>
@@ -182,6 +182,13 @@ $cust_theme_bg = App\Models\Utility::getValByName('cust_theme_bg');
                                 <a class="dash-link" href="{{ route('talent-grades.index') }}">{{ __('Talent Grade') }}</a>
                             </li>
                         @endcan
+
+                        @can('Manage Agency')
+                        <li class="dash-item dash-hasmenu">
+                            <a class="dash-link" href="{{ route('agencies.index') }}">{{ __('Agency') }}</a>
+                        </li>
+                        @endcan
+
                     </ul>
                 </li>
             @endif

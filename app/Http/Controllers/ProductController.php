@@ -16,7 +16,7 @@ use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\ProductExport;
 use App\Models\Utility;
-
+use App\Models\Vendor;
 
 class ProductController extends Controller
 {
@@ -42,8 +42,8 @@ class ProductController extends Controller
             $categories = Category::where('created_by', $user_id)->pluck('name', 'id');
             $categories->prepend(__('Select Category'), '');
 
-            $brands = Brand::where('created_by', $user_id)->pluck('name', 'id');
-            $brands->prepend(__('Select Brand'), '');
+            $vendors = Vendor::where('created_by', $user_id)->pluck('name', 'id');
+            $vendors->prepend(__('Select Vendor'), '');
 
             $units = Unit::where('created_by', $user_id)->pluck('name', 'id');
             $units->prepend(__('Select Unit'), '');
@@ -51,7 +51,7 @@ class ProductController extends Controller
             $taxes = Tax::where('created_by', $user_id)->pluck('name', 'id');
             $taxes->prepend(__('Apply Tax'), '');
 
-            return view('products.create', compact('categories', 'brands', 'units', 'taxes'));
+            return view('products.create', compact('categories', 'vendors', 'units', 'taxes'));
         } else {
             return redirect()->back()->with('error', __('Permission denied.'));
         }
@@ -65,6 +65,8 @@ class ProductController extends Controller
                 [
                     'name' => 'required|max:100|unique:products,name,NULL,id,created_by,' . Auth::user()->getCreatedBy(),
                     'sku' => 'nullable|regex:/[\-]+/i',
+                    'category_id' => 'required',
+                    'unit_id' => 'required',
                 ]
             );
 
@@ -78,6 +80,10 @@ class ProductController extends Controller
             $product->sale_price     = (float)$request->sale_price;
             $product->sku            = $request->sku;
             $product->description    = $request->description;
+            $product->is_stock       = $request->is_stock ? $request->is_stock : 0;
+            $product->is_consigment  = $request->is_consigment ? $request->is_consigment : 0 ;
+            $product->min_stock      = $request->min_stock ? $request->min_stock : 0;
+            $product->max_stock      = $request->max_stock ? $request->max_stock : 0;
 
             if (!empty($request->input('category_id'))) {
                 $product->category_id = $request->category_id;
@@ -91,6 +97,10 @@ class ProductController extends Controller
             if (!empty($request->input('unit_id'))) {
                 $product->unit_id = $request->unit_id;
             }
+            if (!empty($request->input('vendor_id'))) {
+                $product->vendor_id = $request->vendor_id;
+            }
+
             $product->product_type = 0;
             $product->slug         = Str::slug($request->name, '-');
             $product->created_by   = Auth::user()->getCreatedBy();
@@ -146,8 +156,8 @@ class ProductController extends Controller
             $categories = Category::where('created_by', $user_id)->pluck('name', 'id');
             $categories->prepend(__('Select Category'), '');
 
-            $brands = Brand::where('created_by', $user_id)->pluck('name', 'id');
-            $brands->prepend(__('Select Brand'), '');
+            $vendors = Vendor::where('created_by', $user_id)->pluck('name', 'id');
+            $vendors->prepend(__('Select Vendor'), '');
 
             $units = Unit::where('created_by', $user_id)->pluck('name', 'id');
             $units->prepend(__('Select Unit'), '');
@@ -155,7 +165,7 @@ class ProductController extends Controller
             $taxes = Tax::where('created_by', $user_id)->pluck('name', 'id');
             $taxes->prepend(__('Apply Tax'), '');
 
-            return view('products.edit', compact('product', 'categories', 'brands', 'units', 'taxes'));
+            return view('products.edit', compact('product', 'categories', 'vendors', 'units', 'taxes'));
         } else {
             return redirect()->back()->with('error', __('Permission denied.'));
         }
@@ -163,6 +173,7 @@ class ProductController extends Controller
 
     public function update(Request $request, Product $product)
     {
+        // return $request;
         if (Auth::user()->can('Edit Product')) {
             $validator = Validator::make(
                 $request->all(),
@@ -177,10 +188,15 @@ class ProductController extends Controller
             }
 
             $product->name           = $request->name;
-            $product->purchase_price = $request->purchase_price;
-            $product->sale_price     = $request->sale_price;
+            $product->purchase_price = (float)$request->purchase_price;
+            $product->sale_price     = (float)$request->sale_price;
             $product->sku            = $request->sku;
             $product->description    = $request->description;
+            $product->is_stock       = $request->is_stock ? $request->is_stock : 0;
+            $product->is_consigment  = $request->is_consigment ? $request->is_consigment : 0 ;
+            $product->min_stock      = $request->min_stock ? $request->min_stock : 0;
+            $product->max_stock      = $request->max_stock ? $request->max_stock : 0;
+
             if (!empty($request->input('category_id'))) {
                 $product->category_id = $request->category_id;
             }
@@ -193,6 +209,10 @@ class ProductController extends Controller
             if (!empty($request->input('unit_id'))) {
                 $product->unit_id = $request->unit_id;
             }
+            if (!empty($request->input('vendor_id'))) {
+                $product->vendor_id = $request->vendor_id;
+            }
+
             $product->slug = Str::slug($request->name, '-');
 
             $oldfilepath = $product->image;
@@ -248,8 +268,11 @@ class ProductController extends Controller
     public function destroy(Product $product)
     {
         if (Auth::user()->can('Delete Product')) {
-            if (asset(Storage::exists($product->image))) {
-                asset(Storage::delete($product->image));
+            if($product->image != null)
+            {
+                if (asset(Storage::exists($product->image))) {
+                    asset(Storage::delete($product->image));
+                }
             }
             $product->delete();
 
@@ -264,7 +287,13 @@ class ProductController extends Controller
         $search = $request->search;
 
         if (Auth::user()->can('Manage Product') && $request->ajax() && $search != '') {
-            $products = Product::getallproducts()->where('products.name', 'LIKE', "%{$search}%")->get();
+            $products = Product::getAllProducts()->where('products.name', 'LIKE', "%{$search}%");
+
+            if ($request->has('exclude_category')) {
+                $products = $products->where('category_id', '!=', $request->exclude_category);
+            }
+            
+            $products = $products->get();
 
             $items = [];
             foreach ($products as $key => $item) {

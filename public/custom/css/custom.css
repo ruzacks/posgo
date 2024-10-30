@@ -514,6 +514,48 @@ h6.rtl-hide {
     cursor: pointer;
 }
 
+/* // */
+
+.carttable-2 .quantity.buttons_added {
+    text-align: left;
+    position: relative;
+    white-space: nowrap;
+    vertical-align: top;
+}
+
+.carttable-2 .quantity.buttons_added .minus {
+    border-right: 0;
+}
+
+.carttable-2 .quantity.buttons_added input {
+    display: inline-block;
+    margin: 0;
+    vertical-align: top;
+    box-shadow: none;
+}
+
+.carttable-2 .quantity .input-number {
+    width: 35px;
+    height: 35px;
+    padding: 0 5px;
+    text-align: center;
+    background-color: transparent;
+    border: 1px solid #efefef;
+}
+
+.carttable-2 .quantity.buttons_added .plus {
+    border-left: 0;
+}
+
+.carttable-2 .quantity.buttons_added .minus,
+.carttable-2 .quantity.buttons_added .plus {
+    padding: 4px 10px 8px;
+    height: 35px;
+    background-color: #ffffff;
+    border: 1px solid #efefef;
+    cursor: pointer;
+}
+
 .form-row>.zoom-in {
     transition-property: background-color, border-color, color, fill, opacity, box-shadow, transform;
     transition-duration: .3s;

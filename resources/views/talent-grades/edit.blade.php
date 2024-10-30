@@ -5,10 +5,20 @@
         {{ Form::label('name', __('Talent Grade Name'), ['class' => 'col-form-label']) }}
         {{ Form::text('name', null, ['class' => 'form-control', 'placeholder' => __('Enter Talent Grade Name')]) }}
     </div>
-
     <div class="form-group">
-        {{ Form::label('price', __('Price'), ['class' => 'col-form-label']) }}
-        {{ Form::number('price', null, ['class' => 'form-control', 'placeholder' => __('Enter Price'), 'step' => '0.01']) }}
+        {{ Form::label('', __('Price Stucture'), ['class' => 'col-form-label']) }}
+    </div>
+    <div class="form-group">
+        {{ Form::label('talent_price', __('Talent'), ['class' => 'col-form-label']) }}
+        {{ Form::number('talent_price', null, ['class' => 'form-control', 'placeholder' => __('Enter Price'), 'step' => '1000']) }}
+    </div>
+    <div class="form-group">
+        {{ Form::label('agency_price', __('Agency'), ['class' => 'col-form-label']) }}
+        {{ Form::number('agency_price', null, ['class' => 'form-control', 'placeholder' => __('Enter Price'), 'step' => '1000']) }}
+    </div>
+    <div class="form-group">
+        {{ Form::label('office_price', __('Office'), ['class' => 'col-form-label']) }}
+        {{ Form::number('office_price', null, ['class' => 'form-control', 'placeholder' => __('Enter Price'), 'step' => '1000']) }}
     </div>
 
 </div>

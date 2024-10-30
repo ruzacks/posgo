@@ -9,16 +9,7 @@
 <?php $__env->startSection('action-btn'); ?>
 
 
-    <a href="<?php echo e(route('vendors.export')); ?>" class="btn btn-sm btn-primary btn-icon" data-bs-toggle="tooltip"
-        title="<?php echo e(__('Export')); ?>">
-        <i class="ti ti-file-export text-white"></i>
-    </a>
-
-    <a href="#" class="btn btn-sm btn-primary btn-icon m-1" data-url="<?php echo e(route('vendors.file.import')); ?>"
-        data-bs-toggle="tooltip" title="<?php echo e(__('Import')); ?>" data-ajax-popup="true"
-        data-title="<?php echo e(__('Import vendor CSV file')); ?>">
-        <i class="ti ti-file-import text-white"></i>
-    </a>
+    
 
     <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('Create Vendor')): ?>
         <a href="#" data-ajax-popup="true" data-size="lg" data-bs-toggle="tooltip" data-title="<?php echo e(__('Add New Vendor')); ?>"
@@ -48,9 +39,9 @@
                                 <thead>
                                     <tr>
                                         <th>#</th>
+                                        <th><?php echo e(__('Code')); ?></th>
                                         <th><?php echo e(__('Name')); ?></th>
-                                        <th><?php echo e(__('Email')); ?></th>
-                                        <th><?php echo e(__('Date/Time Added')); ?></th>
+                                        <th><?php echo e(__('Phone')); ?></th>
                                         <th width="200px"><?php echo e(__('Action')); ?></th>
                                     </tr>
                                 </thead>
@@ -58,9 +49,9 @@
                                     <?php $__currentLoopData = $vendors; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $vendor): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                         <tr>
                                             <td><?php echo e($key + 1); ?></td>
+                                            <td><?php echo e($vendor->code); ?></td>
                                             <td><?php echo e($vendor->name); ?></td>
-                                            <td><?php echo e($vendor->email); ?></td>
-                                            <td><?php echo e(Auth::user()->datetimeFormat($vendor->created_at)); ?></td>
+                                            <td><?php echo e($vendor->phone_number); ?></td>
                                             <td class="Action">
                                                 <?php if($vendor->is_active == 1): ?>
                                                     <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('Edit Vendor')): ?>

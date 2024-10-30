@@ -8,10 +8,7 @@
 
 <?php $__env->startSection('action-btn'); ?>
 
-    <a href="<?php echo e(route('Product.export')); ?>" class="btn btn-sm btn-primary btn-icon " data-bs-toggle="tooltip"
-        title="<?php echo e(__('Export')); ?>">
-        <i class="ti ti-file-export text-white"></i>
-    </a>
+    
     <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('Create Product')): ?>
         <a href="#" data-ajax-popup="true" data-size="lg" data-bs-toggle="tooltip" title="<?php echo e(__('Add New Product')); ?>"
             data-title="<?php echo e(__('Add New Product')); ?>" data-url="<?php echo e(route('products.create')); ?>"
@@ -39,63 +36,71 @@
                                     <tr>
                                         <th>#</th>
                                         <th class="w-25"><?php echo e(__('Name')); ?></th>
-                                        <th><?php echo e(__('Brand')); ?></th>
                                         <th><?php echo e(__('Category')); ?></th>
-                                        <th><?php echo e(__('Quantity')); ?></th>
-                                        <th><?php echo e(__('Barcode')); ?></th>
+                                        <th><?php echo e(__('Stock')); ?></th>
                                         <th class="text-right"><?php echo e(__('Action')); ?></th>
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                        <td><input type="text" id="nameFilter" class="form-control" placeholder="<?php echo e(__('Enter name')); ?>"></td>
+                                        <td><input type="text" id="categoryFilter" class="form-control" placeholder="<?php echo e(__('Enter category name')); ?>"></td>
+                                        <td></td>
+                                        <td></td>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <?php $__currentLoopData = $products; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $product): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                         <tr>
                                             <td><?php echo e($key + 1); ?></td>
-                                            <td><span class="break-all"><?php echo e($product->name); ?></span></td>
-                                            <td><?php echo e($product->brandname); ?></td>
-                                            <td><?php echo e($product->categoryname); ?></td>
+                                            <td class="name-cell"><span class="break-all"><?php echo e($product->name); ?></span></td>
+                                            <td class="category-cell"><?php echo e($product->categoryname); ?></td>
                                             <td>
-                                                <?php if($product->getTotalProductQuantity() > \App\Models\Utility::settings()['low_product_stock_threshold']): ?>
-                                                    <span
-                                                        class="badge bg-success p-2 px-3 rounded"><?php echo e($product->quantity); ?></span>
-                                                <?php else: ?>
-                                                    <span
-                                                        class="badge bg-danger p-2 px-3 rounded"><?php echo e($product->quantity); ?></span>
+                                                <?php if($product->is_stock): ?>
+                                                    <?php if($product->getTotalProductQuantity() > \App\Models\Utility::settings()['low_product_stock_threshold']): ?>
+                                                        <span
+                                                            class="badge bg-success p-2 px-3 rounded"><?php echo e($product->quantity); ?></span>
+                                                    <?php else: ?>
+                                                        <span
+                                                            class="badge bg-danger p-2 px-3 rounded"><?php echo e($product->quantity); ?></span>
+                                                    <?php endif; ?>
                                                 <?php endif; ?>
-                                            </td>
-                                            <td>
-                                                <div id="<?php echo e($product->id); ?>"
-                                                    class="product_barcode product_barcode_hight_de"
-                                                    data-skucode="<?php echo e($product->sku); ?>"></div>
                                             </td>
                                             <td class="text-right">
-                                                <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('Edit Product')): ?>
-                                                    <div class="action-btn btn-info ms-2">
-
-                                                        <a href="#" data-ajax-popup="true" data-bs-toggle="tooltip"
-                                                            data-title="<?php echo e(__('Edit Product')); ?>"
-                                                            title="<?php echo e(__('Edit Product')); ?>" data-size="lg"
-                                                            data-url="<?php echo e(route('products.edit', $product->id)); ?>"
-                                                            class="mx-3 btn btn-sm d-inline-flex align-items-center edit-product">
-                                                            <i class="ti ti-pencil text-white" title="<?php echo e(__('Edit')); ?>"></i>
-                                                        </a>
-                                                    </div>
-                                                <?php endif; ?>
-                                                <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('Delete Product')): ?>
-                                                    <div class="action-btn bg-danger ms-2">
-                                                        <a href="#"
-                                                            class="bs-pass-para mx-3 btn btn-sm d-inline-flex align-items-center"
-                                                            data-toggle="sweet-alert" data-confirm="<?php echo e(__('Are You Sure?')); ?>"
-                                                            data-text="<?php echo e(__('This action can not be undone. Do you want to continue?')); ?>"
-                                                            data-confirm-yes="delete-form-<?php echo e($product->id); ?>"
-                                                            data-bs-toggle="tooltip" title="<?php echo e(__('Delete')); ?>">
-                                                            <i class="ti ti-trash text-white"></i>
-                                                        </a>
-
-                                                        <?php echo Form::open(['method' => 'DELETE', 'route' => ['products.destroy', $product->id], 'id' => 'delete-form-' . $product->id]); ?>
-
-                                                        <?php echo Form::close(); ?>
-
+                                                <div class="d-flex justify-content-start align-items-center gap-2">
+                                                    <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('Edit Product')): ?>
+                                                        <div class="action-btn btn-info">
+                                                            <a href="#" data-ajax-popup="true" data-bs-toggle="tooltip"
+                                                               data-title="<?php echo e(__('Edit Product')); ?>" title="<?php echo e(__('Edit Product')); ?>"
+                                                               data-size="lg" data-url="<?php echo e(route('products.edit', $product->id)); ?>"
+                                                               class="btn btn-sm d-inline-flex align-items-center edit-product">
+                                                                <i class="ti ti-pencil text-white"></i>
+                                                            </a>
+                                                        </div>
                                                     <?php endif; ?>
+                                                    <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('Delete Product')): ?>
+                                                        <div class="action-btn bg-danger">
+                                                            <a href="#" class="bs-pass-para btn btn-sm d-inline-flex align-items-center"
+                                                               data-toggle="sweet-alert" data-confirm="<?php echo e(__('Are You Sure?')); ?>"
+                                                               data-text="<?php echo e(__('This action can not be undone. Do you want to continue?')); ?>"
+                                                               data-confirm-yes="delete-form-<?php echo e($product->id); ?>"
+                                                               data-bs-toggle="tooltip" title="<?php echo e(__('Delete')); ?>">
+                                                                <i class="ti ti-trash text-white"></i>
+                                                            </a>
+                                                            <?php echo Form::open(['method' => 'DELETE', 'route' => ['products.destroy', $product->id], 'id' => 'delete-form-' . $product->id]); ?>
+
+                                                            <?php echo Form::close(); ?>
+
+                                                        </div>
+                                                    <?php endif; ?>
+                                                    <?php if($product->categoryname == 'PAKET'): ?>
+                                                        <div class="action-btn bg-primary">
+                                                            <a class="btn btn-sm d-inline-flex align-items-center" href="<?php echo e(route('update.package', $product->id)); ?>"
+                                                                data-bs-toggle="tooltip" title="<?php echo e(__('Edit Package')); ?>">
+                                                                <i class="ti ti-pencil text-white"></i>
+                                                            </a>
+                                                        </div>
+                                                    <?php endif; ?>
+                                                </div>
                                             </td>
                                         </tr>
                                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
@@ -182,6 +187,23 @@
                 return false;
             }
         }
+
+        function applyFilters() {
+            let categoryFilter = document.getElementById('categoryFilter').value.toLowerCase();
+            let nameFilter = document.getElementById('nameFilter').value.toLowerCase();
+            let rows = document.querySelectorAll('#pc-dt-simple tbody tr');
+
+            rows.forEach(row => {
+                let category = row.querySelector('.category-cell').textContent.toLowerCase();
+                let name = row.querySelector('.name-cell').textContent.toLowerCase();
+
+                // Display the row only if it matches both filters
+                row.style.display = (category.includes(categoryFilter) && name.includes(nameFilter)) ? '' : 'none';
+            });
+        }
+
+        document.getElementById('categoryFilter').addEventListener('keyup', applyFilters);
+        document.getElementById('nameFilter').addEventListener('keyup', applyFilters);
     </script>
 <?php $__env->stopPush(); ?>
 

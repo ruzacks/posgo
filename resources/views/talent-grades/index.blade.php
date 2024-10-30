@@ -34,8 +34,10 @@
                                 <thead>
                                     <tr>
                                         <th>#</th>
-                                        <th>{{ __('Talent Grade Name') }}</th>
-                                        <th>{{ __('Price') }}</th>
+                                        <th>{{ __('Grade') }}</th>
+                                        <th>{{ __('Talent') }}</th>
+                                        <th>{{ __('Agency') }}</th>
+                                        <th>{{ __('Office') }}</th>
                                         <th width="200px">{{ __('Action') }}</th>
                                     </tr>
                                 </thead>
@@ -44,7 +46,9 @@
                                         <tr>
                                             <td>{{ $key + 1 }}</td>
                                             <td>{{ $grade->name }}</td>
-                                            <td>{{ $grade->price ? $grade->price : __('N/A') }}</td>
+                                            <td>{{ $grade->talent_price }}</td>
+                                            <td>{{ $grade->agency_price }}</td>
+                                            <td>{{ $grade->office_price }}</td>
                                             <td class="Action">
                                                 @can('Edit Talent Grade')
                                                     <div class="action-btn btn-info ms-2">

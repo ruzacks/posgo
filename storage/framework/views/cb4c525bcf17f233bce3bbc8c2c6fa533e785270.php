@@ -23,18 +23,18 @@
                     <?php echo csrf_field(); ?>
                     <div class="">
                         <div class="form-group mb-3">
-                            <label class="form-label"><?php echo e(__('Email')); ?></label>
-                            <input id="email" type="email" placeholder="<?php echo e(__('Email')); ?>"
-                                class="form-control <?php $__errorArgs = ['email'];
+                            <label class="form-label"><?php echo e(__('Name')); ?></label>
+                            <input id="naem" type="text" placeholder="<?php echo e(__('Name')); ?>"
+                                class="form-control <?php $__errorArgs = ['name'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
 $message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
-unset($__errorArgs, $__bag); ?>" name="email"
-                                value="<?php echo e(old('email')); ?>" required autocomplete="email" autofocus>
-                            <?php $__errorArgs = ['email'];
+unset($__errorArgs, $__bag); ?>" name="name"
+                                value="<?php echo e(old('name')); ?>" required autocomplete="name" autofocus>
+                            <?php $__errorArgs = ['name'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
@@ -79,20 +79,7 @@ if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>
                         </div>
-                        <div class="form-group mb-4">
-                            <div class="mb-3">
-                                <div class="text-left">
-                                    <?php if(Route::has('password.request')): ?>
-                                        <a href="<?php echo e(route('password.request', $lang)); ?>"
-                                            class="small text-muted text-underline--dashed border-primary">
-                                            <?php echo e(__('Forgot your password?')); ?>
-
-                                        </a>
-                                    <?php endif; ?>
-                                </div>
-                            </div>
-
-                        </div>
+                        
 
                         <?php if(env('RECAPTCHA_MODULE') == 'yes'): ?>
                             <div class="form-group mb-3">
@@ -118,13 +105,7 @@ unset($__errorArgs, $__bag); ?>
                             <button type="submit" class="btn btn-primary btn-block mt-2"
                                 id="login_button"><?php echo e(__('Login')); ?></button>
                         </div>
-                        <?php if(Utility::getValByName('disable_signup_button') == 'on'): ?>
-                            <div class="my-4 text-center">
-                                <p><?php echo e(__("Don't have an account?")); ?> <a
-                                        href="<?php echo e(route('register', $lang)); ?>"><?php echo e(__('Register')); ?></a></p>
-
-                            </div>
-                        <?php endif; ?>
+                        
                     </div>
                 </form>
             </div>

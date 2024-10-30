@@ -157,14 +157,13 @@ $company_logo = Utility::get_superadmin_logo();
                 </div>
             </div>
             <div class="auth-footer">
-                <div class="container-fluid">
+                {{-- <div class="container-fluid">
                     <div class="row">
                         <div class="col-6">
                             {{__('Copyright')}}  {{ \App\Models\Utility::getValByName('footer_text')? \App\Models\Utility::getValByName('footer_text'): config('app.name', 'POSGo') }}
-                            {{-- <p class="text-body"> {{__('Copyright')}} {{ (Utility::getValByName('footer_text')) ? Utility::getValByName('footer_text') :config('app.name', 'POSGo SaaS') }} | Design By POSGo  </p> --}}
                         </div>
                     </div>
-                </div>
+                </div> --}}
             </div>
         </div>
     </div>
