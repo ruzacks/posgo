@@ -26,6 +26,18 @@ $image_url = !empty($user->avatar) && asset(Storage::exists($user->avatar)) ? $u
 @endsection
 
 @section('action-btn')
+    @can('Manage Role')
+        <a href="{{ route('roles.index') }}" data-bs-toggle="tooltip"
+            class="btn btn-sm btn-primary btn-icon m-1">
+            {{ __('Roles') }}</a>
+        </a>
+    @endcan
+
+    @can('Manage Permission')
+        <a href="{{ route('permissions.index') }}" data-bs-toggle="tooltip" 
+            class="btn btn-sm btn-primary btn-icon m-1">
+            {{ __('Permissions') }}</a>
+    @endcan
 
     <a class="btn btn-sm btn-primary grid" data-bs-toggle="tooltip" data-bs-original-title="{{ __('Grid View') }}">
         <i class="ti ti-layout-grid"></i>
@@ -34,6 +46,8 @@ $image_url = !empty($user->avatar) && asset(Storage::exists($user->avatar)) ? $u
     <a class="btn btn-sm btn-primary list" data-bs-toggle="tooltip" data-bs-original-title="{{ __('List View') }}">
         <i class="ti ti-list-check"></i>
     </a>
+
+    
 
     @can('Create User')
         <a href="#" data-ajax-popup="true" data-size="lg" data-bs-toggle="tooltip"

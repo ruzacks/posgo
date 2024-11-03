@@ -10,10 +10,20 @@
 
 @section('action-btn')
 
-    {{-- <a href="{{ route('Product.export') }}" class="btn btn-sm btn-primary btn-icon " data-bs-toggle="tooltip"
-        title="{{ __('Export') }}">
-        <i class="ti ti-file-export text-white"></i>
-    </a> --}}
+    @can('Manage Category')
+        <a href="{{ route('categories.index') }}" data-bs-toggle="tooltip"
+            class="btn btn-sm btn-primary btn-icon m-1">
+            {{ __('Categories') }}</a>
+        </a>
+    @endcan
+
+    @can('Manage Unit')
+        <a href="{{ route('units.index') }}" data-bs-toggle="tooltip"
+            class="btn btn-sm btn-primary btn-icon m-1">
+            {{ __('Unit') }}</a>
+        </a>
+    @endcan
+
     @can('Create Product')
         <a href="#" data-ajax-popup="true" data-size="lg" data-bs-toggle="tooltip" title="{{ __('Add New Product') }}"
             data-title="{{ __('Add New Product') }}" data-url="{{ route('products.create') }}"
@@ -40,6 +50,7 @@
                                 <thead>
                                     <tr>
                                         <th>#</th>
+                                        <th>{{ __('Code') }}</th>
                                         <th class="w-25">{{ __('Name') }}</th>
                                         <th>{{ __('Category') }}</th>
                                         <th>{{ __('Stock') }}</th>
@@ -47,6 +58,7 @@
                                     </tr>
                                     <tr>
                                         <td></td>
+                                        <td><input type="text" id="codeFilter" class="form-control" placeholder="{{ __('Enter code') }}"></td>
                                         <td><input type="text" id="nameFilter" class="form-control" placeholder="{{ __('Enter name') }}"></td>
                                         <td><input type="text" id="categoryFilter" class="form-control" placeholder="{{ __('Enter category name') }}"></td>
                                         <td></td>
@@ -57,6 +69,7 @@
                                     @foreach ($products as $key => $product)
                                         <tr>
                                             <td>{{ $key + 1 }}</td>
+                                            <td class="code-cell"><span class="break-all">{{ $product->code }}</span></td>
                                             <td class="name-cell"><span class="break-all">{{ $product->name }}</span></td>
                                             <td class="category-cell">{{ $product->categoryname }}</td>
                                             <td>
@@ -194,18 +207,23 @@
         function applyFilters() {
             let categoryFilter = document.getElementById('categoryFilter').value.toLowerCase();
             let nameFilter = document.getElementById('nameFilter').value.toLowerCase();
+            let codeFilter = document.getElementById('codeFilter').value.toLowerCase();
             let rows = document.querySelectorAll('#pc-dt-simple tbody tr');
 
             rows.forEach(row => {
                 let category = row.querySelector('.category-cell').textContent.toLowerCase();
                 let name = row.querySelector('.name-cell').textContent.toLowerCase();
+                let code = row.querySelector('.code-cell').textContent.toLowerCase();
+
 
                 // Display the row only if it matches both filters
-                row.style.display = (category.includes(categoryFilter) && name.includes(nameFilter)) ? '' : 'none';
+                row.style.display = (category.includes(categoryFilter) && name.includes(nameFilter) && code.includes(codeFilter)) ? '' : 'none';
             });
         }
 
         document.getElementById('categoryFilter').addEventListener('keyup', applyFilters);
         document.getElementById('nameFilter').addEventListener('keyup', applyFilters);
+        document.getElementById('codeFilter').addEventListener('keyup', applyFilters);
+
     </script>
 @endpush

@@ -64,6 +64,7 @@ class ProductController extends Controller
                 $request->all(),
                 [
                     'name' => 'required|max:100|unique:products,name,NULL,id,created_by,' . Auth::user()->getCreatedBy(),
+                    'code' => 'required|unique:products,code,NULL,id,created_by,' . Auth::user()->getCreatedBy(),
                     'sku' => 'nullable|regex:/[\-]+/i',
                     'category_id' => 'required',
                     'unit_id' => 'required',
@@ -75,6 +76,7 @@ class ProductController extends Controller
             }
 
             $product                 = new Product();
+            $product->code           = $request->code;
             $product->name           = $request->name;
             $product->purchase_price = (float)$request->purchase_price;
             $product->sale_price     = (float)$request->sale_price;
@@ -179,6 +181,7 @@ class ProductController extends Controller
                 $request->all(),
                 [
                     'name' => 'required|max:100|unique:products,name,' . $product->id . ',id,created_by,' . Auth::user()->getCreatedBy(),
+                    'code' => 'required|unique:products,code,NULL,id,created_by,' . Auth::user()->getCreatedBy(),
                     'sku' => 'nullable|regex:/[\-]+/i',
                 ]
             );
@@ -188,6 +191,7 @@ class ProductController extends Controller
             }
 
             $product->name           = $request->name;
+            $product->code           = $request->code;
             $product->purchase_price = (float)$request->purchase_price;
             $product->sale_price     = (float)$request->sale_price;
             $product->sku            = $request->sku;

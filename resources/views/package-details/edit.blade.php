@@ -11,8 +11,8 @@
 
 @section('breadcrumb')
     <li class="breadcrumb-item"><a href="{{ route('home') }}">{{ __('Home') }}</a></li>
-    {{-- <li class="breadcrumb-item"><a href="{{ route('reports.purchases') }}">{{ __('Purchase List') }}</a></li>
-    <li class="breadcrumb-item">{{ __('Edit Purchase') }}</li> --}}
+    <li class="breadcrumb-item"><a href="{{ route('products.index') }}">{{ __('Product') }}</a></li>
+    <li class="breadcrumb-item">{{ __('Edit Package') }}</li>
 @endsection
 
 
@@ -31,25 +31,19 @@
                     {{ Form::open(['route' => ['update.package', $product->id], 'enctype' => 'multipart/form-data', 'method' => 'PUT']) }}
 
                     <div class="row">
-                        <div class="col-md-3">
+                        <div class="col-md-4">
                             <div class="form-group">
                                 {{ Form::label('name', __('Package Name'), ['class' => 'col-form-label']) }}
                                 {{ Form::text('name', $product->name, ['class' => 'form-control', 'placeholder' => __('Enter new Product Name'), 'required' => true]) }}
                             </div>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-4">
                             <div class="form-group">
                                 {{ Form::label('duration', __('Duration (Hour)'), ['class' => 'col-form-label']) }}
                                 {{ Form::number('duration', $package->duration, ['class' => 'form-control', 'placeholder' => __('Enter duration in hours'), 'required' => true, 'min' => 1]) }}
                             </div>
                         </div>
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                {{ Form::label('location', __('Location'), ['class' => 'col-form-label']) }}
-                                {{ Form::select('location', ['hall' => 'Hall', 'room' => 'Room', 'vip' => 'VIP'], $package->location, ['class' => 'form-control', 'placeholder' => __('Select Location'), 'required' => true]) }}
-                            </div>
-                        </div>
-                        <div class="col-md-3">
+                        <div class="col-md-4">
                             <div class="form-group">
                                 {{ Form::label('min_sale', __('Minimum Sale'), ['class' => 'col-form-label']) }}
                                 {{ Form::number('min_sale', $package->min_sale, ['class' => 'form-control', 'placeholder' => __('Enter minimum sale'), 'required' => true, 'min' => 1]) }}
@@ -57,21 +51,21 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-md-3">
+                        <div class="col-md-4">
                             <div class="form-group">
-                                {{ Form::label('number_optional_choice', __('Number Optional Product can Choose'), ['class' => 'col-form-label']) }}
+                                {{ Form::label('number_optional_choice', __('Optional Product yang bisa Dipilih'), ['class' => 'col-form-label']) }}
                                 {{ Form::number('number_optional_choice', $package->number_optional_choice, ['class' => 'form-control', 'placeholder' => __(''), 'required' => true, 'min' => 1]) }}
                             </div>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-4">
                             <div class="form-group">
                                 {{ Form::label('hpp', __('HPP Estimate'), ['class' => 'col-form-label']) }}
                                 {{ Form::number('hpp', 0, ['class' => 'form-control', 'placeholder' => __(''), 'disabled' => true, 'id' => 'hpp']) }}
                             </div>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-4">
                             <div class="form-group">
-                                {{ Form::label('sale_price', __('Selling Price'), ['class' => 'col-form-label']) }}
+                                {{ Form::label('sale_price', __('Harga Jual'), ['class' => 'col-form-label']) }}
                                 {{ Form::number('sale_price', $product->sale_price, ['class' => 'form-control', 'placeholder' => __('Enter Package Price'), 'required' => true]) }}
                             </div>
                         </div>
@@ -288,14 +282,12 @@
                                     '<td>' + data[i].name + '</td>' +
                                     '<td>' + addCommas(data[i].purchase_price) + '</td>' +
                                     '<td><div class="quantity buttons_added">' +
-                                    '<input type="button" value="-" class="minus">' +
                                     '<input type="hidden" name="fixed_product[]" value="' + data[i]
                                     .product_id + '">' +
-                                    '<input type="number" step="1" min="1" name="fixed_quantity[]" title="{{ __('Quantity') }}" class="input-number form-control" size="4" data-id="' +
+                                    '<input type="number" step="1" min="1" name="fixed_quantity[]" title="{{ __('Quantity') }}" class=" form-control" size="4" data-id="' +
                                     data[i].product_id + '" data-price="' + data[i].purchase_price +
                                     '" data-tax="' + 0 + '" value="' + data[i].quantity +
                                     '">' +
-                                    '<input type="button" value="+" class="plus"></div></td>' +
                                     '<td class="total-cell"><span>' + addCommas(data[i].subtotal) + '</span></td>' +
                                     '<td class="btn btn-sm d-inline-flex align-items-center">' +
                                     '<a class="action-btn bg-danger"><i class="ti ti-trash text-white remove-items"></i></a>' +
@@ -332,13 +324,11 @@
                                     '<td>' + ui.item.name + '</td>' +
                                     '<td>' + addCommas(ui.item.price) + '</td>' +
                                     '<td><div class="quantity buttons_added">' +
-                                    '<input type="button" value="-" class="minus">' +
                                     '<input type="hidden" name="fixed_product[]" value="' + ui.item.id + '">' +
                                     '<input type="number" step="1" min="1" max="' + ui.item.maxquantity +
-                                    '" name="fixed_quantity[]" title="{{ __('Quantity') }}" class="input-number form-control" size="4" data-id="' +
+                                    '" name="fixed_quantity[]" title="{{ __('Quantity') }}" class=" form-control" size="4" data-id="' +
                                     ui.item.id + '" data-price="' + ui.item.price + '" data-tax="' + ui.item
                                     .tax + '" value="' + ui.item.quantity + '">' +
-                                    '<input type="button" value="+" class="plus"></div></td>' +
                                     '<td class="total-cell"><span>' + addCommas(ui.item.subtotal) + '</span></td>' +
                                     '<td class="btn btn-sm d-inline-flex align-items-center">' +
                                     '<a class="action-btn bg-danger"><i class="ti ti-trash text-white remove-items"></i></a>' +
@@ -385,14 +375,12 @@
                                     '<td>' + data[i].name + '</td>' +
                                     '<td>' + addCommas(data[i].purchase_price) + '</td>' +
                                     '<td><div class="quantity buttons_added">' +
-                                    '<input type="button" value="-" class="minus">' +
                                     '<input type="hidden" name="optional_product[]" value="' + data[i]
                                     .product_id + '">' +
-                                    '<input type="number" step="1" min="1" name="optional_quantity[]" title="{{ __('Quantity') }}" class="input-number form-control" size="4" data-id="' +
+                                    '<input type="number" step="1" min="1" name="optional_quantity[]" title="{{ __('Quantity') }}" class=" form-control" size="4" data-id="' +
                                     data[i].product_id + '" data-price="' + data[i].purchase_price +
                                     '" data-tax="' + 0 + '" value="' + data[i].quantity +
                                     '">' +
-                                    '<input type="button" value="+" class="plus"></div></td>' +
                                     '<td class="total-cell"><span>' + addCommas(data[i].subtotal) + '</span></td>' +
                                     '<td class="btn btn-sm d-inline-flex align-items-center">' +
                                     '<a class="action-btn bg-danger"><i class="ti ti-trash text-white remove-items"></i></a>' +
@@ -429,13 +417,11 @@
                                     '<td>' + ui.item.name + '</td>' +
                                     '<td>' + addCommas(ui.item.price) + '</td>' +
                                     '<td><div class="quantity buttons_added">' +
-                                    '<input type="button" value="-" class="minus">' +
                                     '<input type="hidden" name="optional_product[]" value="' + ui.item.id + '">' +
                                     '<input type="number" step="1" min="1" max="' + ui.item.maxquantity +
-                                    '" name="optional_quantity[]" title="{{ __('Quantity') }}" class="input-number form-control" size="4" data-id="' +
+                                    '" name="optional_quantity[]" title="{{ __('Quantity') }}" class=" form-control" size="4" data-id="' +
                                     ui.item.id + '" data-price="' + ui.item.price + '" data-tax="' + ui.item
                                     .tax + '" value="' + ui.item.quantity + '">' +
-                                    '<input type="button" value="+" class="plus"></div></td>' +
                                     '<td class="total-cell"><span>' + addCommas(ui.item.subtotal) + '</span></td>' +
                                     '<td class="btn btn-sm d-inline-flex align-items-center">' +
                                     '<a class="action-btn bg-danger"><i class="ti ti-trash text-white remove-items"></i></a>' +

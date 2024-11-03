@@ -19,6 +19,7 @@
 
 <?php $__env->startSection('breadcrumb'); ?>
     <li class="breadcrumb-item"><a href="<?php echo e(route('home')); ?>"><?php echo e(__('Home')); ?></a></li>
+    <li class="breadcrumb-item"><a href="<?php echo e(route('products.index')); ?>"><?php echo e(__('Product')); ?></a></li>
     <li class="breadcrumb-item"><?php echo e(__('Unit')); ?></li>
 <?php $__env->stopSection(); ?>
 

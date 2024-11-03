@@ -22,6 +22,7 @@
 
 @section('breadcrumb')
     <li class="breadcrumb-item"><a href="{{ route('home') }}">{{ __('Home') }}</a></li>
+    <li class="breadcrumb-item"><a href="{{ route('talents.index') }}">{{ __('Talent') }}</a></li>
     <li class="breadcrumb-item">{{ __('Agency') }}</li>
 @endsection
 

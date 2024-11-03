@@ -20,6 +20,7 @@
 
 @section('breadcrumb')
          <li class="breadcrumb-item"><a href="{{ route('home') }}">{{ __('Home') }}</a></li>
+         <li class="breadcrumb-item"><a href="{{ route('products.index') }}">{{ __('Product') }}</a></li>
         <li class="breadcrumb-item">{{ __('Categories') }}</li>
 @endsection
 

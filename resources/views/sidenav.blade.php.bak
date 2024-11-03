@@ -59,48 +59,26 @@ $cust_theme_bg = App\Models\Utility::getValByName('cust_theme_bg');
                 @if (Gate::check('Manage User') || Gate::check('Manage Role') || Gate::check('Manage Permission'))
                     <li class="dash-item dash-hasmenu">
                         <a href="#!" class="dash-link"><span class="dash-micon"><i
-                                    class="ti ti-server"></i></span><span
-                                class="dash-mtext">{{ __('Master') }}</span><span class="dash-arrow"><i
+                                    class="ti ti-users"></i></span><span
+                                class="dash-mtext">{{ __('Staff') }}</span><span class="dash-arrow"><i
                                     data-feather="chevron-right"></i></span></a>
-                        <ul class="dash-sub-item mx-2" style="display: none">
+                        <ul class="dash-submenu">
 
                             @can('Manage User')
                                 <li class="dash-item dash-hasmenu">
-                                    <a class="dash-link sub-item" href="{{ route('users.index') }}">
-                                        <span class="dash-micon"><i class="ti ti-users"></i></span>{{ __('Users') }}
-                                    </a>
+                                    <a class="dash-link" href="{{ route('users.index') }}">{{ __('Users') }}</a>
                                 </li>
                             @endcan
 
-                            @can('Manage Vendor')
+                            @can('Manage Role')
                                 <li class="dash-item dash-hasmenu">
-                                    <a class="dash-link sub-item" href="{{ route('vendors.index') }}">
-                                        <span class="dash-micon"><i class="ti ti-package"></i></span>{{ __('Vendors') }}
-                                    </a>
+                                    <a class="dash-link" href="{{ route('roles.index') }}">{{ __('Roles') }}</a>
                                 </li>
                             @endcan
 
-                            @can('Manage Product')
+                            @can('Manage Permission')
                                 <li class="dash-item dash-hasmenu">
-                                    <a class="dash-link sub-item" href="{{ route('products.index') }}">
-                                        <span class="dash-micon"><i class="ti ti-box"></i></span>{{ __('Products') }}
-                                    </a>
-                                </li>
-                            @endcan
-
-                            @can('Manage Talent')
-                                <li class="dash-item dash-hasmenu">
-                                    <a class="dash-link sub-item" href="{{ route('talents.index') }}">
-                                        <span class="dash-micon"><i class="ti ti-star"></i></span>{{ __('Talents') }}
-                                    </a>
-                                </li>
-                            @endcan
-
-                            @can('Manage Room')
-                                <li class="dash-item dash-hasmenu">
-                                    <a class="dash-link sub-item" href="{{ route('rooms.index') }}">
-                                        <span class="dash-micon"><i class="ti ti-ticket"></i></span>{{ __('Locations') }}
-                                    </a>
+                                    <a class="dash-link" href="{{ route('permissions.index') }}">permissions</a>
                                 </li>
                             @endcan
 
@@ -109,7 +87,122 @@ $cust_theme_bg = App\Models\Utility::getValByName('cust_theme_bg');
                 @endif
             @endif
 
-          
+            {{-- @can('Manage Customer')
+                <li class="dash-item ">
+                    <a href="{{ route('customers.index') }}"
+                        class="dash-link {{ Request::segment(1) == 'customers' ? 'active' : '' }}"><span
+                            class="dash-micon"><i class="ti ti-user"></i></span><span
+                            class="dash-mtext">{{ __('Customers') }}</span>
+                    </a>
+                </li>
+            @endcan --}}
+
+
+            @can('Manage Vendor')
+                <li class="dash-item ">
+                    <a href="{{ route('vendors.index') }}"
+                        class="dash-link {{ Request::segment(1) == 'customers' ? 'active' : '' }}"><span
+                            class="dash-micon"><i class="ti ti-user-plus"></i></span><span
+                            class="dash-mtext">{{ __('Vendors') }}</span>
+                    </a>
+                </li>
+            @endcan
+
+
+            @if (Gate::check('Manage Product') || Gate::check('Manage Category') || Gate::check('Manage Brand') || Gate::check('Manage Tax') || Gate::check('Manage Unit'))
+                <li class="dash-item dash-hasmenu">
+                    <a href="#" class="dash-link"><span class="dash-micon"><i
+                                class="ti ti-brand-producthunt"></i></span><span
+                            class="dash-mtext">{{ __('Products') }}</span><span class="dash-arrow"><i
+                                data-feather="chevron-right"></i></span></a>
+
+
+
+                    <ul class="dash-submenu">
+
+                        @can('Manage Product')
+                            <li class="dash-item dash-hasmenu">
+                                <a class="dash-link" href="{{ route('products.index') }}">{{ __('Products') }}</a>
+                            </li>
+                        @endcan
+
+                        @can('Manage Category')
+                            <li class="dash-item dash-hasmenu">
+                                <a class="dash-link" href="{{ route('categories.index') }}">{{ __('Categories') }}</a>
+                            </li>
+                        @endcan
+
+                        {{-- @can('Manage Brand')
+                            <li class="dash-item dash-hasmenu">
+                                <a class="dash-link" href="{{ route('brands.index') }}">{{ __('Brands') }}</a>
+                            </li>
+                        @endcan --}}
+
+                        {{-- @can('Manage Tax')
+                            <li class="dash-item dash-hasmenu">
+                                <a class="dash-link" href="{{ route('taxes.index') }}">{{ __('Tax') }}</a>
+                            </li>
+                        @endcan --}}
+
+                        @can('Manage Unit')
+                            <li class="dash-item dash-hasmenu">
+                                <a class="dash-link" href="{{ route('units.index') }}">{{ __('Unit') }}</a>
+                            </li>
+                        @endcan
+
+                        {{-- @can('Manage Voucher')
+                            <li class="dash-item dash-hasmenu">
+                                <a class="dash-link" href="{{ route('vouchers.index') }}">{{ __('Voucher') }}</a>
+                            </li>
+                        @endcan --}}
+
+                    </ul>
+                </li>
+            @endif
+
+            @if (Gate::check('Manage Talent') || Gate::check('Manage Talent Grade'))
+                <li class="dash-item dash-hasmenu">
+                    <a href="#" class="dash-link"><span class="dash-micon"><i
+                                class="ti ti-brand-producthunt"></i></span><span
+                            class="dash-mtext">{{ __('Talents') }}</span><span class="dash-arrow"><i
+                                data-feather="chevron-right"></i></span></a>
+
+
+
+                    <ul class="dash-submenu">
+
+                        @can('Manage Talent')
+                            <li class="dash-item dash-hasmenu">
+                                <a class="dash-link" href="{{ route('talents.index') }}">{{ __('Talents') }}</a>
+                            </li>
+                        @endcan
+
+                        @can('Manage Talent Grade')
+                            <li class="dash-item dash-hasmenu">
+                                <a class="dash-link" href="{{ route('talent-grades.index') }}">{{ __('Talent Grade') }}</a>
+                            </li>
+                        @endcan
+
+                        @can('Manage Agency')
+                        <li class="dash-item dash-hasmenu">
+                            <a class="dash-link" href="{{ route('agencies.index') }}">{{ __('Agency') }}</a>
+                        </li>
+                        @endcan
+
+                    </ul>
+                </li>
+            @endif
+
+            @can('Manage Room')
+                <li class="dash-item ">
+                    <a href="{{ route('rooms.index') }}"
+                        class="dash-link {{ Request::segment(1) == 'rooms' ? 'active' : '' }}"><span
+                            class="dash-micon"><i class="ti ti-user"></i></span><span
+                            class="dash-mtext">{{ __('Rooms') }}</span>
+                    </a>
+                </li>
+            @endcan
+
             @if(1<0)
 
             @can('Manage Purchases')

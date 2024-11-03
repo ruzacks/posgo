@@ -10,6 +10,20 @@
 
 @section('action-btn')
 
+    @can('Manage Agency')
+        <a href="{{ route('agencies.index') }}" data-bs-toggle="tooltip"
+            class="btn btn-sm btn-primary btn-icon m-1">
+            {{ __('Agencies') }}</a>
+        </a>
+    @endcan
+
+    @can('Manage Talent Grade')
+        <a href="{{ route('talent-grades.index') }}" data-bs-toggle="tooltip"
+            class="btn btn-sm btn-primary btn-icon m-1">
+            {{ __('Talent Grade') }}</a>
+        </a>
+    @endcan
+
     @can('Create Talent')
         <a href="#" data-ajax-popup="true" data-size="lg" data-bs-toggle="tooltip" data-title="{{ __('Add New Talent') }}"
             title="{{ __(' New Talent') }}" data-url="{{ route('talents.create') }}"

@@ -9,30 +9,9 @@
 
 <?php $__env->startSection('header-content'); ?>
     <div class="row">
-        <?php if(count($lowstockproducts) > 0): ?>
-            <div class="col-md-12">
-                <?php $__currentLoopData = $lowstockproducts; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $product): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                        <span class="alert-icon"><i class="ti ti-alert-triangle"></i></span>
-                        <strong><?php echo e($product['name']); ?></strong><small><?php echo e(__(' (Only ') . $product['quantity'] . __(' items left)')); ?></small>
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-            </div>
-        <?php endif; ?>
+        
 
 
-        <?php if(isset($notifications) && !empty($notifications) && count($notifications) > 0): ?>
-            <div class="col-md-12">
-                <?php $__currentLoopData = $notifications; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $notification): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                    <div class="alert alert-<?php echo e($notification->color); ?> alert-dismissible fade show" role="alert">
-                        <strong><?php echo $notification->description; ?></strong>
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-            </div>
-        <?php endif; ?>
-    </div>
 
     <?php if($branches == 0 || $cashregisters == 0 || $productscount == 0 || $customers == 0 || $vendors == 0): ?>
         <div class="row mt-4">
@@ -71,7 +50,7 @@
 
         <div class="col-sm-12">
             <div class="row">
-                <div class="col-xxl-7">
+                <div class="col-xxl-12">
                     <div class="row">
                         <div class="col-lg-3 col-6">
                             <div class="card" style="min-height: 225px;">
@@ -127,82 +106,142 @@
                         </div>
                     </div>
 
-                    <div class="col-xxl-12">
+                    
+                </div>
 
-                        <div class="card">
-                            <div class="card-header">
-                                <div class="d-flex align-items-center justify-content-between ">
-                                    <h5><?php echo e(__('To do list')); ?></h5>
-                                    <div type="button" class="btn btn-sm btn-primary btn-icon m-1">
-                                        <a href="#" class="" data-bs-toggle="tooltip" data-bs-placement="top"
-                                            title="<?php echo e(__('Add Todo Task')); ?>" data-ajax-popup="true"
-                                            data-title="<?php echo e(__('Add Todo Task')); ?>"
-                                            data-url="<?php echo e(route('todos.create')); ?>">
-                                            <i class="ti ti-plus text-white"></i></a>
-                                    </div>
-                                </div>
-                            </div>
+                
 
-                            <?php if(isset($todos) && !empty($todos) && count($todos) > 0): ?>
-                                <ul class="list-group list-group-flush todo-scrollbar" data-toggle="checklist">
-                                    <?php $__currentLoopData = $todos; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $todo): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                        <li class="checklist-entry list-group-item flex-column align-items-start">
-                                            <div
-                                                class="d-flex align-items-center justify-content-between checklist-item checklist-item-<?php echo e($todo->color); ?> <?php echo e($todo->status == 1 ? 'checklist-item-checked' : ''); ?>">
-                                                <div class="checklist-info">
-                                                    <a href="#!" class="fs-14 mb-0"><b><?php echo e($todo->title); ?></b></a>
-                                                    <small
-                                                        class="d-block"><?php echo e(Auth::user()->datetimeFormat($todo->created_at)); ?></small>
-                                                </div>
-                                                <div>
-                                                    <div class="form-check  custom-checkbox ">
-                                                        <input class="custom-control-input form-check-input"
-                                                            id="chk-todo-task-<?php echo e($todo->id); ?>"
-                                                            data-url="<?php echo e(route('todo.status', $todo->id)); ?>"
-                                                            type="checkbox"
-                                                            <?php echo e($todo->status == 1 ? ' checked=""' : ''); ?>>
-                                                        <label class="custom-control-label"
-                                                            for="chk-todo-task-<?php echo e($todo->id); ?>"></label>
+                <div class="col-md-9">
+                    <div class="card">
+                        <div class="card-header card-body table-border-style">
+                            <div class="table-responsive">
+                                <table class="table" id="pc-dt-simple">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th><?php echo e(__('Room Code')); ?></th>
+                                            <th><?php echo e(__('Room Status')); ?></th>
+                                            <th><?php echo e(__('Check In')); ?></th>
+                                            <th><?php echo e(__('Check Out')); ?></th>
+                                            <th><?php echo e(__('Elapsed')); ?></th>
+                                            <th width="200px"><?php echo e(__('Action')); ?></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php $__currentLoopData = $rooms; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $room): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                            <?php
+                                                // Generate random check-in time within a specific range
+                                                $randomCheckIn = \Carbon\Carbon::now()->subDays(rand(0, 5))->setTime(rand(0, 23), rand(0, 59));
+                                                // Set check-out 2 hours after check-in
+                                                $randomCheckOut = $randomCheckIn->copy()->addHours(2);
+                                                // Determine color based on room status
+                                                $statusColor = '';
+                                                switch ($room->status) {
+                                                    case 'occupied':
+                                                        $checkInDisplay = $randomCheckIn->format('d M H:i');
+                                                        $checkOutDisplay = $randomCheckOut->format('d M H:i');
+                                                        $statusColor = 'text-success'; // Green for occupied
+                                                        break;
+                                                    case 'booked':
+                                                        $checkInDisplay = $randomCheckIn->format('d M H:i');
+                                                        $checkOutDisplay = ''; // No check-out time for booked
+                                                        $statusColor = 'text-warning'; // Yellow for booked
+                                                        break;
+                                                    case 'available':
+                                                        $checkInDisplay = '';
+                                                        $checkOutDisplay = '';
+                                                        $statusColor = 'text-info'; // Blue for available
+                                                        break;
+                                                    case 'maintenance':
+                                                        $checkInDisplay = '';
+                                                        $checkOutDisplay = '';
+                                                        $statusColor = 'text-secondary'; // Gray for maintenance
+                                                        break;
+                                                    default:
+                                                        $checkInDisplay = '';
+                                                        $checkOutDisplay = '';
+                                                        $statusColor = 'text-muted'; // Default for unknown status
+                                                        break;
+                                                }
+                                            ?>
+                                            <tr>
+                                                <td><?php echo e($key + 1); ?></td>
+                                                <td><?php echo e($room->code); ?></td>
+                                                <td class="<?php echo e($statusColor); ?>"><?php echo e($room->status); ?></td>
+                                                <td><?php echo e($checkInDisplay); ?></td>
+                                                <td><?php echo e($checkOutDisplay); ?></td>
+                                                <td class="elapsed-time" data-start="<?php echo e($randomCheckIn); ?>">
+                                                    00:00:00
+                                                </td>
+                                                <td class="Action">
+                                                    <div class="d-flex justify-content-start align-items-center gap-2">
+                                                        <?php if($room->is_active == 1): ?>
+                                                            <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('Edit Room')): ?>
+                                                                <div class="action-btn btn-info">
+                                                                    <a href="#" class="mx-3 btn btn-sm d-inline-flex align-items-center"
+                                                                        data-ajax-popup="true" title="<?php echo e(__('Edit Room')); ?>"
+                                                                        data-title="<?php echo e(__('Edit Room')); ?>" data-size="lg"
+                                                                        data-url="<?php echo e(route('rooms.edit', $room->id)); ?>"
+                                                                        data-bs-toggle="tooltip" title="<?php echo e(__('Edit Room')); ?>">
+                                                                        <i class="ti ti-pencil text-white"></i>
+                                                                    </a>
+                                                                </div>
+                                                            <?php endif; ?>
+                                    
+                                                            <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('Delete Room')): ?>
+                                                                <div class="action-btn bg-danger">
+                                                                    <a href="#"
+                                                                        class="bs-pass-para mx-3 btn btn-sm d-inline-flex align-items-center"
+                                                                        data-toggle="sweet-alert" data-bs-toggle="tooltip"
+                                                                        data-confirm="<?php echo e(__('Are You Sure?')); ?>"
+                                                                        data-text="<?php echo e(__('This action can not be undone. Do you want to continue?')); ?>"
+                                                                        data-confirm-yes="delete-form-<?php echo e($room->id); ?>"
+                                                                        title="<?php echo e(__('Delete')); ?>">
+                                                                        <i class="ti ti-trash text-white"></i>
+                                                                    </a>
+                                                                </div>
+                                                                <?php echo Form::open(['method' => 'DELETE', 'route' => ['rooms.destroy', $room->id], 'id' => 'delete-form-' . $room->id]); ?>
+
+                                                                <?php echo Form::close(); ?>
+
+                                                            <?php endif; ?>
+                                    
+                                                            <!-- Money Badge Button -->
+                                                            <div class="action-btn bg-primary">
+                                                                <a href="#"
+                                                                    class="bs-pass-para mx-3 btn btn-sm d-inline-flex align-items-center"
+                                                                    data-bs-toggle="tooltip"
+                                                                    title="<?php echo e(__('Charge')); ?>">
+                                                                    <i class="ti ti-credit-card text-white"></i>
+                                                                </a>
+                                                            </div>
+                                                        <?php else: ?>
+                                                            <a href="#" class="btn btn-danger btn-sm">
+                                                                <i class="fa fa-lock"></i>
+                                                            </a>
+                                                        <?php endif; ?>
                                                     </div>
-                                                </div>
-                                            </div>
-                                        </li>
-                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                </ul>
-                            <?php endif; ?>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-xxl-5">
-                    <div class="card">
-                        <div class="card-header">
-
-                            <div class="row ">
-                                <div class="col-6">
-                                    <h5><?php echo e(__('Purchase Sale Report')); ?></h5>
-                                </div>
-                                <div class="col-6 text-end">
-                                    <h6><?php echo e(__('Last 10 Days')); ?></h6>
-                                </div>
+                                                </td>
+                                            </tr>
+                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
-                        <div class="card-body">
-                            <div id="traffic-chart"></div>
-                        </div>
                     </div>
                 </div>
 
-                <div class="col-xxl-7">
-                    <div class="card">
-                        <div class="card-header">
-                            <h5><?php echo e(__('Calendar')); ?></h5>
+                <?php if(count($lowstockproducts) > 0): ?>
+                <div class="col-md-3">
+                    <?php $__currentLoopData = $lowstockproducts; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $product): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                            <span class="alert-icon"><i class="ti ti-alert-triangle"></i></span>
+                            <strong><?php echo e($product['name']); ?></strong><small> <?php echo e($product['quantity'] . __(' items left)')); ?></small>
+                            
                         </div>
-                        <div class="card-body">
-                            <div id='calendar' class='calendar'></div>
-                        </div>
-                    </div>
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 </div>
+            <?php endif; ?>
 
                 <?php if(isset($saletarget) && !empty($saletarget) && count($saletarget) > 0): ?>
 
@@ -452,6 +491,25 @@
 
             calendar.render();
         })();
+    </script>
+
+    <script>
+        // Ticking Elapsed Time Counter
+        function updateElapsedTime() {
+            document.querySelectorAll('.elapsed-time').forEach(function(element) {
+                const startTime = new Date(element.getAttribute('data-start')).getTime();
+                const now = new Date().getTime();
+                const elapsed = new Date(now - startTime);
+
+                const hours = String(elapsed.getUTCHours()).padStart(2, '0');
+                const minutes = String(elapsed.getUTCMinutes()).padStart(2, '0');
+                const seconds = String(elapsed.getUTCSeconds()).padStart(2, '0');
+
+                element.textContent = `${hours}:${minutes}:${seconds}`;
+            });
+        }
+
+        setInterval(updateElapsedTime, 1000);
     </script>
 <?php $__env->stopPush(); ?>
 

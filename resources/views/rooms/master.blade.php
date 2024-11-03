@@ -1,10 +1,10 @@
 @extends('layouts.app')
 
-@section('page-title', __('Rooms'))
+@section('page-title', __('Locations'))
 
 @section('title')
     <div class="d-inline-block">
-        <h5 class="h4 d-inline-block font-weight-400 mb-0">{{ __('Rooms') }}</h5>
+        <h5 class="h4 d-inline-block font-weight-400 mb-0">{{ __('Locations') }}</h5>
     </div>
 @endsection
 
@@ -22,7 +22,7 @@
 
 @section('breadcrumb')
     <li class="breadcrumb-item"><a href="{{ route('home') }}">{{ __('Home') }}</a></li>
-    <li class="breadcrumb-item">{{ __('Room') }}</li>
+    <li class="breadcrumb-item">{{ __('Location') }}</li>
 @endsection
 
 @section('content')

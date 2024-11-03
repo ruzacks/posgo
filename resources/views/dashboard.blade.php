@@ -11,7 +11,7 @@
 
 @section('header-content')
     <div class="row">
-        @if (count($lowstockproducts) > 0)
+        {{-- @if (count($lowstockproducts) > 0)
             <div class="col-md-12">
                 @foreach ($lowstockproducts as $product)
                     <div class="alert alert-warning alert-dismissible fade show" role="alert">
@@ -21,9 +21,9 @@
                     </div>
                 @endforeach
             </div>
-        @endif
+        @endif --}}
 
-
+{{-- 
         @if (isset($notifications) && !empty($notifications) && count($notifications) > 0)
             <div class="col-md-12">
                 @foreach ($notifications as $notification)
@@ -34,7 +34,7 @@
                 @endforeach
             </div>
         @endif
-    </div>
+    </div> --}}
 
     @if ($branches == 0 || $cashregisters == 0 || $productscount == 0 || $customers == 0 || $vendors == 0)
         <div class="row mt-4">
@@ -195,16 +195,135 @@
                     </div>
                 </div> --}}
 
-                <div class="col-xxl-7">
+                <div class="col-md-9">
                     <div class="card">
-                        <div class="card-header">
-                            <h5>{{ __('Calendar') }}</h5>
-                        </div>
-                        <div class="card-body">
-                            <div id='calendar' class='calendar'></div>
+                        <div class="card-header card-body table-border-style">
+                            <div class="table-responsive">
+                                <table class="table" id="pc-dt-simple">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>{{ __('Room Code') }}</th>
+                                            <th>{{ __('Room Status') }}</th>
+                                            <th>{{ __('Check In') }}</th>
+                                            <th>{{ __('Check Out') }}</th>
+                                            <th>{{ __('Elapsed') }}</th>
+                                            <th width="200px">{{ __('Action') }}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($rooms as $key => $room)
+                                            @php
+                                                // Generate random check-in time within a specific range
+                                                $randomCheckIn = \Carbon\Carbon::now()->subDays(rand(0, 5))->setTime(rand(0, 23), rand(0, 59));
+                                                // Set check-out 2 hours after check-in
+                                                $randomCheckOut = $randomCheckIn->copy()->addHours(2);
+                                                // Determine color based on room status
+                                                $statusColor = '';
+                                                switch ($room->status) {
+                                                    case 'occupied':
+                                                        $checkInDisplay = $randomCheckIn->format('d M H:i');
+                                                        $checkOutDisplay = $randomCheckOut->format('d M H:i');
+                                                        $statusColor = 'text-success'; // Green for occupied
+                                                        break;
+                                                    case 'booked':
+                                                        $checkInDisplay = $randomCheckIn->format('d M H:i');
+                                                        $checkOutDisplay = ''; // No check-out time for booked
+                                                        $statusColor = 'text-warning'; // Yellow for booked
+                                                        break;
+                                                    case 'available':
+                                                        $checkInDisplay = '';
+                                                        $checkOutDisplay = '';
+                                                        $statusColor = 'text-info'; // Blue for available
+                                                        break;
+                                                    case 'maintenance':
+                                                        $checkInDisplay = '';
+                                                        $checkOutDisplay = '';
+                                                        $statusColor = 'text-secondary'; // Gray for maintenance
+                                                        break;
+                                                    default:
+                                                        $checkInDisplay = '';
+                                                        $checkOutDisplay = '';
+                                                        $statusColor = 'text-muted'; // Default for unknown status
+                                                        break;
+                                                }
+                                            @endphp
+                                            <tr>
+                                                <td>{{ $key + 1 }}</td>
+                                                <td>{{ $room->code }}</td>
+                                                <td class="{{ $statusColor }}">{{ $room->status }}</td>
+                                                <td>{{ $checkInDisplay }}</td>
+                                                <td>{{ $checkOutDisplay }}</td>
+                                                <td class="elapsed-time" data-start="{{ $randomCheckIn }}">
+                                                    00:00:00
+                                                </td>
+                                                <td class="Action">
+                                                    <div class="d-flex justify-content-start align-items-center gap-2">
+                                                        @if ($room->is_active == 1)
+                                                            @can('Edit Room')
+                                                                <div class="action-btn btn-info">
+                                                                    <a href="#" class="mx-3 btn btn-sm d-inline-flex align-items-center"
+                                                                        data-ajax-popup="true" title="{{ __('Edit Room') }}"
+                                                                        data-title="{{ __('Edit Room') }}" data-size="lg"
+                                                                        data-url="{{ route('rooms.edit', $room->id) }}"
+                                                                        data-bs-toggle="tooltip" title="{{ __('Edit Room') }}">
+                                                                        <i class="ti ti-pencil text-white"></i>
+                                                                    </a>
+                                                                </div>
+                                                            @endcan
+                                    
+                                                            @can('Delete Room')
+                                                                <div class="action-btn bg-danger">
+                                                                    <a href="#"
+                                                                        class="bs-pass-para mx-3 btn btn-sm d-inline-flex align-items-center"
+                                                                        data-toggle="sweet-alert" data-bs-toggle="tooltip"
+                                                                        data-confirm="{{ __('Are You Sure?') }}"
+                                                                        data-text="{{ __('This action can not be undone. Do you want to continue?') }}"
+                                                                        data-confirm-yes="delete-form-{{ $room->id }}"
+                                                                        title="{{ __('Delete') }}">
+                                                                        <i class="ti ti-trash text-white"></i>
+                                                                    </a>
+                                                                </div>
+                                                                {!! Form::open(['method' => 'DELETE', 'route' => ['rooms.destroy', $room->id], 'id' => 'delete-form-' . $room->id]) !!}
+                                                                {!! Form::close() !!}
+                                                            @endcan
+                                    
+                                                            <!-- Money Badge Button -->
+                                                            <div class="action-btn bg-primary">
+                                                                <a href="#"
+                                                                    class="bs-pass-para mx-3 btn btn-sm d-inline-flex align-items-center"
+                                                                    data-bs-toggle="tooltip"
+                                                                    title="{{ __('Charge') }}">
+                                                                    <i class="ti ti-credit-card text-white"></i>
+                                                                </a>
+                                                            </div>
+                                                        @else
+                                                            <a href="#" class="btn btn-danger btn-sm">
+                                                                <i class="fa fa-lock"></i>
+                                                            </a>
+                                                        @endif
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
+
+                @if (count($lowstockproducts) > 0)
+                <div class="col-md-3">
+                    @foreach ($lowstockproducts as $product)
+                        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                            <span class="alert-icon"><i class="ti ti-alert-triangle"></i></span>
+                            <strong>{{ $product['name'] }}</strong><small> {{ $product['quantity'] . __(' items left)') }}</small>
+                            {{-- <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> --}}
+                        </div>
+                    @endforeach
+                </div>
+            @endif
 
                 @if (isset($saletarget) && !empty($saletarget) && count($saletarget) > 0)
 
@@ -450,5 +569,24 @@
 
             calendar.render();
         })();
+    </script>
+
+    <script>
+        // Ticking Elapsed Time Counter
+        function updateElapsedTime() {
+            document.querySelectorAll('.elapsed-time').forEach(function(element) {
+                const startTime = new Date(element.getAttribute('data-start')).getTime();
+                const now = new Date().getTime();
+                const elapsed = new Date(now - startTime);
+
+                const hours = String(elapsed.getUTCHours()).padStart(2, '0');
+                const minutes = String(elapsed.getUTCMinutes()).padStart(2, '0');
+                const seconds = String(elapsed.getUTCSeconds()).padStart(2, '0');
+
+                element.textContent = `${hours}:${minutes}:${seconds}`;
+            });
+        }
+
+        setInterval(updateElapsedTime, 1000);
     </script>
 @endpush

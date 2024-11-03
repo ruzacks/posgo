@@ -59,26 +59,53 @@ $cust_theme_bg = App\Models\Utility::getValByName('cust_theme_bg');
                 <?php if(Gate::check('Manage User') || Gate::check('Manage Role') || Gate::check('Manage Permission')): ?>
                     <li class="dash-item dash-hasmenu">
                         <a href="#!" class="dash-link"><span class="dash-micon"><i
-                                    class="ti ti-users"></i></span><span
-                                class="dash-mtext"><?php echo e(__('Staff')); ?></span><span class="dash-arrow"><i
+                                    class="ti ti-server"></i></span><span
+                                class="dash-mtext"><?php echo e(__('Master')); ?></span><span class="dash-arrow"><i
                                     data-feather="chevron-right"></i></span></a>
-                        <ul class="dash-submenu">
+                        <ul class="dash-sub-item mx-2" style="display: none">
 
                             <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('Manage User')): ?>
                                 <li class="dash-item dash-hasmenu">
-                                    <a class="dash-link" href="<?php echo e(route('users.index')); ?>"><?php echo e(__('Users')); ?></a>
+                                    <a class="dash-link sub-item" href="<?php echo e(route('users.index')); ?>">
+                                        <span class="dash-micon"><i class="ti ti-users"></i></span><?php echo e(__('Users')); ?>
+
+                                    </a>
                                 </li>
                             <?php endif; ?>
 
-                            <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('Manage Role')): ?>
+                            <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('Manage Vendor')): ?>
                                 <li class="dash-item dash-hasmenu">
-                                    <a class="dash-link" href="<?php echo e(route('roles.index')); ?>"><?php echo e(__('Roles')); ?></a>
+                                    <a class="dash-link sub-item" href="<?php echo e(route('vendors.index')); ?>">
+                                        <span class="dash-micon"><i class="ti ti-package"></i></span><?php echo e(__('Vendors')); ?>
+
+                                    </a>
                                 </li>
                             <?php endif; ?>
 
-                            <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('Manage Permission')): ?>
+                            <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('Manage Product')): ?>
                                 <li class="dash-item dash-hasmenu">
-                                    <a class="dash-link" href="<?php echo e(route('permissions.index')); ?>">permissions</a>
+                                    <a class="dash-link sub-item" href="<?php echo e(route('products.index')); ?>">
+                                        <span class="dash-micon"><i class="ti ti-box"></i></span><?php echo e(__('Products')); ?>
+
+                                    </a>
+                                </li>
+                            <?php endif; ?>
+
+                            <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('Manage Talent')): ?>
+                                <li class="dash-item dash-hasmenu">
+                                    <a class="dash-link sub-item" href="<?php echo e(route('talents.index')); ?>">
+                                        <span class="dash-micon"><i class="ti ti-star"></i></span><?php echo e(__('Talents')); ?>
+
+                                    </a>
+                                </li>
+                            <?php endif; ?>
+
+                            <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('Manage Room')): ?>
+                                <li class="dash-item dash-hasmenu">
+                                    <a class="dash-link sub-item" href="<?php echo e(route('rooms.index')); ?>">
+                                        <span class="dash-micon"><i class="ti ti-ticket"></i></span><?php echo e(__('Locations')); ?>
+
+                                    </a>
                                 </li>
                             <?php endif; ?>
 
@@ -87,101 +114,8 @@ $cust_theme_bg = App\Models\Utility::getValByName('cust_theme_bg');
                 <?php endif; ?>
             <?php endif; ?>
 
-            
-
-
-            <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('Manage Vendor')): ?>
-                <li class="dash-item ">
-                    <a href="<?php echo e(route('vendors.index')); ?>"
-                        class="dash-link <?php echo e(Request::segment(1) == 'customers' ? 'active' : ''); ?>"><span
-                            class="dash-micon"><i class="ti ti-user-plus"></i></span><span
-                            class="dash-mtext"><?php echo e(__('Vendors')); ?></span>
-                    </a>
-                </li>
-            <?php endif; ?>
-
-
-            <?php if(Gate::check('Manage Product') || Gate::check('Manage Category') || Gate::check('Manage Brand') || Gate::check('Manage Tax') || Gate::check('Manage Unit')): ?>
-                <li class="dash-item dash-hasmenu">
-                    <a href="#" class="dash-link"><span class="dash-micon"><i
-                                class="ti ti-brand-producthunt"></i></span><span
-                            class="dash-mtext"><?php echo e(__('Products')); ?></span><span class="dash-arrow"><i
-                                data-feather="chevron-right"></i></span></a>
-
-
-
-                    <ul class="dash-submenu">
-
-                        <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('Manage Product')): ?>
-                            <li class="dash-item dash-hasmenu">
-                                <a class="dash-link" href="<?php echo e(route('products.index')); ?>"><?php echo e(__('Products')); ?></a>
-                            </li>
-                        <?php endif; ?>
-
-                        <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('Manage Category')): ?>
-                            <li class="dash-item dash-hasmenu">
-                                <a class="dash-link" href="<?php echo e(route('categories.index')); ?>"><?php echo e(__('Categories')); ?></a>
-                            </li>
-                        <?php endif; ?>
-
-                        
-
-                        
-
-                        <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('Manage Unit')): ?>
-                            <li class="dash-item dash-hasmenu">
-                                <a class="dash-link" href="<?php echo e(route('units.index')); ?>"><?php echo e(__('Unit')); ?></a>
-                            </li>
-                        <?php endif; ?>
-
-                        
-
-                    </ul>
-                </li>
-            <?php endif; ?>
-
-            <?php if(Gate::check('Manage Talent') || Gate::check('Manage Talent Grade')): ?>
-                <li class="dash-item dash-hasmenu">
-                    <a href="#" class="dash-link"><span class="dash-micon"><i
-                                class="ti ti-brand-producthunt"></i></span><span
-                            class="dash-mtext"><?php echo e(__('Talents')); ?></span><span class="dash-arrow"><i
-                                data-feather="chevron-right"></i></span></a>
-
-
-
-                    <ul class="dash-submenu">
-
-                        <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('Manage Talent')): ?>
-                            <li class="dash-item dash-hasmenu">
-                                <a class="dash-link" href="<?php echo e(route('talents.index')); ?>"><?php echo e(__('Talents')); ?></a>
-                            </li>
-                        <?php endif; ?>
-
-                        <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('Manage Talent Grade')): ?>
-                            <li class="dash-item dash-hasmenu">
-                                <a class="dash-link" href="<?php echo e(route('talent-grades.index')); ?>"><?php echo e(__('Talent Grade')); ?></a>
-                            </li>
-                        <?php endif; ?>
-
-                        <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('Manage Agency')): ?>
-                        <li class="dash-item dash-hasmenu">
-                            <a class="dash-link" href="<?php echo e(route('agencies.index')); ?>"><?php echo e(__('Agency')); ?></a>
-                        </li>
-                        <?php endif; ?>
-
-                    </ul>
-                </li>
-            <?php endif; ?>
-
-            <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('Manage Room')): ?>
-                <li class="dash-item ">
-                    <a href="<?php echo e(route('rooms.index')); ?>"
-                        class="dash-link <?php echo e(Request::segment(1) == 'rooms' ? 'active' : ''); ?>"><span
-                            class="dash-micon"><i class="ti ti-user"></i></span><span
-                            class="dash-mtext"><?php echo e(__('Rooms')); ?></span>
-                    </a>
-                </li>
-            <?php endif; ?>
+          
+            <?php if(1<0): ?>
 
             <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('Manage Purchases')): ?>
                 <li class="dash-item dash-hasmenu">
@@ -431,6 +365,8 @@ $cust_theme_bg = App\Models\Utility::getValByName('cust_theme_bg');
                         </ul>
                     </li>
                 <?php endif; ?>
+            <?php endif; ?>
+
             <?php endif; ?>
 
 

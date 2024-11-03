@@ -2,24 +2,25 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Branch;
+use App\Models\BranchSalesTarget;
+use App\Models\Calendar;
+use App\Models\CashRegister;
+use App\Models\Customer;
 use App\Models\LandingPageSection;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use App\Models\Utility;
 use App\Models\Notification;
 use App\Models\Order;
 use App\Models\Plan;
-use App\Models\User;
-use App\Models\Branch;
-use App\Models\BranchSalesTarget;
-use App\Models\CashRegister;
-use App\Models\Customer;
 use App\Models\Product;
 use App\Models\Purchase;
+use App\Models\Room;
 use App\Models\Sale;
 use App\Models\Todo;
+use App\Models\User;
+use App\Models\Utility;
 use App\Models\Vendor;
-use App\Models\Calendar;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class HomeController extends Controller
 {
@@ -100,6 +101,8 @@ class HomeController extends Controller
 
             $saletarget = BranchSalesTarget::getBranchTargets(true);
 
+            $rooms = Room::where('created_by', '=', Auth::user()->getCreatedBy())->orderBy('id', 'ASC')->get();
+
             $homes = [
                 'branches',
                 'cashregisters',
@@ -116,6 +119,7 @@ class HomeController extends Controller
                 'salesArray',
                 'todos',
                 'saletarget',
+                'rooms',
             ];
 
             $getOrderChart     = $this->getOrderChart(['duration' => 'week']);

@@ -8,7 +8,20 @@
 
 <?php $__env->startSection('action-btn'); ?>
 
-    
+    <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('Manage Category')): ?>
+        <a href="<?php echo e(route('categories.index')); ?>" data-bs-toggle="tooltip"
+            class="btn btn-sm btn-primary btn-icon m-1">
+            <?php echo e(__('Categories')); ?></a>
+        </a>
+    <?php endif; ?>
+
+    <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('Manage Unit')): ?>
+        <a href="<?php echo e(route('units.index')); ?>" data-bs-toggle="tooltip"
+            class="btn btn-sm btn-primary btn-icon m-1">
+            <?php echo e(__('Unit')); ?></a>
+        </a>
+    <?php endif; ?>
+
     <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('Create Product')): ?>
         <a href="#" data-ajax-popup="true" data-size="lg" data-bs-toggle="tooltip" title="<?php echo e(__('Add New Product')); ?>"
             data-title="<?php echo e(__('Add New Product')); ?>" data-url="<?php echo e(route('products.create')); ?>"
@@ -35,6 +48,7 @@
                                 <thead>
                                     <tr>
                                         <th>#</th>
+                                        <th><?php echo e(__('Code')); ?></th>
                                         <th class="w-25"><?php echo e(__('Name')); ?></th>
                                         <th><?php echo e(__('Category')); ?></th>
                                         <th><?php echo e(__('Stock')); ?></th>
@@ -42,6 +56,7 @@
                                     </tr>
                                     <tr>
                                         <td></td>
+                                        <td><input type="text" id="codeFilter" class="form-control" placeholder="<?php echo e(__('Enter code')); ?>"></td>
                                         <td><input type="text" id="nameFilter" class="form-control" placeholder="<?php echo e(__('Enter name')); ?>"></td>
                                         <td><input type="text" id="categoryFilter" class="form-control" placeholder="<?php echo e(__('Enter category name')); ?>"></td>
                                         <td></td>
@@ -52,6 +67,7 @@
                                     <?php $__currentLoopData = $products; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $product): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                         <tr>
                                             <td><?php echo e($key + 1); ?></td>
+                                            <td class="code-cell"><span class="break-all"><?php echo e($product->code); ?></span></td>
                                             <td class="name-cell"><span class="break-all"><?php echo e($product->name); ?></span></td>
                                             <td class="category-cell"><?php echo e($product->categoryname); ?></td>
                                             <td>
@@ -191,19 +207,24 @@
         function applyFilters() {
             let categoryFilter = document.getElementById('categoryFilter').value.toLowerCase();
             let nameFilter = document.getElementById('nameFilter').value.toLowerCase();
+            let codeFilter = document.getElementById('codeFilter').value.toLowerCase();
             let rows = document.querySelectorAll('#pc-dt-simple tbody tr');
 
             rows.forEach(row => {
                 let category = row.querySelector('.category-cell').textContent.toLowerCase();
                 let name = row.querySelector('.name-cell').textContent.toLowerCase();
+                let code = row.querySelector('.code-cell').textContent.toLowerCase();
+
 
                 // Display the row only if it matches both filters
-                row.style.display = (category.includes(categoryFilter) && name.includes(nameFilter)) ? '' : 'none';
+                row.style.display = (category.includes(categoryFilter) && name.includes(nameFilter) && code.includes(codeFilter)) ? '' : 'none';
             });
         }
 
         document.getElementById('categoryFilter').addEventListener('keyup', applyFilters);
         document.getElementById('nameFilter').addEventListener('keyup', applyFilters);
+        document.getElementById('codeFilter').addEventListener('keyup', applyFilters);
+
     </script>
 <?php $__env->stopPush(); ?>
 

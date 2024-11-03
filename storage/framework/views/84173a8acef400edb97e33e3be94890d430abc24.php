@@ -26,6 +26,18 @@ $image_url = !empty($user->avatar) && asset(Storage::exists($user->avatar)) ? $u
 <?php $__env->stopSection(); ?>
 
 <?php $__env->startSection('action-btn'); ?>
+    <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('Manage Role')): ?>
+        <a href="<?php echo e(route('roles.index')); ?>" data-bs-toggle="tooltip"
+            class="btn btn-sm btn-primary btn-icon m-1">
+            <?php echo e(__('Roles')); ?></a>
+        </a>
+    <?php endif; ?>
+
+    <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('Manage Permission')): ?>
+        <a href="<?php echo e(route('permissions.index')); ?>" data-bs-toggle="tooltip" 
+            class="btn btn-sm btn-primary btn-icon m-1">
+            <?php echo e(__('Permissions')); ?></a>
+    <?php endif; ?>
 
     <a class="btn btn-sm btn-primary grid" data-bs-toggle="tooltip" data-bs-original-title="<?php echo e(__('Grid View')); ?>">
         <i class="ti ti-layout-grid"></i>
@@ -34,6 +46,8 @@ $image_url = !empty($user->avatar) && asset(Storage::exists($user->avatar)) ? $u
     <a class="btn btn-sm btn-primary list" data-bs-toggle="tooltip" data-bs-original-title="<?php echo e(__('List View')); ?>">
         <i class="ti ti-list-check"></i>
     </a>
+
+    
 
     <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('Create User')): ?>
         <a href="#" data-ajax-popup="true" data-size="lg" data-bs-toggle="tooltip"
