@@ -13,7 +13,7 @@ use App\Models\Order;
 use App\Models\Plan;
 use App\Models\Product;
 use App\Models\Purchase;
-use App\Models\Room;
+use App\Models\Location;
 use App\Models\Sale;
 use App\Models\Todo;
 use App\Models\User;
@@ -40,26 +40,6 @@ class HomeController extends Controller
                 ->where('branches.created_by', '=', $user_id)
                 ->count();
 
-            $productObj = Product::getallproducts();
-
-            $productscount = $productObj->count();
-
-            $lowstockproducts = [];
-
-            if ($productscount > 0) {
-
-                foreach ($productObj->get() as $key => $product) {
-
-                    $productquantity = $product->getTotalProductQuantity();
-
-                    if ($productquantity <= $low_stock) {
-                        $lowstockproducts[] = [
-                            'name' => $product->name,
-                            'quantity' => $productquantity
-                        ];
-                    }
-                }
-            }
 
             //   Dashboard calendar 
             $events    = Calendar::where('created_by', '=', \Auth::user()->getCreatedBy())->get();
@@ -87,11 +67,15 @@ class HomeController extends Controller
 
             $vendors = Vendor::select('id')->where('created_by', '=', $user_id)->count();
 
+            $productObj = Product::getallproducts();
+
+            $productscount = $productObj->count();
+
             $monthlySelledAmount = Sale::totalSelledAmount(true);
-            $totalSelledAmount   = Sale::totalSelledAmount();
+            $dailySelledAmount = Sale::totalSelledAmount(false, true);
 
             $monthlyPurchasedAmount = Purchase::totalPurchasedAmount(true);
-            $totalPurchasedAmount   = Purchase::totalPurchasedAmount();
+            $dailyPurchasedAmount = Purchase::totalPurchasedAmount(false, true);
 
             $purchasesArray = Purchase::getPurchaseReportChart();
 
@@ -101,25 +85,24 @@ class HomeController extends Controller
 
             $saletarget = BranchSalesTarget::getBranchTargets(true);
 
-            $rooms = Room::where('created_by', '=', Auth::user()->getCreatedBy())->orderBy('id', 'ASC')->get();
+            $locations = Location::where('created_by', '=', Auth::user()->getCreatedBy())->orderBy('id', 'ASC')->get();
 
             $homes = [
                 'branches',
                 'cashregisters',
                 'productscount',
-                'lowstockproducts',
                 'notifications',
                 'customers',
                 'vendors',
                 'monthlySelledAmount',
-                'totalSelledAmount',
+                'dailySelledAmount',
                 'monthlyPurchasedAmount',
-                'totalPurchasedAmount',
+                'dailyPurchasedAmount',
                 'purchasesArray',
                 'salesArray',
                 'todos',
                 'saletarget',
-                'rooms',
+                'locations',
             ];
 
             $getOrderChart     = $this->getOrderChart(['duration' => 'week']);
@@ -192,5 +175,59 @@ class HomeController extends Controller
         $usr->save();
 
         return redirect()->back();
+    }
+
+    public function getStockNotification($stock_type)
+    {
+        $productObj = Product::getallproducts();
+
+        $productscount = $productObj->count();
+
+        if ($stock_type == 'min') {
+            
+            $lowstockproducts = [];
+    
+            if ($productscount > 0) {
+    
+                foreach ($productObj->get() as $key => $product) {
+    
+                    $productquantity = $product->getTotalProductQuantity();
+    
+                    if ($productquantity <= $product->min_stock && $product->is_stock == 1) {
+                        $lowstockproducts[] = [
+                            'name' => $product->name,
+                            'quantity' => $productquantity
+                        ];
+                    }
+                }
+            }
+
+            $html = view('components.low-stock-notification', compact('lowstockproducts'))->render();
+
+            return response()->json(['html' => $html]);
+
+        } else if ($stock_type == 'max') {
+            $highstockproducts = [];
+    
+            if ($productscount > 0) {
+    
+                foreach ($productObj->get() as $key => $product) {
+    
+                    $productquantity = $product->getTotalProductQuantity();
+    
+                    if ($productquantity >= $product->max_stock && $product->is_stock == 1) {
+                        $highstockproducts[] = [
+                            'name' => $product->name,
+                            'quantity' => $productquantity
+                        ];
+                    }
+                }
+            }
+
+            $html = view('components.high-stock-notification', compact('highstockproducts'))->render();
+
+            return response()->json(['html' => $html]);
+        }
+       
     }
 }

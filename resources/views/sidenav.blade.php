@@ -96,9 +96,9 @@ $cust_theme_bg = App\Models\Utility::getValByName('cust_theme_bg');
                                 </li>
                             @endcan
 
-                            @can('Manage Room')
+                            @can('Manage Location')
                                 <li class="dash-item dash-hasmenu">
-                                    <a class="dash-link sub-item" href="{{ route('rooms.index') }}">
+                                    <a class="dash-link sub-item" href="{{ route('location-types.index') }}">
                                         <span class="dash-micon"><i class="ti ti-ticket"></i></span>{{ __('Locations') }}
                                     </a>
                                 </li>

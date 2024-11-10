@@ -147,6 +147,22 @@ if (\Auth::user()->type == 'Super Admin') {
         </div>
     </div>
 
+    <div class="modal fade" id="secondaryModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="body">
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
     <script src="<?php echo e(asset('custom/js/jquery.min.js')); ?>"></script>
     <script src="<?php echo e(asset('custom/js/jquery.form.js')); ?>"></script>
     <script src="<?php echo e(asset('assets/js/plugins/choices.min.js')); ?>"></script>

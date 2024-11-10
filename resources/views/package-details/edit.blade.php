@@ -53,7 +53,7 @@
                     <div class="row">
                         <div class="col-md-4">
                             <div class="form-group">
-                                {{ Form::label('number_optional_choice', __('Optional Product yang bisa Dipilih'), ['class' => 'col-form-label']) }}
+                                {{ Form::label('number_optional_choice', __('Optional Product that can be Selected'), ['class' => 'col-form-label']) }}
                                 {{ Form::number('number_optional_choice', $package->number_optional_choice, ['class' => 'form-control', 'placeholder' => __(''), 'required' => true, 'min' => 1]) }}
                             </div>
                         </div>

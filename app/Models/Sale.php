@@ -96,20 +96,21 @@ class Sale extends Model
         return Auth::user()->priceFormat($monthSelledAmount);
     }
 
-    public static function totalSelledAmount($month = false)
+    public static function totalSelledAmount($month = false, $daily = false)
     {
         $sells = new Sale();
-
         $sells = $sells->where('created_by', '=', Auth::user()->getCreatedBy());
 
-        if($month)
-        {
+        if ($daily) {
+            // Filter by the current day
+            $sells = $sells->whereDate('created_at', '=', date('Y-m-d'));
+        } elseif ($month) {
+            // Filter by the current month
             $sells = $sells->whereRaw('MONTH(created_at) = ?', [date('m')]);
         }
 
         $selledAmount = 0;
-        foreach($sells->get() as $key => $sell)
-        {
+        foreach ($sells->get() as $sell) {
             $selledAmount += $sell->getTotal();
         }
 

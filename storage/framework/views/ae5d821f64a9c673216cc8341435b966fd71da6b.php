@@ -100,9 +100,9 @@ $cust_theme_bg = App\Models\Utility::getValByName('cust_theme_bg');
                                 </li>
                             <?php endif; ?>
 
-                            <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('Manage Room')): ?>
+                            <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('Manage Location')): ?>
                                 <li class="dash-item dash-hasmenu">
-                                    <a class="dash-link sub-item" href="<?php echo e(route('rooms.index')); ?>">
+                                    <a class="dash-link sub-item" href="<?php echo e(route('location-types.index')); ?>">
                                         <span class="dash-micon"><i class="ti ti-ticket"></i></span><?php echo e(__('Locations')); ?>
 
                                     </a>

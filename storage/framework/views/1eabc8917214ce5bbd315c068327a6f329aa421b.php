@@ -80,6 +80,13 @@
 
         </div>
 
+        <div class="form-group col-md-6">
+            <?php echo e(Form::label('talent_fee', __('Talent Fee'), ['class' => 'col-form-label'])); ?>
+
+            <?php echo e(Form::number('talent_fee', null, ['class' => 'form-control', 'placeholder' => __('Enter Talent Fee'), 'step' => '1', 'id' => 'talent_fee'])); ?>
+
+        </div>
+
     </div>
     <div class="row">
         <div class="form-group col-md-4">
@@ -140,12 +147,17 @@
     function calculateProfit() {
         const purchasePrice = parseFloat(document.getElementById('purchase_price').value) || 0;
         const salePrice = parseFloat(document.getElementById('sale_price').value) || 0;
-        const profit = salePrice - purchasePrice;
+        const talentFee = parseFloat(document.getElementById('talent_fee').value) || 0;
+        const profit = salePrice - purchasePrice - talentFee;
         document.getElementById('profit').value = profit.toFixed(0); // Display profit with two decimal places
     }
 
     // Attach event listeners
     document.getElementById('sale_price').addEventListener('keyup', function() {
+        calculateProfit();
+    });
+
+    document.getElementById('talent_fee').addEventListener('keyup', function() {
         calculateProfit();
     });
 

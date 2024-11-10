@@ -134,7 +134,7 @@ class VendorController extends Controller
                 $request->all(),
                 [
                     'name' => 'required|max:120',
-                    'code' => 'required|unique:vendors,code,' . ($request->id ?? 'NULL') . ',id',
+                    'code' => 'required|unique:vendors,code,' . $vendor->id . ',id',
                     'phone_number' => 'required|min:10|max:15',
                 ]
             );

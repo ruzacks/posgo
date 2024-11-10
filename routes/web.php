@@ -3,6 +3,8 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\VendorController;
+use App\Models\LocationPrice;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -19,7 +21,7 @@ require __DIR__ . '/auth.php';
 Route::get('/', [HomeController::class,'index'])->name('home')->middleware(['XSS']);
 Route::get('/change/mode', ['as' => 'change.mode', 'uses' => 'HomeController@changeMode']);
 
-
+Route::get('get-stock-notification/{stock_type}', [HomeController::class, 'getStockNotification'])->name('stock.notification')->middleware(['auth', 'XSS']);
 
 Route::resource('roles', RoleController::class)->middleware(['auth','XSS']);
 
@@ -60,14 +62,21 @@ Route::resource('talent-grades', TalentGradeController::class)->middleware(['aut
 
 Route::resource('agencies', AgencyController::class)->middleware(['auth','XSS']);
 
-Route::resource('rooms', RoomController::class)->middleware(['auth','XSS']);
-Route::post('update-number-rooms', [RoomController::class, 'numberOfRoomUpdate'])->middleware(['auth', 'XSS']);
-route::get('room-detail/{type}',[RoomController::class, 'detailRooms'])->name('rooms.detail')->middleware(['auth', 'XSS']);
-route::get('create-room/{type}',[RoomController::class, 'createRoom'])->name('rooms.type.create')->middleware(['auth', 'XSS']);
+Route::resource('locations', LocationController::class)->middleware(['auth','XSS']);
+Route::resource('location-types', LocationTypeController::class)->middleware(['auth','XSS']);
+
+Route::post('update-number-locations', [LocationController::class, 'numberOfLocationUpdate'])->middleware(['auth', 'XSS']);
+route::get('location-detail/{locationType}',[LocationController::class, 'detailLocations'])->name('locations.detail')->middleware(['auth', 'XSS']);
+route::get('create-location/{type}',[LocationController::class, 'createLocation'])->name('locations.type.create')->middleware(['auth', 'XSS']);
 
 Route::resource('vouchers', VoucherController::class)->middleware(['auth','XSS']);
 
-
+Route::get('location-prices/{locationType}', [LocationPriceController::class, 'index'])->name('location-prices.index')->middleware(['auth','XSS']);
+Route::get('location-prices/create/{locationType}', [LocationPriceController::class, 'create'])->name('location-prices.create')->middleware(['auth','XSS']);
+Route::post('location-prices/store/{locationType}', [LocationPriceController::class, 'store'])->name('location-prices.store')->middleware(['auth','XSS']);
+Route::get('location-prices/edit/{locationPrice}', [LocationPriceController::class, 'edit'])->name('location-prices.edit')->middleware(['auth','XSS']);
+Route::post('location-prices/update/{locationPrice}', [LocationPriceController::class, 'update'])->name('location-prices.update')->middleware(['auth','XSS']);
+Route::delete('location-prices/destroy/{locationPrice}', [LocationPriceController::class, 'destroy'])->name('location-prices.destroy')->middleware(['auth','XSS']);
 
 Route::get('search-vendors/{search?}', [VendorController::class,'searchVendors'])->name('search.vendors')->middleware(['auth', 'XSS']);
 // Route::get('search-vendors/{search?}', 'VendorController@searchVendors')->name('search.vendors')->middleware(['auth', 'XSS']);

@@ -188,6 +188,79 @@ $(document).on('click', 'a[data-ajax-popup="true"], button[data-ajax-popup="true
     });
 });
 
+$(document).on('click', 'a[data-secondary-popup="true"], button[data-secondary-popup="true"]', function(e) {
+    e.preventDefault();
+
+    var data = {};
+    var title = $(this).data('title');
+    var size = (($(this).data('size') == '') && (typeof $(this).data('size') === "undefined")) ? 'md' : $(this).data('size');
+    var url = $(this).data('url');
+    var align = $(this).data('align');
+
+    $("#secondaryModal .modal-title").html(title);
+    $("#secondaryModal .modal-dialog").addClass('modal-' + size + ' modal-dialog-' + align);
+
+    if ($('#vc_name_hidden').length > 0) {
+        data['vc_name'] = $('#vc_name_hidden').val();
+    }
+
+    $.ajax({
+        url: url,
+        data: data,
+        success: function(data) {
+
+            $('#secondaryModal .body').html(data);
+
+            $("select option[value='']").prop('disabled', !$("select option[value='']").prop('disabled'));
+
+            // if ($('[data-toggle="select"]').length > 0) {
+            //     $('[data-toggle="select"]').select2({});
+            // }
+
+            if (($('#from').length > 0 && $('#to').length > 0)) {
+                $("#from, #to").datepicker({ format: 'yyyy-mm-dd', startDate: new Date(), autoclose: true });
+            }
+            if ($('#date').length > 0) {
+                $("#date").datepicker({ format: 'yyyy-mm-dd', autoclose: true });
+            }
+
+            if ($('#month').length > 0 && !$('#month').hasClass('edit-branch-target')) {
+                $('#month').datepicker({
+                    format: "MM-yyyy",
+                    startView: "months",
+                    minViewMode: "months",
+                    autoclose: true
+                });
+            }
+
+            if ($(".d_week").length > 0) {
+                $($(".d_week")).each(function(index, element) {
+                    var id = $(element).attr('id');
+
+                    (function() {
+                        const d_week = new Datepicker(document.querySelector('#' + id), {
+                            buttonClass: 'btn',
+                            format: 'yyyy-mm-dd',
+                        });
+                    })();
+
+                });
+            }
+
+            if ($('#description').length > 0) {
+                // CKEDITOR.replace('description');
+            }
+
+            $('#secondaryModal').modal('toggle');
+            // $('#commonModal').modal({backdrop: 'static', keyboard: false});
+        },
+        error: function(data) {
+            data = data.responseJSON;
+            show_toastr('Error', data.message, 'error')
+        }
+    });
+});
+
 Array.prototype.remove = function() {
     var what, a = arguments,
         L = a.length,

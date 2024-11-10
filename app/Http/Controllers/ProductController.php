@@ -86,6 +86,7 @@ class ProductController extends Controller
             $product->is_consigment  = $request->is_consigment ? $request->is_consigment : 0 ;
             $product->min_stock      = $request->min_stock ? $request->min_stock : 0;
             $product->max_stock      = $request->max_stock ? $request->max_stock : 0;
+            $product->talent_fee      = $request->talent_fee ? $request->talent_fee : 0;
 
             if (!empty($request->input('category_id'))) {
                 $product->category_id = $request->category_id;
@@ -181,7 +182,7 @@ class ProductController extends Controller
                 $request->all(),
                 [
                     'name' => 'required|max:100|unique:products,name,' . $product->id . ',id,created_by,' . Auth::user()->getCreatedBy(),
-                    'code' => 'required|unique:products,code,NULL,id,created_by,' . Auth::user()->getCreatedBy(),
+                    'code' => 'required|unique:products,code,' . $product->id . ',id,created_by,' . Auth::user()->getCreatedBy(),
                     'sku' => 'nullable|regex:/[\-]+/i',
                 ]
             );
@@ -200,6 +201,7 @@ class ProductController extends Controller
             $product->is_consigment  = $request->is_consigment ? $request->is_consigment : 0 ;
             $product->min_stock      = $request->min_stock ? $request->min_stock : 0;
             $product->max_stock      = $request->max_stock ? $request->max_stock : 0;
+            $product->talent_fee      = $request->talent_fee ? $request->talent_fee : 0;
 
             if (!empty($request->input('category_id'))) {
                 $product->category_id = $request->category_id;

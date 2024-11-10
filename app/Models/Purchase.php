@@ -84,23 +84,27 @@ class Purchase extends Model
         return $items;
     }
 
-    public static function totalPurchasedAmount($month = false)
+    public static function totalPurchasedAmount($month = false, $daily = false)
     {
         $purchased = new Purchase();
-
         $purchased = $purchased->where('created_by', '=', Auth::user()->getCreatedBy());
 
-        if ($month) {
+        if ($daily) {
+            // Filter by the current day
+            $purchased = $purchased->whereDate('created_at', '=', date('Y-m-d'));
+        } elseif ($month) {
+            // Filter by the current month
             $purchased = $purchased->whereRaw('MONTH(created_at) = ?', [date('m')]);
         }
 
         $purchasedAmount = 0;
-        foreach ($purchased->get() as $key => $purchase) {
+        foreach ($purchased->get() as $purchase) {
             $purchasedAmount += $purchase->getTotal();
         }
 
         return Auth::user()->priceFormat($purchasedAmount);
     }
+
 
     public static function getPurchaseReportChart()
     {

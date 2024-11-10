@@ -78,6 +78,20 @@
                         <div class="col-lg-3 col-6">
                             <div class="card" style="min-height: 225px;">
                                 <div class="card-body">
+                                    <div class="theme-avtar bg-info">
+                                        <i class="ti ti-chart-pie"></i>
+                                    </div>
+                                    <p class="text-muted text-sm mt-4 mb-2">{{ __('Sales Of This Day') }}</p>
+                                    <h6 class="mb-3"></h6>
+                                    <h3 class="mb-0">{{ $dailySelledAmount }}<span
+                                            class="text-danger text-sm"><i class=""></i></span></h3>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-3 col-6">
+                            <div class="card" style="min-height: 225px;">
+                                <div class="card-body">
                                     <div class="theme-avtar bg-primary">
                                         <i class="ti ti-hand-finger"></i>
                                     </div>
@@ -88,19 +102,21 @@
                                 </div>
                             </div>
                         </div>
+
                         <div class="col-lg-3 col-6">
                             <div class="card" style="min-height: 225px;">
                                 <div class="card-body">
-                                    <div class="theme-avtar bg-info">
-                                        <i class="ti ti-chart-pie"></i>
+                                    <div class="theme-avtar bg-danger">
+                                        <i class="ti ti-chart-bar"></i>
                                     </div>
-                                    <p class="text-muted text-sm mt-4 mb-2">{{ __('Total Sales Amount') }}</p>
+                                    <p class="text-muted text-sm mt-4 mb-2">{{ __('Purchase Of This Day') }}</p>
                                     <h6 class="mb-3"></h6>
-                                    <h3 class="mb-0">{{ $totalSelledAmount }}<span
-                                            class="text-danger text-sm"><i class=""></i></span></h3>
+                                    <h3 class="mb-0">{{ $dailyPurchasedAmount }}<span
+                                            class="text-danger text-sm"><i class=""></i> </span></h3>
                                 </div>
                             </div>
                         </div>
+
                         <div class="col-lg-3 col-6">
                             <div class="card" style="min-height: 225px;">
                                 <div class="card-body">
@@ -114,86 +130,9 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-lg-3 col-6">
-                            <div class="card" style="min-height: 225px;">
-                                <div class="card-body">
-                                    <div class="theme-avtar bg-danger">
-                                        <i class="ti ti-chart-bar"></i>
-                                    </div>
-                                    <p class="text-muted text-sm mt-4 mb-2">{{ __('Total Purchase Amount') }}</p>
-                                    <h6 class="mb-3"></h6>
-                                    <h3 class="mb-0">{{ $totalPurchasedAmount }}<span
-                                            class="text-danger text-sm"><i class=""></i> </span></h3>
-                                </div>
-                            </div>
-                        </div>
                     </div>
 
-                    {{-- <div class="col-xxl-12">
-
-                        <div class="card">
-                            <div class="card-header">
-                                <div class="d-flex align-items-center justify-content-between ">
-                                    <h5>{{ __('To do list') }}</h5>
-                                    <div type="button" class="btn btn-sm btn-primary btn-icon m-1">
-                                        <a href="#" class="" data-bs-toggle="tooltip" data-bs-placement="top"
-                                            title="{{ __('Add Todo Task') }}" data-ajax-popup="true"
-                                            data-title="{{ __('Add Todo Task') }}"
-                                            data-url="{{ route('todos.create') }}">
-                                            <i class="ti ti-plus text-white"></i></a>
-                                    </div>
-                                </div>
-                            </div>
-
-                            @if (isset($todos) && !empty($todos) && count($todos) > 0)
-                                <ul class="list-group list-group-flush todo-scrollbar" data-toggle="checklist">
-                                    @foreach ($todos as $key => $todo)
-                                        <li class="checklist-entry list-group-item flex-column align-items-start">
-                                            <div
-                                                class="d-flex align-items-center justify-content-between checklist-item checklist-item-{{ $todo->color }} {{ $todo->status == 1 ? 'checklist-item-checked' : '' }}">
-                                                <div class="checklist-info">
-                                                    <a href="#!" class="fs-14 mb-0"><b>{{ $todo->title }}</b></a>
-                                                    <small
-                                                        class="d-block">{{ Auth::user()->datetimeFormat($todo->created_at) }}</small>
-                                                </div>
-                                                <div>
-                                                    <div class="form-check  custom-checkbox ">
-                                                        <input class="custom-control-input form-check-input"
-                                                            id="chk-todo-task-{{ $todo->id }}"
-                                                            data-url="{{ route('todo.status', $todo->id) }}"
-                                                            type="checkbox"
-                                                            {{ $todo->status == 1 ? ' checked=""' : '' }}>
-                                                        <label class="custom-control-label"
-                                                            for="chk-todo-task-{{ $todo->id }}"></label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </li>
-                                    @endforeach
-                                </ul>
-                            @endif
-                        </div>
-                    </div> --}}
                 </div>
-
-                {{-- <div class="col-xxl-5">
-                    <div class="card">
-                        <div class="card-header">
-
-                            <div class="row ">
-                                <div class="col-6">
-                                    <h5>{{ __('Purchase Sale Report') }}</h5>
-                                </div>
-                                <div class="col-6 text-end">
-                                    <h6>{{ __('Last 10 Days') }}</h6>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <div id="traffic-chart"></div>
-                        </div>
-                    </div>
-                </div> --}}
 
                 <div class="col-md-9">
                     <div class="card">
@@ -203,55 +142,73 @@
                                     <thead>
                                         <tr>
                                             <th>#</th>
-                                            <th>{{ __('Room Code') }}</th>
-                                            <th>{{ __('Room Status') }}</th>
+                                            <th>{{ __('Location') }}</th>
+                                            <th>{{ __('Status') }}</th>
+                                            <th>{{ __('Sale') }}</th>
                                             <th>{{ __('Check In') }}</th>
                                             <th>{{ __('Check Out') }}</th>
                                             <th>{{ __('Elapsed') }}</th>
                                             <th width="200px">{{ __('Action') }}</th>
                                         </tr>
+                                        <tr>
+                                            <td></td>
+                                            <td colspan="2">
+                                                <input type="text" id="codeFilter" class="form-control" placeholder="{{ __('Kode Lokasi') }}">
+                                            </td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach ($rooms as $key => $room)
+                                        @foreach ($locations as $key => $location)
                                             @php
                                                 // Generate random check-in time within a specific range
                                                 $randomCheckIn = \Carbon\Carbon::now()->subDays(rand(0, 5))->setTime(rand(0, 23), rand(0, 59));
                                                 // Set check-out 2 hours after check-in
                                                 $randomCheckOut = $randomCheckIn->copy()->addHours(2);
-                                                // Determine color based on room status
+                                                // Determine color based on location status
                                                 $statusColor = '';
-                                                switch ($room->status) {
+                                                switch ($location->status) {
                                                     case 'occupied':
                                                         $checkInDisplay = $randomCheckIn->format('d M H:i');
                                                         $checkOutDisplay = $randomCheckOut->format('d M H:i');
                                                         $statusColor = 'text-success'; // Green for occupied
+                                                        $sale = 2000000;
                                                         break;
                                                     case 'booked':
                                                         $checkInDisplay = $randomCheckIn->format('d M H:i');
                                                         $checkOutDisplay = ''; // No check-out time for booked
                                                         $statusColor = 'text-warning'; // Yellow for booked
+                                                        $sale = 300000;
                                                         break;
                                                     case 'available':
                                                         $checkInDisplay = '';
                                                         $checkOutDisplay = '';
                                                         $statusColor = 'text-info'; // Blue for available
+                                                        $sale = 0;
                                                         break;
                                                     case 'maintenance':
                                                         $checkInDisplay = '';
                                                         $checkOutDisplay = '';
                                                         $statusColor = 'text-secondary'; // Gray for maintenance
+                                                        $sale = 200000;
                                                         break;
                                                     default:
                                                         $checkInDisplay = '';
                                                         $checkOutDisplay = '';
                                                         $statusColor = 'text-muted'; // Default for unknown status
+                                                        $sale = 0;
                                                         break;
                                                 }
                                             @endphp
                                             <tr>
                                                 <td>{{ $key + 1 }}</td>
-                                                <td>{{ $room->code }}</td>
-                                                <td class="{{ $statusColor }}">{{ $room->status }}</td>
+                                                <td class="code-cell">{{ $location->code }}</td>
+                                                <td class="{{ $statusColor }}">{{ $location->status }}</td>
+                                                <td>{{ $sale }}</td>
                                                 <td>{{ $checkInDisplay }}</td>
                                                 <td>{{ $checkOutDisplay }}</td>
                                                 <td class="elapsed-time" data-start="{{ $randomCheckIn }}">
@@ -259,41 +216,25 @@
                                                 </td>
                                                 <td class="Action">
                                                     <div class="d-flex justify-content-start align-items-center gap-2">
-                                                        @if ($room->is_active == 1)
-                                                            @can('Edit Room')
+                                                        @if ($location->is_active == 1)
+                                                            @can('Edit Location')
                                                                 <div class="action-btn btn-info">
                                                                     <a href="#" class="mx-3 btn btn-sm d-inline-flex align-items-center"
-                                                                        data-ajax-popup="true" title="{{ __('Edit Room') }}"
-                                                                        data-title="{{ __('Edit Room') }}" data-size="lg"
-                                                                        data-url="{{ route('rooms.edit', $room->id) }}"
-                                                                        data-bs-toggle="tooltip" title="{{ __('Edit Room') }}">
+                                                                        data-ajax-popup="true" title="{{ __('Edit Location') }}"
+                                                                        data-title="{{ __('Edit Location') }}" data-size="lg"
+                                                                        data-url="{{ route('locations.edit', $location->id) }}"
+                                                                        data-bs-toggle="tooltip" title="{{ __('Edit Location') }}">
                                                                         <i class="ti ti-pencil text-white"></i>
                                                                     </a>
                                                                 </div>
                                                             @endcan
-                                    
-                                                            @can('Delete Room')
-                                                                <div class="action-btn bg-danger">
-                                                                    <a href="#"
-                                                                        class="bs-pass-para mx-3 btn btn-sm d-inline-flex align-items-center"
-                                                                        data-toggle="sweet-alert" data-bs-toggle="tooltip"
-                                                                        data-confirm="{{ __('Are You Sure?') }}"
-                                                                        data-text="{{ __('This action can not be undone. Do you want to continue?') }}"
-                                                                        data-confirm-yes="delete-form-{{ $room->id }}"
-                                                                        title="{{ __('Delete') }}">
-                                                                        <i class="ti ti-trash text-white"></i>
-                                                                    </a>
-                                                                </div>
-                                                                {!! Form::open(['method' => 'DELETE', 'route' => ['rooms.destroy', $room->id], 'id' => 'delete-form-' . $room->id]) !!}
-                                                                {!! Form::close() !!}
-                                                            @endcan
-                                    
+                                                                        
                                                             <!-- Money Badge Button -->
                                                             <div class="action-btn bg-primary">
                                                                 <a href="#"
                                                                     class="bs-pass-para mx-3 btn btn-sm d-inline-flex align-items-center"
                                                                     data-bs-toggle="tooltip"
-                                                                    title="{{ __('Charge') }}">
+                                                                    title="{{ __('Transaction') }}">
                                                                     <i class="ti ti-credit-card text-white"></i>
                                                                 </a>
                                                             </div>
@@ -313,17 +254,15 @@
                     </div>
                 </div>
 
-                @if (count($lowstockproducts) > 0)
                 <div class="col-md-3">
-                    @foreach ($lowstockproducts as $product)
-                        <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                            <span class="alert-icon"><i class="ti ti-alert-triangle"></i></span>
-                            <strong>{{ $product['name'] }}</strong><small> {{ $product['quantity'] . __(' items left)') }}</small>
-                            {{-- <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> --}}
+                    <div class="card p-2 ">
+                        {{ Form::select('stock_notif', ['min' => 'Min Stock', 'max' => 'Max Stock'], null, ['class' => 'form-control mb-3', 'data-toggle' => 'select', 'required' => '']) }}
+                        <div class="stock_notification_area">
+                            
                         </div>
-                    @endforeach
+                       
+                    </div>
                 </div>
-            @endif
 
                 @if (isset($saletarget) && !empty($saletarget) && count($saletarget) > 0)
 
@@ -572,6 +511,32 @@
     </script>
 
     <script>
+
+        // Define the function that makes the AJAX call
+        function fetchStockNotification(stockType) {
+            $.ajax({
+                url: "{{ route('stock.notification', ':stock_type') }}".replace(':stock_type', stockType),
+                type: 'GET',
+                success: function (response) {
+                    // Update the notification container with the response HTML
+                    document.querySelector('.stock_notification_area').innerHTML = response.html;
+                },
+                error: function (error) {
+                    console.error("Error fetching stock notifications:", error);
+                }
+            });
+        }
+
+        // Trigger the AJAX call on page load
+        const initialStockType = $('select[name="stock_notif"]').val();
+        fetchStockNotification(initialStockType);
+
+        // Trigger the AJAX call when the dropdown changes
+        $('select[name="stock_notif"]').on('change', function () {
+            const selectedStockType = $(this).val();
+            fetchStockNotification(selectedStockType);
+        });
+
         // Ticking Elapsed Time Counter
         function updateElapsedTime() {
             document.querySelectorAll('.elapsed-time').forEach(function(element) {
@@ -588,5 +553,26 @@
         }
 
         setInterval(updateElapsedTime, 1000);
+
+        function applyFilters() {
+            // let categoryFilter = document.getElementById('categoryFilter').value.toLowerCase();
+            // let nameFilter = document.getElementById('nameFilter').value.toLowerCase();
+            let codeFilter = document.getElementById('codeFilter').value.toLowerCase();
+            let rows = document.querySelectorAll('#pc-dt-simple tbody tr');
+
+            rows.forEach(row => {
+                // let category = row.querySelector('.category-cell').textContent.toLowerCase();
+                // let name = row.querySelector('.name-cell').textContent.toLowerCase();
+                let code = row.querySelector('.code-cell').textContent.toLowerCase();
+
+
+                // Display the row only if it matches both filters
+                row.style.display = (code.includes(codeFilter)) ? '' : 'none';
+            });
+        }
+
+        // document.getElementById('categoryFilter').addEventListener('keyup', applyFilters);
+        // document.getElementById('nameFilter').addEventListener('keyup', applyFilters);
+        document.getElementById('codeFilter').addEventListener('keyup', applyFilters);
     </script>
 @endpush
