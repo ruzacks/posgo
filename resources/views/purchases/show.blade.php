@@ -11,19 +11,19 @@
                     <div class="text-gray-light text-uppercase">{{ __('Invoice From:') }}</div>
                     {!! $details['vendor']['details']  !!}
                 </div>
-                <div class="company-details mt-4">
+                {{-- <div class="company-details mt-4">
                     <div class="text-gray-light text-uppercase">{{ __('Invoice To:') }}</div>
                     {!! $details['user']['details']  !!}
-                </div>
+                </div> --}}
             </div>
             <div class="col invoice-details text-end">
                 <h1 class="invoice-id h4">{{ $details['invoice_id'] }}</h1>
                 <div class="date mb-3">{{ __('Date of Invoice') }}: {{ $details['date'] }}</div>
-                @if (Utility::getValByName('SITE_RTL') == 'on')
+                {{-- @if (Utility::getValByName('SITE_RTL') == 'on')
                     <div class="date mb-3 float-start">{!! DNS2D::getBarcodeHTML(route('purchase.link.copy',\Illuminate\Support\Facades\Crypt::encrypt($details['invoice_id'])),'QRCODE',2,2) !!}</div>
                 @else
                     <div class="date mb-3 float-end">{!! DNS2D::getBarcodeHTML(route('purchase.link.copy',\Illuminate\Support\Facades\Crypt::encrypt($details['invoice_id'])),'QRCODE',2,2) !!}</div>
-                @endif
+                @endif --}}
                 <span class="clearfix" style="clear: both; display: block;"></span>
             </div>
         </div>
@@ -39,8 +39,6 @@
                             <th class="text-left">{{ __('Items') }}</th>
                             <th>{{ __('Quantity') }}</th>
                             <th class="text-right">{{ __('Price') }}</th>
-                            <th class="text-right">{{ __('Tax') }}</th>
-                            <th class="text-right">{{ __('Tax Amount') }}</th>
                             <th class="text-right">{{ __('Total') }}</th>
                         </tr>
                         </thead>
@@ -58,12 +56,6 @@
                                     {{ $value['price'] }}
                                 </td>
                                 <td class="text-right cart-summary-table">
-                                    {{ $value['tax'] }}
-                                </td>
-                                <td class="text-right cart-summary-table">
-                                    {{ $value['tax_amount'] }}
-                                </td>
-                                <td class="text-right cart-summary-table">
                                     {{ $value['subtotal'] }}
                                 </td>
                             </tr>
@@ -74,15 +66,13 @@
                             <td class="text-left font-weight-bold">{{ __('Total') }}</td>
                             <td></td>
                             <td></td>
-                            <td></td>
-                            <td></td>
                             <td class="text-right font-weight-bold">{{ $purchases['total'] }}</td>
                         </tr>
                         </tfoot>
                     </table>
                 </div>
                 @if($details['pay'] == 'show')
-                    <button class="btn btn-primary btn-done-payment rounded mb-3 float-right" data-url="{{route('purchases.store')}}">{{ __('Done Payment') }}</button>
+                    <button class="btn btn-primary btn-done-payment rounded mb-3 float-right" data-url="{{route('purchases.store')}}">{{ __('Done Purchase') }}</button>
                 @endif
             </div>
         </div>

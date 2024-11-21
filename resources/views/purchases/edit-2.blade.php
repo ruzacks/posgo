@@ -187,12 +187,12 @@ if (\Auth::user()->type == 'Super Admin') {
                                                 <div class="input-group-prepend">
                                                     <span class="input-group-text"><i data-feather="user"></i></span>
                                                 </div>
-                                                {{ Form::select('searchvendors', $vendors, null, ['class' => 'form-control pr-4 rounded-right', 'id' => 'searchvendors']) }}
-                                                <a href="#" id="clearinput">
+                                                {{ Form::select('searchvendors', $vendors, $purchase->vendor_id, ['class' => 'form-control pr-4 rounded-right', 'id' => 'searchvendors']) }}
+                                                {{-- <a href="#" id="clearinput">
                                                     <div class="input-group-text">
                                                         <i data-feather="x-square"></i>
                                                     </div>
-                                                </a>
+                                                </a> --}}
                                                 
                                                 {{ Form::hidden('vc_name_hidden', '', ['id' => 'vc_name_hidden']) }}
                                             </div>
@@ -222,46 +222,44 @@ if (\Auth::user()->type == 'Super Admin') {
                                                     </tr>
                                                     </thead>
                                                     <tbody id="tbody">
-                                                    @if(session($lastsegment) && !empty(session($lastsegment)) && count(session($lastsegment)) > 0)
-                                                    @foreach(session($lastsegment) as $id => $details)
-                                                        @php
-                                                           $product = \App\Models\Product::find($details['id']);
-                                                            $total += $details['subtotal'];
-                                                        @endphp
-                                                            <tr data-product-id="{{$id}}" id="product-id-{{$id}}">
-                                                                <td class="col-sm-3 name">{{ $details['name'] }}</td>
-                                                                <td>
-                                                                    <span class="col-sm-6 quantity buttons_added">
-                                                                        <input type="button" value="-" class="minus">
-                                                                        <input type="number" step="1" min="1" max="" name="quantity"
-                                                                                                   title="{{ __('Quantity') }}" class="input-number"
-                                                                                                   data-url="{{ url('update-cart/') }}" data-id="{{ $id }}"
-                                                                                                   size="10" style="color: white" value="{{ $details['quantity'] }}">
-                                                                        <input type="button" value="+" class="plus">
-                                                                    </span>
-                                                                </td>
-                                                                <td class="col-sm-6 price text-center">{{ Auth::user()->priceFormat($details['price']) }}</td>
-                                                                <td class="col-sm-3 text-center">
-                                                                    <span class="subtotal">{{ Auth::user()->priceFormat($details['subtotal']) }}</span>
-                                                                </td>
-            
-                                                                <td class="col-sm-2 mt-2">
-                                                                    <a href="#" class="action-btn bg-danger bs-pass-para" data-confirm="{{ __('Are You Sure?') }}" data-text="{{__('This action can not be undone. Do you want to continue?')}}"
-                                                                       data-confirm-yes="delete-form-{{ $id }}" title="{{ __('Delete') }}" data-id="{{ $id }}">
-                                                                        <i class="ti ti-trash text-white mx-3 btn btn-sm" title="{{ __('Delete') }}"></i>
-                                                                    </a>
-                                                                    {!! Form::open(['method' => 'delete', 'url' => ['remove-from-cart'],'id' => 'delete-form-'.$id]) !!}
-                                                                    <input type="hidden" name="session_key" value="{{ $lastsegment }}">
-                                                                    <input type="hidden" name="id" value="{{ $id }}">
-                                                                    {!! Form::close() !!}
-                                                                </td>
+                                                        @if($purchase->items->count() > 0)
+                                                            @php $total = 0; @endphp
+                                                            @foreach($purchase->items as $details)
+                                                                @php
+                                                                    $product = \App\Models\Product::find($details['product_id']);
+                                                                    $total += $details['price'] * $details['quantity'];
+                                                                @endphp
+                                                                <tr>
+                                                                    <td class="col-sm-3 name">{{ $product ? $product->name : __('Unknown Product') }}</td>
+                                                                    <td>
+                                                                        <span class="col-sm-6 quantity buttons_added">
+                                                                            <input type="button" value="-" class="minus">
+                                                                            <input type="number" step="1" min="1" name="quantity"
+                                                                                title="{{ __('Quantity') }}" class="input-number"
+                                                                                size="10" style="color: white" value="{{ $details->quantity }}">
+                                                                            <input type="button" value="+" class="plus">
+                                                                        </span>
+                                                                    </td>
+                                                                    <td class="col-sm-6 price text-center">{{ Auth::user()->priceFormat($details->price) }}<input type="hidden" class="unformatted_price" value="{{ $details->price }}"></td>
+                                                                    <td class="col-sm-3 text-center">
+                                                                        <span class="subtotal">{{ Auth::user()->priceFormat($details->price * $details->quantity) }}</span>
+                                                                    </td>
+                                                                    <td class="col-sm-2 mt-2">
+                                                                        <a href="#" class="action-btn bg-danger bs-pass-para" 
+                                                                        data-confirm="{{ __('Are You Sure?') }}" 
+                                                                        data-text="{{__('This action cannot be undone. Do you want to continue?')}}"
+                                                                        title="{{ __('Delete') }}">
+                                                                            <i class="ti ti-trash text-white mx-3 btn btn-sm" title="{{ __('Delete') }}"></i>
+                                                                        </a>
+                                                                    </td>
+                                                                </tr>
+                                                            @endforeach
+                                                        @else
+                                                            <tr class="text-center no-found">
+                                                                <td colspan="7">{{__('No Data Found.!')}}</td>
                                                             </tr>
-                                                    @endforeach
-                                                    @else
-                                                        <tr class="text-center no-found">
-                                                            <td colspan="7">{{__('No Data Found.!')}}</td>
-                                                        </tr>
-                                                    @endif
+                                                        @endif
+                                                    
                                                     </tbody>
                                                 </table>
                                             </div>
@@ -651,47 +649,47 @@ if (\Auth::user()->type == 'Super Admin') {
 
         $(document).on('change keyup', '#carthtml input[name="quantity"]', function (e) {
             e.preventDefault();
-            var ele = $(this);
-            var sum = 0;
-            var quantity = ele.closest('span').find('input[name="quantity"]').val();
+            let ele = e.target;
+            let quantity = parseInt(ele.value, 10) || 0; // Default to 0 if not a valid number
+            let row = ele.closest(".row");
+            let price = row.querySelector('.unformatted_price').value;
+            let subtotalElement = row.querySelector('.subtotal');
+            let totalElement = document.getElementById('displaytotal');
+            let allRows = document.querySelectorAll('#carthtml .row');
+            let sum = 0;
 
-            // console.log(quantity)
+            // Update subtotal for the current row
+            if (quantity > 0) {
+                let newSubtotal = price * quantity;
+                subtotalElement.textContent = addCommas(newSubtotal);
+            } else {
+                // Hide and remove the row if quantity is 0
+                row.style.transition = "0.25s ease";
+                row.style.opacity = 0;
+                setTimeout(() => row.remove(), 250);
+            }
 
-            $.ajax({
-                url: ele.data('url'),
-                method: "patch",
-                data: {
-                    id: ele.attr("data-id"),
-                    quantity: quantity,
-                    session_key: session_key
-                },
-                success: function (data) {
-
-                    if (data.code == '200') {
-
-                        if (quantity == 0) {
-                            ele.closest(".row").hide(250, function () {
-                                ele.closest(".row").remove();
-                            });
-                            if (ele.closest(".row").is(":last-child")) {
-                                $('#btn-pur button').attr('disabled', 'disabled');
-                                $('.btn-empty button').removeClass('btn-clear-cart');
-                            }
-                        }
-
-                        $.each(data.product, function (key, value) {
-                            sum += value.subtotal;
-                            $('#product-id-' + value.id + ' .subtotal').text(addCommas(value.subtotal));
-                        });
-
-                        $('#displaytotal').text(addCommas(sum));
-                    }
-                },
-                error: function (data) {
-                    data = data.responseJSON;
-                    show_toastr('{{ __("Error") }}', data.error, 'error');
-                }
+            // Recalculate the total sum
+            allRows.forEach(row => {
+                let quantityInput = row.querySelector('input[name="quantity"]');
+                let price = parseFloat(row.querySelector('.price').dataset.price);
+                let quantity = parseInt(quantityInput.value, 10) || 0;
+                sum += price * quantity;
             });
+
+            // Update the total
+            totalElement.textContent = addCommas(sum);
+
+            // Enable/Disable buttons based on cart status
+            let purchaseButton = document.querySelector('#btn-pur button');
+            let emptyButton = document.querySelector('.btn-empty button');
+            if (allRows.length === 0 || sum === 0) {
+                purchaseButton.setAttribute('disabled', 'disabled');
+                emptyButton.classList.remove('btn-clear-cart');
+            } else {
+                purchaseButton.removeAttribute('disabled');
+                emptyButton.classList.add('btn-clear-cart');
+            }
         });
 
         $(document).on('click', '.remove-from-cart', function (e) {
@@ -782,53 +780,36 @@ if (\Auth::user()->type == 'Super Admin') {
     });
 
 
-        $(document).on('click', '.btn-done-payment', function(e) {
-        e.preventDefault();
+            $(document).on('click', '.btn-done-payment', function(e) {
+                e.preventDefault();
 
-        var ele = $(this);
+                var ele = $(this);
 
-        $.ajax({
-            url: ele.data('url'),
-            method: 'POST',
-            data: {
-                vc_name: $('#searchvendors').val(),
-            },
-            beforeSend: function() {
-                ele.remove();
-            },
-            success: function(data) {
-                if (data.code == 200) {
-                    show_toastr('Success', data.success, 'success');
-
-                    // Show Swal dialog for user choice
-                    Swal.fire({
-                        title: 'Purchase Complete?',
-                        text: 'Print Invoice?',
-                        icon: 'question',
-                        showCancelButton: true,
-                        confirmButtonText: 'Print',
-                        cancelButtonText: 'No',
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            // If Print Invoice is chosen
-                            window.open(data.invoice_url, '_blank'); // Open in new tab
-                            window.location.reload(); // Reload current page after printing
-                        } else {
-                            // If Reload Page is chosen
-                            window.location.reload(); // Reload current page
+                $.ajax({
+                    url: ele.data('url'),
+                    method: 'POST',
+                    data: {
+                        vc_name: $('#vc_name_hidden').val(),
+                        // branch_id: $('#branch_id').val(),
+                        // cash_register_id: $('#cash_register_id').val(),
+                    },
+                    beforeSend: function() {
+                        ele.remove();
+                    },
+                    success: function(data) {
+                        if (data.code == 200) {
+                            show_toastr('Success', data.success, 'success')
                         }
-                    });
-                    $('#commonModal').hide();          // Hide the modal
-                    $('.modal-backdrop').remove();
-                }
-            },
-            error: function(data) {
-                data = data.responseJSON;
-                show_toastr('Error', data.error, 'error');
-            }
-        });
-    });
-
+                        setTimeout(function() {
+                            window.location.reload();
+                        }, 1000);
+                    },
+                    error: function(data) {
+                        data = data.responseJSON;
+                        show_toastr('{{ __('Error') }}', data.error, 'error');
+                    }
+                });
+            });
 
 
 
@@ -943,38 +924,6 @@ if (\Auth::user()->type == 'Super Admin') {
                 }
             });
 
-
-
-            // $("#searchvendors").autocomplete({
-            //     minLength: 0,
-            //     source: function(request, response) {
-            //         $.getJSON("{{ route('search.vendors') }}", {
-            //             search: request.term
-            //         }, response);
-            //     },
-            //     search: function() {
-            //         var term = this.value;
-            //         if (term.length == 0) {
-            //             $("#vc_name_hidden").val('');
-            //         }
-            //         if (term.length < 2) {
-            //             return false;
-            //         }
-            //     },
-            //     focus: function(event, ui) {
-            //         $("#searchvendors, #vc_name_hidden").val(ui.item.label);
-            //         return false;
-            //     },
-            //     select: function(event, ui) {
-            //         $("#searchvendors, #vc_name_hidden").val(ui.item.label);
-            //         return false;
-            //     }
-            // }).autocomplete("instance")._renderItem = function(ul, item) {
-
-            //     return $("<li>")
-            //         .append("<div>" + item.label + "</div>")
-            //         .appendTo(ul);
-            // };
 
 </script>
 

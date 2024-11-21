@@ -34,10 +34,33 @@ class PurchaseController extends Controller
             $brands = Brand::where('created_by', $user_id)->pluck('name', 'id');
             $brands->prepend(__('Select Brand'), '');
 
+            $vendors = Vendor::where('created_by', $user_id)->pluck('name', 'id');
+            $vendors->prepend(__('Select Vendor'), '');
+
             $cashregister = CashRegister::where('created_by', $user_id)->pluck('name', 'id');
             $cashregister->prepend(__('Select CashRegister'), '');
 
-            return view('purchases.index',compact('brands','cashregister'));
+            return view('purchases.index',compact('brands','cashregister','vendors'));
+        } else {
+            return redirect()->back()->with('error', __('Permission denied.'));
+        }
+    }
+
+    public function edit(Purchase $purchase)
+    {
+        if (Auth::user()->can('Manage Purchases')) {
+            $user_id = Auth::user()->getCreatedBy();
+
+            $brands = Brand::where('created_by', $user_id)->pluck('name', 'id');
+            $brands->prepend(__('Select Brand'), '');
+
+            $vendors = Vendor::where('created_by', $user_id)->pluck('name', 'id');
+            $vendors->prepend(__('Select Vendor'), '');
+
+            $cashregister = CashRegister::where('created_by', $user_id)->pluck('name', 'id');
+            $cashregister->prepend(__('Select CashRegister'), '');
+
+            return view('purchases.edit-2',compact('purchase','brands','cashregister','vendors'));
         } else {
             return redirect()->back()->with('error', __('Permission denied.'));
         }
@@ -52,7 +75,7 @@ class PurchaseController extends Controller
 
             $settings = Utility::settings();
 
-            $vendor = Vendor::where('name', '=', $request->vc_name)->where('created_by', $user->getCreatedBy())->first();
+            $vendor = Vendor::where('id', '=', $request->vc_name)->where('created_by', $user->getCreatedBy())->first();
             $details = [
                 'invoice_id' => $user->purchaseInvoiceNumberFormat($this->invoicePurchaseNumber()),
                 'vendor' => $vendor != null ? $vendor->toArray() : [],
@@ -108,11 +131,10 @@ class PurchaseController extends Controller
 
     public function store(Request $request)
     {
-       
         if (Auth::user()->can('Manage Purchases')) {
             $user_id = Auth::user()->getCreatedBy();
 
-            $vendor_id        = Vendor::vendor_id($request->vc_name);
+            $vendor_id        = $request->vc_name;
             $branch_id        = $request->branch_id != '' ? $request->branch_id : 0;
             $cash_register_id = $request->cash_register_id != '' ? $request->cash_register_id : 0;
             $invoice_id       = $this->invoicePurchaseNumber();
@@ -172,17 +194,18 @@ class PurchaseController extends Controller
                         $purchase->vendor_email = $purchase->vendor->email;
                         $purchase->url          = route('get.purchased.invoice', $purchase_id);
 
-                        try {
-                            Mail::to($purchase->vendor_email)->send(new PurchasedInvoice($purchase));
-                        } catch (\Exception $e) {
-                            $smtp_error = "<br><span class='text-danger'>" . __('E-Mail has been not sent due to SMTP configuration') . '</span>';
-                        }
+                        // try {
+                        //     Mail::to($purchase->vendor_email)->send(new PurchasedInvoice($purchase));
+                        // } catch (\Exception $e) {
+                        //     $smtp_error = "<br><span class='text-danger'>" . __('E-Mail has been not sent due to SMTP configuration') . '</span>';
+                        // }
                     }
 
                     return response()->json(
                         [
                             'code' => 200,
                             'success' => __('Payment completed successfully!') . ((isset($smtp_error)) ? $smtp_error : ''),
+                            'invoice_url' => $purchase->url
                         ]
                     );
                 }
@@ -216,10 +239,6 @@ class PurchaseController extends Controller
         return redirect()->back()->with('error', __('Permission denied.'));
     }
 
-    public function edit(Purchase $purchase)
-    {
-        return redirect()->back()->with('error', __('Permission denied.'));
-    }
 
     public function update(Request $request, Purchase $purchase)
     {
@@ -476,7 +495,7 @@ class PurchaseController extends Controller
             $logo=\App\Models\Utility::get_file('/');
             // $company_logo = Utility::getValByName('company_logo_dark');
             $company_logo = Utility::get_company_logo();
-            $img          = asset($logo . (isset($company_logo) && !empty($company_logo) ? $company_logo : 'logo-dark.png'));
+            $img          = asset($logo . (isset($company_logo) && !empty($company_logo) ? '2-logo-dark.png' : '2-logo-dark.png'));
 
             $font_color = Utility::getFontColor($color);
 

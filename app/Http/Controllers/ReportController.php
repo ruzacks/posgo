@@ -313,13 +313,9 @@ class ReportController extends Controller
                     <div class="action-btn btn-dark ms-2">
                     <a href="' . route('get.purchased.invoice', Crypt::encrypt($invoice->id)) . '" target="_blank" class="mx-3 btn btn-sm d-inline-flex align-items-center " data-bs-toggle="tooltip"  data-title="' . __('Download') . '"    title="' . __('Download') . '"><i class="ti ti-arrow-bar-to-down text-white"></i></a>
                     </div>
-
-                    <div class="action-btn btn-primary ms-2">
-                    <a href="' . route('purchase.link.copy', Crypt::encrypt($invoice->id)) . '" class="mx-3 btn btn-sm d-inline-flex align-items-center copy_link" data-bs-toggle="tooltip"  data-title="' . __('Copy Link') . '"  title="' . __('Copy Link') . '"><i class="ti ti-link text-white"></i></a>
-                    </div>
                     
                     <div class="action-btn btn-info ms-2">
-                    <a href="' . route('edit.purchase.invoice', $invoice->id) . '" class="mx-3 btn btn-sm d-inline-flex align-items-center"  data-bs-toggle="tooltip"  data-title="' . __('Edit') . '"  title="' . __('Edit') . '"> <i class="ti ti-pencil text-white" title="Edit"></i></a>
+                    <a href="' . route('purchases.edit', $invoice->id) . '" class="mx-3 btn btn-sm d-inline-flex align-items-center"  data-bs-toggle="tooltip"  data-title="' . __('Edit') . '"  title="' . __('Edit') . '"> <i class="ti ti-pencil text-white" title="Edit"></i></a>
                     </div>
                   
                     

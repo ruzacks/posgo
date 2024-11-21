@@ -93,7 +93,7 @@
             text-align: right;
             padding-top: 9px;
             padding-bottom: 9px;
-            padding-right: 10px;
+            padding-right: 0px;
         }
 
         .d-table-spacer[data-v-f2a183a6] {
@@ -131,8 +131,8 @@
         }
 
         .d-title[data-v-f2a183a6] {
-            font-size: 50px;
-            line-height: 50px;
+            font-size: 25px;
+            line-height: 25px;
             font-weight: bold;
             margin-bottom: 20px;
         }
@@ -524,7 +524,7 @@
                                             @if($settings['company_zipcode']) <br>{{$settings['company_zipcode']}}@endif <br>
                                                 @if(!empty($settings['tax_type']) && !empty($settings['vat_number'])){{$settings['tax_type'].' '. __('Number')}} : {{$settings['vat_number']}} <br>@endif
                                         </p>
-                                        <p> {!! DNS2D::getBarcodeHTML(route('purchase.link.copy',\Illuminate\Support\Facades\Crypt::encrypt($purchase->id)),'QRCODE',2,2) !!}</p>
+                                        {{-- <p> {!! DNS2D::getBarcodeHTML(route('purchase.link.copy',\Illuminate\Support\Facades\Crypt::encrypt($purchase->id)),'QRCODE',2,2) !!}</p> --}}
                                     </div>
                                     <div data-v-f2a183a6="" class="d-header-50 d-right">
                                         <div data-v-f2a183a6="" class="d-title">{{__('INVOICE')}}</div>
@@ -542,10 +542,10 @@
                                                 <td>{{__('Billing Time')}}:</td>
                                                 <td>{{$user->timeFormat($purchase->created_at)}}</td>
                                             </tr>
-                                            <tr>
+                                            {{-- <tr>
                                                 <td>{{__('Status')}}:</td>
                                                 <td>{{ ($purchase->status == 1) ? __('Partially Paid') : (($purchase->status == 2) ? __('Paid') : __('Unpaid')) }}</td>
-                                            </tr>
+                                            </tr> --}}
                                             
                                             </tbody>
                                         </table>
@@ -571,9 +571,7 @@
                                                 <div class="d-table-th w-8">{{__('Product')}}</div>
                                                 <div class="d-table-th w-2">{{__('Qty')}}</div>
                                                 <div class="d-table-th w-3">{{__('Price')}}</div>
-                                                <div class="d-table-th w-2">{{__('Tax')}}</div>
-                                                <div class="d-table-th w-4">{{__('Tax Amount')}}</div>
-                                                <div class="d-table-th w-3">{{__('Total')}}</div>
+                                                <div class="d-table-th w-9 text-center" style="text-align: center">{{__('Total')}}</div>
                                             </div>
                                             <div class="d-table-body">
                                                 @if(isset($purchase->items) && count($purchase->items) > 0)
@@ -589,13 +587,7 @@
                                                             <div class="d-table-td w-3">
                                                                 <span data-v-f2a183a6="">{{ $item->price }}</span>
                                                             </div>
-                                                            <div class="d-table-td w-2">
-                                                                <span data-v-f2a183a6="">{{ $item->tax }}</span>
-                                                            </div>
-                                                            <div class="d-table-td w-4">
-                                                                <span data-v-f2a183a6="">{{ $item->tax_amount }}</span>
-                                                            </div>
-                                                            <div class="d-table-td w-3">
+                                                            <div class="d-table-td w-9 text-end" style="text-align: right;">
                                                                 <span data-v-f2a183a6="">{{ $item->subtotal }}</span>
                                                             </div>
                                                         </div>
@@ -604,12 +596,6 @@
                                                     <div class="d-table-tr" style="border-bottom:1px solid {{($color == '#ffffff') ? 'black' : $color}};">
                                                         <div class="d-table-td w-2"><span>-</span></div>
                                                         <div class="d-table-td w-8">
-                                                            <span data-v-f2a183a6="">-</span>
-                                                        </div>
-                                                        <div class="d-table-td w-2">
-                                                            <span data-v-f2a183a6="">-</span>
-                                                        </div>
-                                                        <div class="d-table-td w-3">
                                                             <span data-v-f2a183a6="">-</span>
                                                         </div>
                                                         <div class="d-table-td w-2">
@@ -627,7 +613,7 @@
                                             <div data-v-f2a183a6="" class="d-table-footer">
                                                 <div data-v-f2a183a6="" class="d-table-controls"></div>
                                                 <div data-v-f2a183a6="" class="d-table-summary">
-                                                    <div data-v-f2a183a6="" class="d-table-summary-item" style="border-top: 1px solid {{($color == '#ffffff') ? 'black' : $color}}; border-bottom: 1px solid {{($color == '#ffffff') ? 'black' : $color}};">
+                                                    <div data-v-f2a183a6="" class="d-table-summary-item" style="border-bottom: 1px solid {{($color == '#ffffff') ? 'black' : $color}}; text-align:right">
                                                         <div data-v-f2a183a6="" class="d-table-label">{{ __('Total') }}:</div>
                                                         <div data-v-f2a183a6="" class="d-table-value">{{ $purchase->subtotal }}</div>
                                                     </div>

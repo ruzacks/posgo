@@ -358,7 +358,69 @@ class ProductController extends Controller
                               <div class="col-lg-2 col-md-2 col-sm-3 col-xs-4 col-12">
                               <div class="tab-pane fade show active toacart w-100" data-url="' . url('add-to-cart/' . $product->id . '/' . $lastsegment) .'">
                                   <div class="position-relative card">
-                                      <img alt="Image placeholder" src="' . asset(Storage::url($image_url)) . '" class="card-image avatar shadow hover-shadow-lg" style=" height: 6rem; width: 100%;">
+                                      <div class="p-0 custom-card-body card-body d-flex ">
+                                          <div class="card-body my-2 p-2 text-left card-bottom-content">
+                                              <h6 class="mb-2 text-dark product-title-name">' . $product->name . '</h6>
+                                              <small class="badge bg-primary mb-0 mt-2">' . Auth::user()->priceFormat($productprice) . '</small>
+
+                                              <small class="top-badge badge bg-danger mb-0">'. $product->quantity .'</small>
+                                          </div>
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
+                           
+                    ';
+
+
+
+            
+                }
+
+                return Response($output);
+            } else {
+                return Response(__('No result found'));
+            }
+        }
+    }
+
+    public function searchPurchaseProducts(Request $request)
+    {
+        $lastsegment = $request->session_key;
+
+        if (Auth::user()->can('Manage Product') && $request->ajax() && isset($lastsegment) && !empty($lastsegment)) {
+            $output = "";
+            if ($request->cat_id !== '' && $request->search == '') {
+                $products = Product::getallproducts()->where('category_id', $request->cat_id)->where('products.is_stock',1)->get();
+            } else {
+                $packageCatId = Category::where('name','PAKET')->pluck('id')->first();
+                $products = Product::getallproducts()->where(function ($query) use ($request) {
+                    $query->where('products.name', 'LIKE', "%{$request->search}%");
+            
+                    if (!empty($request->cat_id)) {
+                        $query->where('category_id', $request->cat_id);
+                    }
+                })
+                ->where('category_id', '!=', $packageCatId)
+                ->where('products.is_stock',1)
+                ->get();
+            }
+            if ($products) {
+                foreach ($products as $key => $product) {
+                    $image_url = (!empty($product->image) && Storage::exists($product->image)) ? $product->image : 'logo/placeholder.png';
+                    if ($request->session_key == 'purchases') {
+                        $productprice = $product->purchase_price != 0 ? $product->purchase_price : 0;
+                    } else if ($request->session_key == 'sales') {
+                        $productprice = $product->sale_price != 0 ? $product->sale_price : 0;
+                    } else {
+                        $productprice = $product->sale_price != 0 ? $product->sale_price : $product->purchase_price;
+                    }
+
+                    $output .= '
+                           
+                              <div class="col-lg-2 col-md-2 col-sm-3 col-xs-4 col-12">
+                              <div class="tab-pane fade show active toacart w-100" data-url="' . url('add-to-cart/' . $product->id . '/' . $lastsegment) .'">
+                                  <div class="position-relative card">
                                       <div class="p-0 custom-card-body card-body d-flex ">
                                           <div class="card-body my-2 p-2 text-left card-bottom-content">
                                               <h6 class="mb-2 text-dark product-title-name">' . $product->name . '</h6>
@@ -432,18 +494,13 @@ class ProductController extends Controller
 
             $tax = ($productprice * $producttax) / 100;
 
-            $subtotal        = $productprice + $tax;
+            $subtotal        =  $productprice ; // $productprice + $tax;
             $cart            = session()->get($session_key);
-            $image_url       = (!empty($product->image) && Storage::exists($product->image)) ? $product->image : 'logo/placeholder.png';
             $model_delete_id = 'delete-form-' . $id;
 
             $carthtml = '';
 
             $carthtml .= '<tr data-product-id="' . $id . '" id="product-id-' . $id . '">
-                                <td class="col-sm-2">
-                                    <img alt="Image placeholder" src="' . asset(Storage::url($image_url)) . '" class="card-image avatar rounded-circle shadow hover-shadow-lg">
-                                </td>
-
                                 <td class="col-sm-2">
                                     <span class="name">' . $productname . '</span>
                                 </td>
@@ -453,15 +510,11 @@ class ProductController extends Controller
                                 <td class="col-sm-2">
                                     <span class="quantity buttons_added">
                                         <input type="button" value="-" class="minus">
-                                        <input type="number" step="1" min="1" max="" name="quantity" title="' . __('Quantity') . '" class="input-number" size="4" data-url="' . url('update-cart/') . '" data-id="' . $id . '">
+                                        <input type="number" step="1" min="1" max="" style="color: white" name="quantity" title="' . __('Quantity') . '" class="input-number" size="4" data-url="' . url('update-cart/') . '" data-id="' . $id . '">
                                         <input type="button" value="+" class="plus">
                                     </span>
                                 </td>
                 `
-
-                                <td class="col-sm-2">
-                                    <span class="tax">' . $producttax . '%</span>
-                                </td>
 
                                 <td class="col-sm-2">
                                     <span class="price">' . Auth::user()->priceFormat($productprice) . '</span>
@@ -514,6 +567,7 @@ class ProductController extends Controller
                         404
                     );
                 }
+
 
                 session()->put($session_key, $cart);
 
@@ -619,8 +673,6 @@ class ProductController extends Controller
         if (Auth::user()->can('Manage Product') && $request->ajax() && isset($id) && !empty($id) && isset($session_key) && !empty($session_key)) {
             $cart = session()->get($session_key);
 
-
-
             if (isset($cart[$id]) && $quantity == 0) {
                 unset($cart[$id]);
             }
@@ -629,7 +681,7 @@ class ProductController extends Controller
 
                 $cart[$id]["quantity"] = $quantity;
 
-                $producttax            = $cart[$id]["tax"];
+                $producttax            = 0;
                 $productprice          = $cart[$id]["price"];
 
                 $subtotal = $productprice * $quantity;

@@ -10,8 +10,8 @@
     <a class="btn btn-sm btn-primary btn-icon m-1" data-bs-toggle="collapse" data-bs-target=".multi-collapse"
         data-bs-toggle="tooltip" title="{{ __('Filter') }}"> <i class="ti ti-filter text-white"></i> </a>
 
-    <a href="{{ route('Purchase.export') }}" class="btn btn-sm btn-primary btn-icon m-1" data-bs-toggle="tooltip"
-        title="{{ __('Export') }}">
+    <a href="{{ route('purchases.index') }}" class="btn btn-sm btn-primary btn-icon m-1" data-bs-toggle="tooltip"
+        title="{{ __('Purchase') }}">
         <i class="ti ti-file-export text-white"></i>
     </a>
 @endsection
@@ -107,7 +107,7 @@
                                         <th>{{ __('Purchase From') }}</th>
                                         <th>{{ __('Items Purchased') }}</th>
                                         <th>{{ __('Total') }}</th>
-                                        <th>{{ __('Payment Status') }}</th>
+                                        {{-- <th>{{ __('Payment Status') }}</th> --}}
                                         <th class="text-center" style="width: 180px;">{{ __('Action') }}</th>
                                     </tr>
                                 </thead>
@@ -128,7 +128,7 @@
                                         <td rowspan="1" colspan="1">
                                             <h5 class="h6" id="totalcounts"></h5>
                                         </td>
-                                        <td rowspan="1" colspan="1"></td>
+                                        {{-- <td rowspan="1" colspan="1"></td> --}}
                                         <td rowspan="1" colspan="1"></td>
                                     </tr>
                                 </tfoot>
@@ -235,9 +235,9 @@
                             {
                                 "data": "itemstotal"
                             },
-                            {
-                                "data": "paymentstatus"
-                            },
+                            // {
+                            //     "data": "paymentstatus"
+                            // },
                             {
                                 "data": "action"
                             }

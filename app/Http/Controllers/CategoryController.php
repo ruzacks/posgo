@@ -136,19 +136,6 @@ class CategoryController extends Controller
             </div>
             </div>
         </div>';
-        // <span class="product-count">'.$all_products.' Items</span>
-        //  $html= '<div class="col-md-3 mb-3 zoom-in ">
-        //               <div class="card rounded-10 card-stats mb-0 cat-active" data-id="">
-        //                  <div class="card-body p-3 category-select" data-cat-id="">
-        //                     <div class="row">
-        //                        <div class="col text-white">
-        //                           <h6 class="card-title text-white mb-0 ">'.__("All").'</h6>
-                                
-        //                        </div>
-        //                     </div>
-        //                  </div>
-        //               </div>
-        //            </div>';
             foreach ($cat as $key => $c) {
                 $dcls = '';
                 if($c->products > 0){
@@ -161,19 +148,34 @@ class CategoryController extends Controller
                    </div>
                 </div>
              </div>';
-            // <span class="product-count">'.$c->products.' Items</span>
+                }
+        return Response($html);
+    }
+    
+    public function getProductPurchaseCategories(){
 
-            // $html .= ' <div class="col-md-3 mb-3 zoom-in cat-list-btn">
-            //               <div class="card rounded-10 card-stats mb-0 overflow-hidden" data-id="'.$c->id.'">
-            //                  <div class="card-body p-3 '.$dcls.'" data-cat-id="'.$c->id.'">
-            //                     <div class="row">
-            //                        <div class="col">
-            //                           <h6 class="card-title mb-0 ">'.$c->name.'</h6>
-            //                        </div>
-            //                     </div>
-            //                  </div>
-            //               </div>
-            //            </div>';
+        $cat = Category::getallPurchaseCategories();
+        $all_products = Product::getallproducts()->count();
+        $html = '<div class="mb-3 mr-2 zoom-in " style="padding-right: 10px;">
+            <div class="card rounded-10 card-stats mb-0 cat-active overflow-hidden" data-id="0">
+            <div class="category-select" data-cat-id="">
+                <button type="button" class="btn tab-btns btn-primary">'.__("All Categories").'</button>
+                
+            </div>
+            </div>
+        </div>';
+            foreach ($cat as $key => $c) {
+                $dcls = '';
+                if($c->products > 0){
+                    $dcls = 'category-select';
+                }
+                $html .= ' <div class="mb-3 mr-2 zoom-in cat-list-btn" style=" padding-right: 10px;">
+                <div class="card rounded-10 card-stats mb-0 overflow-hidden " data-id="'.$c->id.'">
+                   <div class="'.$dcls.'" data-cat-id="'.$c->id.'">
+                      <button type="button" class="btn tab-btns ">'.$c->name.'</button>
+                   </div>
+                </div>
+             </div>';
                 }
         return Response($html);
     }   

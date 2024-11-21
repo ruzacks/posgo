@@ -133,5 +133,11 @@ class Category extends Model
         $cat = Category::select('categories.*', \DB::raw("COUNT(pu.category_id) products"))->leftjoin('products as pu','categories.id' ,'=','pu.category_id')->where('categories.created_by', '=', Auth::user()->getCreatedBy())->orderBy('categories.id', 'DESC')->groupBy('categories.id')->get();
         return $cat;
     }
+
+    public static function getallPurchaseCategories()
+    {
+        $cat = Category::select('categories.*', \DB::raw("COUNT(pu.category_id) products"))->leftjoin('products as pu','categories.id' ,'=','pu.category_id')->whereNotIn('categories.name',['PAKET','VOUCHER'])->where('categories.created_by', '=', Auth::user()->getCreatedBy())->orderBy('categories.id', 'DESC')->groupBy('categories.id')->get();
+        return $cat;
+    }
     
 }

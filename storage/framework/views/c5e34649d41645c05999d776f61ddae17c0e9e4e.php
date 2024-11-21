@@ -93,7 +93,7 @@
             text-align: right;
             padding-top: 9px;
             padding-bottom: 9px;
-            padding-right: 10px;
+            padding-right: 0px;
         }
 
         .d-table-spacer[data-v-f2a183a6] {
@@ -131,8 +131,8 @@
         }
 
         .d-title[data-v-f2a183a6] {
-            font-size: 50px;
-            line-height: 50px;
+            font-size: 25px;
+            line-height: 25px;
             font-weight: bold;
             margin-bottom: 20px;
         }
@@ -524,7 +524,7 @@
                                             <?php if($settings['company_zipcode']): ?> <br><?php echo e($settings['company_zipcode']); ?><?php endif; ?> <br>
                                                 <?php if(!empty($settings['tax_type']) && !empty($settings['vat_number'])): ?><?php echo e($settings['tax_type'].' '. __('Number')); ?> : <?php echo e($settings['vat_number']); ?> <br><?php endif; ?>
                                         </p>
-                                        <p> <?php echo DNS2D::getBarcodeHTML(route('purchase.link.copy',\Illuminate\Support\Facades\Crypt::encrypt($purchase->id)),'QRCODE',2,2); ?></p>
+                                        
                                     </div>
                                     <div data-v-f2a183a6="" class="d-header-50 d-right">
                                         <div data-v-f2a183a6="" class="d-title"><?php echo e(__('INVOICE')); ?></div>
@@ -542,10 +542,7 @@
                                                 <td><?php echo e(__('Billing Time')); ?>:</td>
                                                 <td><?php echo e($user->timeFormat($purchase->created_at)); ?></td>
                                             </tr>
-                                            <tr>
-                                                <td><?php echo e(__('Status')); ?>:</td>
-                                                <td><?php echo e(($purchase->status == 1) ? __('Partially Paid') : (($purchase->status == 2) ? __('Paid') : __('Unpaid'))); ?></td>
-                                            </tr>
+                                            
                                             
                                             </tbody>
                                         </table>
@@ -571,9 +568,7 @@
                                                 <div class="d-table-th w-8"><?php echo e(__('Product')); ?></div>
                                                 <div class="d-table-th w-2"><?php echo e(__('Qty')); ?></div>
                                                 <div class="d-table-th w-3"><?php echo e(__('Price')); ?></div>
-                                                <div class="d-table-th w-2"><?php echo e(__('Tax')); ?></div>
-                                                <div class="d-table-th w-4"><?php echo e(__('Tax Amount')); ?></div>
-                                                <div class="d-table-th w-3"><?php echo e(__('Total')); ?></div>
+                                                <div class="d-table-th w-9 text-center" style="text-align: center"><?php echo e(__('Total')); ?></div>
                                             </div>
                                             <div class="d-table-body">
                                                 <?php if(isset($purchase->items) && count($purchase->items) > 0): ?>
@@ -589,13 +584,7 @@
                                                             <div class="d-table-td w-3">
                                                                 <span data-v-f2a183a6=""><?php echo e($item->price); ?></span>
                                                             </div>
-                                                            <div class="d-table-td w-2">
-                                                                <span data-v-f2a183a6=""><?php echo e($item->tax); ?></span>
-                                                            </div>
-                                                            <div class="d-table-td w-4">
-                                                                <span data-v-f2a183a6=""><?php echo e($item->tax_amount); ?></span>
-                                                            </div>
-                                                            <div class="d-table-td w-3">
+                                                            <div class="d-table-td w-9 text-end" style="text-align: right;">
                                                                 <span data-v-f2a183a6=""><?php echo e($item->subtotal); ?></span>
                                                             </div>
                                                         </div>
@@ -604,12 +593,6 @@
                                                     <div class="d-table-tr" style="border-bottom:1px solid <?php echo e(($color == '#ffffff') ? 'black' : $color); ?>;">
                                                         <div class="d-table-td w-2"><span>-</span></div>
                                                         <div class="d-table-td w-8">
-                                                            <span data-v-f2a183a6="">-</span>
-                                                        </div>
-                                                        <div class="d-table-td w-2">
-                                                            <span data-v-f2a183a6="">-</span>
-                                                        </div>
-                                                        <div class="d-table-td w-3">
                                                             <span data-v-f2a183a6="">-</span>
                                                         </div>
                                                         <div class="d-table-td w-2">
@@ -627,7 +610,7 @@
                                             <div data-v-f2a183a6="" class="d-table-footer">
                                                 <div data-v-f2a183a6="" class="d-table-controls"></div>
                                                 <div data-v-f2a183a6="" class="d-table-summary">
-                                                    <div data-v-f2a183a6="" class="d-table-summary-item" style="border-top: 1px solid <?php echo e(($color == '#ffffff') ? 'black' : $color); ?>; border-bottom: 1px solid <?php echo e(($color == '#ffffff') ? 'black' : $color); ?>;">
+                                                    <div data-v-f2a183a6="" class="d-table-summary-item" style="border-bottom: 1px solid <?php echo e(($color == '#ffffff') ? 'black' : $color); ?>; text-align:right">
                                                         <div data-v-f2a183a6="" class="d-table-label"><?php echo e(__('Total')); ?>:</div>
                                                         <div data-v-f2a183a6="" class="d-table-value"><?php echo e($purchase->subtotal); ?></div>
                                                     </div>

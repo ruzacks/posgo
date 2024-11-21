@@ -98,6 +98,8 @@ Route::delete('remove-from-cart', [ProductController::class,'removeFromCart'])->
 Route::post('empty-cart', [ProductController::class,'emptyCart'])->middleware(['XSS']);
 Route::get('name-search-products', [ProductController::class,'searchProductsByName'])->name('name.search.products')->middleware(['XSS']);
 Route::get('search-products', [ProductController::class,'searchProducts'])->name('search.products')->middleware(['XSS']);
+Route::get('search-purchase-products', [ProductController::class,'searchPurchaseProducts'])->name('search.purchase.products')->middleware(['XSS']);
+
 
 
 // Route::get('add-to-cart/{id}/{session}', 'ProductController@addToCart')->middleware(['auth', 'XSS']);
@@ -108,6 +110,8 @@ Route::get('search-products', [ProductController::class,'searchProducts'])->name
 // Route::get('search-products', 'ProductController@searchProducts')->name('search.products')->middleware(['auth', 'XSS']);
 
 Route::get('product-categories', [CategoryController::class,'getProductCategories'])->name('product.categories')->middleware(['XSS']);
+Route::get('product-purchase-categories', [CategoryController::class,'getProductPurchaseCategories'])->name('product.purchase.categories')->middleware(['XSS']);
+
 // Route::get('product-categories', 'CategoryController@getProductCategories')->name('product.categories')->middleware(['auth', 'XSS']);
 
 Route::resource('products', ProductController::class)->middleware(['auth','XSS']);

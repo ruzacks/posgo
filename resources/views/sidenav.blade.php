@@ -107,6 +107,24 @@ $cust_theme_bg = App\Models\Utility::getValByName('cust_theme_bg');
                         </ul>
                     </li>
                 @endif
+                @if (Gate::check('Manage User') || Gate::check('Manage Role') || Gate::check('Manage Permission'))
+                    <li class="dash-item dash-hasmenu">
+                        <a href="#!" class="dash-link"><span class="dash-micon"><i
+                                    class="ti ti-server"></i></span><span
+                                class="dash-mtext">{{ __('Transaction') }}</span><span class="dash-arrow"><i
+                                    data-feather="chevron-right"></i></span></a>
+                        <ul class="dash-sub-item mx-2" style="display: none">
+
+                            @can('Manage Purchases')
+                                <li class="dash-item dash-hasmenu">
+                                    <a class="dash-link sub-item" href="{{ route('reports.purchases') }}">
+                                        <span class="dash-micon"><i class="ti ti-users"></i></span>{{ __('Purchase') }}
+                                    </a>
+                                </li>
+                            @endcan
+                        </ul>
+                    </li>
+                @endif
             @endif
 
           
