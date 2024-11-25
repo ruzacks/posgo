@@ -515,10 +515,10 @@ if (\Auth::user()->type == 'Super Admin') {
 <style type="text/css">
 
 </style>
-{{-- <script src="{{ asset('js/jquery-ui.js') }}"></script> --}}
+<script src="{{ asset('js/jquery-ui.js') }}"></script>
 @stack('scripts')
 
-{{-- <script src="{{asset('js/jquery-ui.min.js')}}"></script> --}}
+<script src="{{asset('js/jquery-ui.min.js')}}"></script>
 <script src="{{ asset('js/jquery-ui.js') }}"></script>
 <script>
 
@@ -653,10 +653,10 @@ if (\Auth::user()->type == 'Super Admin') {
     }
 
     document.addEventListener('click', function (event) {
-        event.preventDefault();
-
+        
         // Check if the clicked element has the 'toacart' class
         if (event.target.closest('.toacart')) {
+            event.preventDefault();
             const element = event.target.closest('.toacart'); // Get the actual element clicked
 
             // Get the product data
