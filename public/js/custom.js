@@ -605,3 +605,26 @@ $(function() {
         })
     });
 });
+
+function pickLocation(idLocation) {
+    let hiddenInput = document.querySelector('input[type="hidden"][name="current_location_hidden"]');
+
+    
+    $.ajax({
+        url: "/reserve-location",
+        method: 'POST',
+        data: { location_id: idLocation },
+        success: function(response) {
+            if (response) {
+                show_toastr("Error", response.message, "error");
+            } else if (hiddenInput) {
+                hiddenInput.value = idLocation;
+            } else {
+                window.location.href = `/sales?location_id=${idLocation}`;
+            }
+            },
+            error: function(error) {
+                console.error('Error changing location:', error);
+            }
+        });
+}

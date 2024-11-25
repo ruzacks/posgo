@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\VendorController;
 use App\Models\LocationPrice;
+use App\Models\Vendor;
 
 /*
 |--------------------------------------------------------------------------
@@ -81,6 +82,8 @@ Route::delete('location-prices/destroy/{locationPrice}', [LocationPriceControlle
 Route::get('search-vendors/{search?}', [VendorController::class,'searchVendors'])->name('search.vendors')->middleware(['auth', 'XSS']);
 // Route::get('search-vendors/{search?}', 'VendorController@searchVendors')->name('search.vendors')->middleware(['auth', 'XSS']);
 Route::resource('vendors', VendorController::class)->middleware(['auth','XSS']);
+Route::get('get-vendor', [VendorController::class,'getVendor'])->name('get.vendor')->middleware(['auth', 'XSS']);
+
 
 Route::get('get-branches', [BranchController::class,'getBranches'])->name('get.branches')->middleware(['auth', 'XSS']);
 // Route::get('get-branches', 'BranchController@getBranches')->name('get.branches')->middleware(['auth', 'XSS']);
@@ -98,6 +101,7 @@ Route::delete('remove-from-cart', [ProductController::class,'removeFromCart'])->
 Route::post('empty-cart', [ProductController::class,'emptyCart'])->middleware(['XSS']);
 Route::get('name-search-products', [ProductController::class,'searchProductsByName'])->name('name.search.products')->middleware(['XSS']);
 Route::get('search-products', [ProductController::class,'searchProducts'])->name('search.products')->middleware(['XSS']);
+Route::get('search-products-json', [ProductController::class,'searchProductsJson'])->name('search.product.json')->middleware(['XSS']);
 Route::get('search-purchase-products', [ProductController::class,'searchPurchaseProducts'])->name('search.purchase.products')->middleware(['XSS']);
 
 
@@ -147,6 +151,11 @@ Route::get('sales-invoices/{id}/get_invoice', [SaleController::class,'printSaleI
 Route::get('sales-items', [SaleController::class,'salesItems'])->name('sales.items')->middleware(['auth', 'XSS']);
 
 Route::resource('sales', SaleController::class)->middleware(['auth','XSS']);
+
+Route::get('get-location', [SaleController::class, 'getLocation'])->name('locations.getLocation')->middleware(['auth', 'XSS']);
+Route::post('process-location', [SaleController::class, 'inProcess'])->name('locations.inProcess')->middleware(['auth', 'XSS']);
+Route::post('reserve-location', [SaleController::class, 'reserveLocation'])->name('locations.reserve')->middleware(['auth', 'XSS']);
+
 
 Route::get('returned-items', [ProductsReturnController::class,'returnedItems'])->name('returned.items')->middleware(['auth','XSS']);
 // Route::get('returned-items', 'ProductsReturnController@returnedItems')->name('returned.items')->middleware(['auth', 'XSS']);

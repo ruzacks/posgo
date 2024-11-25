@@ -153,7 +153,8 @@
                                         <tr>
                                             <td></td>
                                             <td colspan="2">
-                                                <input type="text" id="codeFilter" class="form-control" placeholder="{{ __('Kode Lokasi') }}">
+                                                {{-- <input type="text" id="codeFilter" class="form-control" placeholder="{{ __('Kode Lokasi') }}"> --}}
+                                                {{ Form::select('', $locationTypes, null, ['class' => 'form-control', 'data-toggle' => 'select', 'id' => 'codeFilter']) }}
                                             </td>
                                             <td></td>
                                             <td></td>
@@ -573,6 +574,6 @@
 
         // document.getElementById('categoryFilter').addEventListener('keyup', applyFilters);
         // document.getElementById('nameFilter').addEventListener('keyup', applyFilters);
-        document.getElementById('codeFilter').addEventListener('keyup', applyFilters);
+        document.getElementById('codeFilter').addEventListener('change', applyFilters);
     </script>
 @endpush

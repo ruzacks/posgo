@@ -314,10 +314,6 @@ class ReportController extends Controller
                     <a href="' . route('get.purchased.invoice', Crypt::encrypt($invoice->id)) . '" target="_blank" class="mx-3 btn btn-sm d-inline-flex align-items-center " data-bs-toggle="tooltip"  data-title="' . __('Download') . '"    title="' . __('Download') . '"><i class="ti ti-arrow-bar-to-down text-white"></i></a>
                     </div>
                     
-                    <div class="action-btn btn-info ms-2">
-                    <a href="' . route('purchases.edit', $invoice->id) . '" class="mx-3 btn btn-sm d-inline-flex align-items-center"  data-bs-toggle="tooltip"  data-title="' . __('Edit') . '"  title="' . __('Edit') . '"> <i class="ti ti-pencil text-white" title="Edit"></i></a>
-                    </div>
-                  
                     
                     <div class="action-btn btn-warning ms-2">
                     <a href="#" data-ajax-popup="true" data-title="' . __('Purchase Invoice') . '" data-size="lg" data-url="' . route('show.purchase.invoice', $invoice->id) . '" class="mx-3 btn btn-sm d-inline-flex align-items-center"  data-bs-toggle="tooltip"  data-title="' . __('Show') . '"   title="' . __('Show') . '"><i class="ti ti-eye text-white"></i></a>

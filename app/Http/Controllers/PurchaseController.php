@@ -40,7 +40,10 @@ class PurchaseController extends Controller
             $cashregister = CashRegister::where('created_by', $user_id)->pluck('name', 'id');
             $cashregister->prepend(__('Select CashRegister'), '');
 
-            return view('purchases.index',compact('brands','cashregister','vendors'));
+            $tempInvoice = Purchase::where('created_by', $user_id)->pluck('id')->max();
+            $tempInvoice = Auth::user()->purchaseInvoiceNumberFormat($tempInvoice + 1);
+
+            return view('purchases.index',compact('brands','cashregister','vendors','tempInvoice'));
         } else {
             return redirect()->back()->with('error', __('Permission denied.'));
         }
@@ -129,98 +132,144 @@ class PurchaseController extends Controller
         }
     }
 
+    // public function store(Request $request)
+    // {
+        
+        
+    //     if (Auth::user()->can('Manage Purchases')) {
+    //         $user_id = Auth::user()->getCreatedBy();
+
+    //         $vendor_id        = $request->vendor_id;
+    //         $invoice_id       = $this->invoicePurchaseNumber();
+
+            
+    //                 $purchase = new Purchase();
+
+    //                 $purchase->invoice_id       = $invoice_id;
+    //                 $purchase->vendor_id        = $vendor_id;
+    //                 $purchase->branch_id        = 1;
+    //                 $purchase->cash_register_id = 1;
+    //                 $purchase->created_by       = $user_id;
+
+    //                 $purchase->save();
+
+    //                 foreach ($purchases as $key => $value) {
+    //                     $product_id = $value['id'];
+
+    //                     $product = Product::whereId($product_id)->where('created_by', $user_id)->first();
+
+    //                     $original_quantity = ($product == null) ? 0 : (int)$product->quantity;
+
+    //                     $product_quantity = $original_quantity + $value['quantity'];
+    //                     if ($product != null && !empty($product)) {
+    //                         Product::where('id', $product_id)->update(['quantity' => $product_quantity]);
+    //                     }
+
+    //                     $purchaseditems = new PurchasedItems();
+
+    //                     $purchaseditems->purchase_id = $purchase->id;
+    //                     $purchaseditems->product_id  = $product_id;
+    //                     $purchaseditems->price       = $value['price'];
+    //                     $purchaseditems->quantity    = $value['quantity'];
+
+    //                     $purchaseditems->save();
+    //                 }
+
+
+    //                 if ($purchase->vendor != null) {
+    //                     $purchase_id            = Crypt::encrypt($purchase->id);
+    //                     $purchase->vendor_name  = ucfirst($purchase->vendor->name);
+    //                     $purchase->vendor_email = $purchase->vendor->email;
+    //                     $purchase->url          = route('get.purchased.invoice', $purchase_id);
+    //                 }
+
+    //                 return response()->json(
+    //                     [
+    //                         'code' => 200,
+    //                         'success' => __('Payment completed successfully!') . ((isset($smtp_error)) ? $smtp_error : ''),
+    //                         'invoice_url' => $purchase->url
+    //                     ]
+    //                 );
+    //             }
+           
+    //     } else {
+    //         return redirect()->back()->with('error', __('Permission denied.'));
+    //     }
+
     public function store(Request $request)
     {
         if (Auth::user()->can('Manage Purchases')) {
             $user_id = Auth::user()->getCreatedBy();
 
-            $vendor_id        = $request->vc_name;
-            $branch_id        = $request->branch_id != '' ? $request->branch_id : 0;
-            $cash_register_id = $request->cash_register_id != '' ? $request->cash_register_id : 0;
-            $invoice_id       = $this->invoicePurchaseNumber();
-            $purchases        = session()->get('purchases');
+            // Extract data from request
+            $vendor_id = $request->vendor_id;
+            $purchase_date = $request->purchase_date;
+            $vendor_invoice = $request->vendor_invoice;
+            $products = $request->products;
 
-            if (isset($purchases) && !empty($purchases) && count($purchases) > 0) {
-                $result = DB::table('purchases')->where('invoice_id', $invoice_id)->where('created_by', $user_id)->get();
-                if (count($result) > 0) {
-                    return response()->json(
-                        [
-                            'code' => 200,
-                            'success' => __('Payment is already completed!'),
-                        ]
-                    );
-                } else {
-                    $purchase = new Purchase();
+            // Generate a new purchase invoice number
+            $invoice_id = $this->invoicePurchaseNumber();
 
-                    $purchase->invoice_id       = $invoice_id;
-                    $purchase->vendor_id        = $vendor_id;
-                    $purchase->branch_id        = $branch_id;
-                    $purchase->cash_register_id = $cash_register_id;
-                    $purchase->created_by       = $user_id;
+            // Create a new Purchase
+            $purchase = new Purchase();
+            $purchase->invoice_id = $invoice_id;
+            $purchase->vendor_id = $vendor_id;
+            $purchase->branch_id = 1; // Adjust based on your logic
+            $purchase->cash_register_id = 1; // Adjust based on your logic
+            $purchase->purchase_date = $purchase_date;
+            $purchase->vendor_invoice = $vendor_invoice;
+            $purchase->created_by = $user_id;
+            $purchase->save();
 
-                    $purchase->save();
+            // Process each product in the products array
+            foreach ($products as $productData) {
+                $product_id = $productData['product_id'];
+                $quantity = (int)$productData['quantity'];
+                $price = (float)$productData['price'];
 
-                    foreach ($purchases as $key => $value) {
-                        $product_id = $value['id'];
+                // Update product stock
+                $product = Product::whereId($product_id)
+                    ->where('created_by', $user_id)
+                    ->first();
 
-                        $product = Product::whereId($product_id)->where('created_by', $user_id)->first();
-
-                        $original_quantity = ($product == null) ? 0 : (int)$product->quantity;
-
-                        $product_quantity = $original_quantity + $value['quantity'];
-                        if ($product != null && !empty($product)) {
-                            Product::where('id', $product_id)->update(['quantity' => $product_quantity]);
-                        }
-
-                        $tax_id = Product::tax_id($product_id);
-
-                        $purchaseditems = new PurchasedItems();
-
-                        $purchaseditems->purchase_id = $purchase->id;
-                        $purchaseditems->product_id  = $product_id;
-                        $purchaseditems->price       = $value['price'];
-                        $purchaseditems->quantity    = $value['quantity'];
-                        $purchaseditems->tax_id      = $tax_id;
-                        $purchaseditems->tax         = $value['tax'];
-
-                        $purchaseditems->save();
-                    }
-
-                    session()->forget('purchases');
-
-                    if ($purchase->vendor != null) {
-                        $purchase_id            = Crypt::encrypt($purchase->id);
-                        $purchase->vendor_name  = ucfirst($purchase->vendor->name);
-                        $purchase->vendor_email = $purchase->vendor->email;
-                        $purchase->url          = route('get.purchased.invoice', $purchase_id);
-
-                        // try {
-                        //     Mail::to($purchase->vendor_email)->send(new PurchasedInvoice($purchase));
-                        // } catch (\Exception $e) {
-                        //     $smtp_error = "<br><span class='text-danger'>" . __('E-Mail has been not sent due to SMTP configuration') . '</span>';
-                        // }
-                    }
-
-                    return response()->json(
-                        [
-                            'code' => 200,
-                            'success' => __('Payment completed successfully!') . ((isset($smtp_error)) ? $smtp_error : ''),
-                            'invoice_url' => $purchase->url
-                        ]
-                    );
+                if ($product) {
+                    $product->quantity += $quantity;
+                    $product->purchase_price = $price;
+                    $product->save();
                 }
-            } else {
-                return response()->json(
-                    [
-                        'code' => 404,
-                        'success' => __('Items not found!'),
-                    ]
-                );
+
+                // Add product to PurchasedItems
+                $purchasedItem = new PurchasedItems();
+                $purchasedItem->purchase_id = $purchase->id;
+                $purchasedItem->product_id = $product_id;
+                $purchasedItem->price = $price;
+                $purchasedItem->quantity = $quantity;
+                $purchasedItem->save();
             }
+
+            // Prepare invoice link if vendor exists
+            if ($purchase->vendor) {
+                $purchase_id = Crypt::encrypt($purchase->id);
+                $purchase->vendor_name = ucfirst($purchase->vendor->name);
+                $purchase->vendor_email = $purchase->vendor->email;
+                $purchase->url = route('get.purchased.invoice', $purchase_id);
+            }
+
+            // Return success response
+            return response()->json([
+                'status' => 200,
+                'message' => __('Payment completed successfully!'),
+                'invoice_url' => $purchase->url ?? null,
+            ]);
         } else {
-            return redirect()->back()->with('error', __('Permission denied.'));
+            return response()->json([
+                'status' => 403,
+                'message' => __('Permission denied.'),
+            ], 403);
         }
     }
+
+    
 
     function invoicePurchaseNumber()
     {

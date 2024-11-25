@@ -274,4 +274,20 @@ class VendorController extends Controller
 
         return redirect()->back()->with($data['status'], $data['msg']);
     }
+
+    public function getVendor(Request $request)
+    {
+        $vendor = Vendor::find($request->vendor_id);
+
+        if ($vendor) {
+            return response()->json([
+                'address' => $vendor->address,
+                'phone' => $vendor->phone_number,
+            ]);
+        }
+
+        return response()->json([
+            'error' => 'Vendor not found.',
+        ], 404);
+    }
 }

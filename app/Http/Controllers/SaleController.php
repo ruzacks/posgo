@@ -2,6 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\SaleExport;
+use App\Mail\SelledInvoice;
+use App\Models\Customer;
+use App\Models\Location;
+use App\Models\LocationType;
+use App\Models\Product;
+use App\Models\Sale;
+use App\Models\SelledItems;
+use App\Models\User;
+use App\Models\Utility;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
@@ -10,22 +21,25 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 use Konekt\PdfInvoice\InvoicePrinter;
-use App\Models\Customer;
-use App\Mail\SelledInvoice;
-use App\Models\Product;
-use App\Models\Sale;
-use App\Models\SelledItems;
-use App\Models\User;
-use App\Models\Utility;
 use Maatwebsite\Excel\Facades\Excel;
-use App\Exports\SaleExport;
 
 class SaleController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         if (Auth::user()->can('Manage Sales')) {
-            return view('sales.index');
+            $location = Location::where('id', $request->location_id)->first();
+    
+            if ($location->processing_by == null || now()->diffInSeconds($location->last_process_call) > 15) {
+                return view('sales.index', compact('location'));
+            } else if ($location && $location->last_process_call && 
+                now()->diffInSeconds($location->last_process_call) < 15 &&
+                $location->processing_by != Auth::user()->name) {
+               return redirect()->back()->with('error','Location is still being processed by ' . $location->processing_by);
+            } else {
+                return view('sales.index', compact('location'));
+            }
+    
         } else {
             return redirect()->back()->with('error', __('Permission denied.'));
         }
@@ -519,5 +533,37 @@ class SaleController extends Controller
         $data = Excel::download(new SaleExport(), $name . '.xlsx'); ob_end_clean();
 
         return $data;
+    }
+
+    public function getLocation()
+    {
+        $locations = LocationType::with('location')->where('created_by', Auth::user()->getCreatedBy())->get();
+
+        return view('sales.get-location', compact('locations'));
+    }
+
+    public function inProcess(Request $request)
+    {
+        $location = Location::where('id', $request->location_id)->where('created_by', Auth::user()->getCreatedBy())->first();
+
+        $location->state = "processing";
+        $location->processing_by = Auth::user()->name;
+        $location->last_process_call = Carbon::now();
+        $location->save();
+
+        return response()->json(['message' => 'Call is logged.']);
+    }
+
+    public function reserveLocation(Request $request){
+        $location = Location::where('id', $request->location_id)->first();
+    
+        if ($location && $location->last_process_call && 
+            now()->diffInSeconds($location->last_process_call) < 15 &&
+            $location->processing_by != Auth::user()->name) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Location is still being processed by ' . $location->processing_by . '.'
+            ]);
+        } 
     }
 }

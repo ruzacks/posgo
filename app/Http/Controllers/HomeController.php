@@ -14,6 +14,7 @@ use App\Models\Plan;
 use App\Models\Product;
 use App\Models\Purchase;
 use App\Models\Location;
+use App\Models\LocationType;
 use App\Models\Sale;
 use App\Models\Todo;
 use App\Models\User;
@@ -86,6 +87,8 @@ class HomeController extends Controller
             $saletarget = BranchSalesTarget::getBranchTargets(true);
 
             $locations = Location::where('created_by', '=', Auth::user()->getCreatedBy())->orderBy('id', 'ASC')->get();
+            $locationTypes = LocationType::where('created_by', '=', Auth::user()->getCreatedBy())->orderBy('id', 'ASC')->pluck('name', 'name');
+            $locationTypes->prepend(__('All Location'), '');
 
             $homes = [
                 'branches',
@@ -103,6 +106,7 @@ class HomeController extends Controller
                 'todos',
                 'saletarget',
                 'locations',
+                'locationTypes'
             ];
 
             $getOrderChart     = $this->getOrderChart(['duration' => 'week']);

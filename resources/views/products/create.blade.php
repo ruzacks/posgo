@@ -35,7 +35,7 @@
                 <div class="col-md-6">
                     {{ Form::label('is_stock', __('With Stock'), ['class' => 'col-form-label']) }}
                     <div class="form-check">
-                        {{ Form::checkbox('is_stock', 1, false, ['class' => 'form-check-input', 'id' => 'is_stock']) }}
+                        {{ Form::checkbox('is_stock', 1, true, ['class' => 'form-check-input', 'id' => 'is_stock']) }}
                         {{ Form::label('is_stock', __('Yes'), ['class' => 'form-check-label']) }}
                     </div>
                 </div>

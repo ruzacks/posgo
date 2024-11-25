@@ -347,29 +347,30 @@ class ProductController extends Controller
                     $image_url = (!empty($product->image) && Storage::exists($product->image)) ? $product->image : 'logo/placeholder.png';
                     if ($request->session_key == 'purchases') {
                         $productprice = $product->purchase_price != 0 ? $product->purchase_price : 0;
-                    } else if ($request->session_key == 'sales') {
+                        $elementAttributes = 'data-url="' . url('add-to-cart/' . $product->id . '/' . $lastsegment) . '"';
+                    } else if (str_contains($request->session_key, 'sales')) {
                         $productprice = $product->sale_price != 0 ? $product->sale_price : 0;
+                        // $elementAttributes = 'data-product="'. $product . '"';
+                        $elementAttributes = "data-product='$product'";
                     } else {
                         $productprice = $product->sale_price != 0 ? $product->sale_price : $product->purchase_price;
+                        $elementAttributes = ''; // Default to an empty string if no attributes are needed
                     }
-
+                    
                     $output .= '
-                           
-                              <div class="col-lg-2 col-md-2 col-sm-3 col-xs-4 col-12">
-                              <div class="tab-pane fade show active toacart w-100" data-url="' . url('add-to-cart/' . $product->id . '/' . $lastsegment) .'">
-                                  <div class="position-relative card">
-                                      <div class="p-0 custom-card-body card-body d-flex ">
-                                          <div class="card-body my-2 p-2 text-left card-bottom-content">
-                                              <h6 class="mb-2 text-dark product-title-name">' . $product->name . '</h6>
-                                              <small class="badge bg-primary mb-0 mt-2">' . Auth::user()->priceFormat($productprice) . '</small>
-
-                                              <small class="top-badge badge bg-danger mb-0">'. $product->quantity .'</small>
-                                          </div>
-                                      </div>
-                                  </div>
-                              </div>
-                          </div>
-                           
+                        <div class="col-lg-2 col-md-2 col-sm-3 col-xs-4 col-12">
+                            <div class="tab-pane fade show active toacart w-100" ' . $elementAttributes . '>
+                                <div class="position-relative card">
+                                    <div class="p-0 custom-card-body card-body d-flex">
+                                        <div class="card-body my-2 p-2 text-left card-bottom-content">
+                                            <h6 class="mb-2 text-dark product-title-name">' . $product->name . '</h6>
+                                            <small class="badge bg-primary mb-0 mt-2">' . Auth::user()->priceFormat($productprice) . '</small>
+                                            <small class="top-badge badge bg-danger mb-0">' . $product->quantity . '</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     ';
 
 
@@ -568,8 +569,9 @@ class ProductController extends Controller
                     );
                 }
 
-
-                session()->put($session_key, $cart);
+                if($session_key == 'purchases'){
+                    session()->put($session_key, $cart);
+                }
 
                 return response()->json(
                     [
@@ -761,6 +763,19 @@ class ProductController extends Controller
         ob_end_clean();
 
         return $data;
+    }
+
+    public function searchProductsJson(Request $request)
+    {
+        $search = $request->name;
+        $products = Product::getallproducts()->where('products.name', 'LIKE', "%{$request->search}%")
+                    ->select('products.id', 'products.name as label', 'quantity as stock', 'purchase_price')
+                    ->get();
+
+        // return $products;
+
+        return $products;
+
     }
 
     

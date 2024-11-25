@@ -12,8 +12,10 @@
                     data-bs-toggle="tooltip" 
                         data-bs-target=".multi-collapse" title="{{ __('Filter') }}"> <i class="ti ti-filter"></i> </a>
 
-        <a href="{{ route('Sale.export') }}" class="btn btn-sm btn-primary btn-icon m-1" data-bs-toggle="tooltip" title="{{ __('Export') }}">
-            <i class="ti ti-file-export"></i> 
+        <a href="#" class="btn btn-sm btn-primary btn-icon m-1" data-ajax-popup="true" data-bs-toggle="tooltip"
+            data-title="{{ __('Change Location') }}" title="{{ __('Create Sales') }}"
+            data-size="lg" data-url="{{ route('locations.getLocation') }}">
+            <i class="ti ti-file-export" title="{{ __('Change Location') }}"></i>
         </a>
 
    
