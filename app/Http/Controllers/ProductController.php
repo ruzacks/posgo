@@ -769,6 +769,7 @@ class ProductController extends Controller
     {
         $search = $request->name;
         $products = Product::getallproducts()->where('products.name', 'LIKE', "%{$request->search}%")
+                    ->where('is_stock',1)
                     ->select('products.id', 'products.name as label', 'quantity as stock', 'purchase_price')
                     ->get();
 
