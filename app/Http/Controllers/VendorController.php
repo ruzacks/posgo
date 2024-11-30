@@ -184,7 +184,7 @@ class VendorController extends Controller
             $vendors = [];
             $search  = $request->search;
             if ($request->ajax() && isset($search) && !empty($search)) {
-                $vendors = Vendor::select('id as value', 'name as label', 'email')->where('is_active', '=', 1)->where('created_by', '=', Auth::user()->getCreatedBy())->Where('name', 'LIKE', '%' . $search . '%')->orWhere('email', 'LIKE', '%' . $search . '%')->get();
+                $vendors = Vendor::select('id', 'name')->where('is_active', '=', 1)->where('created_by', '=', Auth::user()->getCreatedBy())->Where('name', 'LIKE', '%' . $search . '%')->orWhere('email', 'LIKE', '%' . $search . '%')->get();
 
                 return json_encode($vendors);
             }

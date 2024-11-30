@@ -91,36 +91,6 @@ if (\Auth::user()->type == 'Super Admin') {
     @stack('old-datatable-css')
     @stack('stylesheets')
 
-    <style>
-        .autocomplete-items {
-            position: absolute;
-            border: 1px solid #d4d4d4;
-            border-top: none;
-            z-index: 99;
-            top: 100%;
-            left: 0;
-            right: 0;
-            max-height: 200px;
-            overflow-y: auto;
-            background: #fff;
-        }
-
-        .autocomplete-items div {
-            padding: 10px;
-            cursor: pointer;
-            border-bottom: 1px solid #d4d4d4;
-        }
-
-        .autocomplete-items div:hover {
-            background-color: #e9e9e9;
-        }
-
-        .autocomplete-active {
-            background-color: #3498db !important;
-            color: #ffffff;
-        }
-    </style>
-
 </head>
 
 
@@ -128,120 +98,113 @@ if (\Auth::user()->type == 'Super Admin') {
 {{-- <body class="theme-1"> --}}
 
 <body class="{{ $color }}">
-            <div class="container-fluid px-4">
+            <div class="container-fluid px-2">
                 <?php $lastsegment = request()->segment(count(request()->segments())) ?>
             
                     <div class="row">
                     <div class="col-12">
                         <div class="mt-2 pos-top-bar bg-primary d-flex justify-content-between">
-                                                       
-                            <span class="text-white"> <a href="{{ route('reports.purchases') }}" class="text-white">
-                                <i class="ti ti-arrow-left" style="font-size: 20px;"></i>
-                            </a>
-                            {{ __('Purchase') }}</span>
-                            <a  href="#" id="home-btn" class="text-white"><i class="ti ti-home" style="font-size: 20px;"></i> </a>
+                            <span class="text-white">{{ __('Sales') }}</span>
+                            <a  href="{{ route('home') }}" class="text-white"><i class="ti ti-home" style="font-size: 20px;"></i> </a>
                         </div>
                     </div>
                 </div>
-                <div class="row mt-2">
-                    <div class="col-md-6 form-group">
-                        <div class="row">
-                            <div class="col-md-2 " style="display: flex; align-items: center;">
-                                Tanggal
-                            </div>
-                            <div class="col-md-3">
-                                {{ Form::date('purchase_date', date('Y-m-d'), ['class' => 'form-control', 'id' => 'purchase_date']) }}
-                            </div>
-                            <div class="col-md-2" style="display: flex; align-items: center;">
-                                No Faktur
-                            </div>
-                            <div class="col-md-3">
-                                {{ Form::text('invoice_id', $tempInvoice, ['class' => 'form-control', 'readonly' => true]) }}
-                            </div>
-                        </div>
-                        <div class="row mt-2 form-group">
-                            <div class="col-md-2">
-                                {{ Form::label('vendor_name', __('Vendor Name'), ['class' => 'col-form-label']) }}
-                            </div>
-                            <div class="col-md-8">                       
-                                {{ Form::text('vendor_name', null, ['class' => 'form-control', 'placeholder' => __('Enter Vendor Name'), 'required' => '']) }}
-                                <div id="autocomplete-list" class="autocomplete-items"></div>
-                                {{ Form::hidden('vendor_id', null, ['id' => 'vendor_id']) }}
-                            </div> 
-                        </div>
-                        <div class="row mt-2">
-                            <div class="col-md-2" style="display: flex; align-items: center;">
-                                Alamat
-                            </div>
-                            <div class="col-md-8">
-                                {{ Form::text('address', null, ['class' => 'form-control', 'id' => 'address',  'readonly' =>  true]) }}
-                            </div>
-                        </div>
-                        <div class="row mt-2">
-                            <div class="col-md-2" style="display: flex; align-items: center;">
-                                No. Telepon
-                            </div>
-                            <div class="col-md-8">
-                                {{ Form::text('phone', null, ['class' => 'form-control', 'id' => 'phone', 'readonly' =>  true]) }}
-                            </div>
-                        </div>
-                        <div class="row mt-2">
-                            <div class="col-md-2" style="display: flex; align-items: center;">
-                                No. Faktur Supplier
-                            </div>
-                            <div class="col-md-8">
-                                {{ Form::text('vendor_invoice', null, ['class' => 'form-control', 'id' => 'vendor_invoice', ]) }}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
+            
                     <div class="mt-2 row">
-                        <div class="col-lg-12">
-                            <div class="sop-card card">
+                        <div class="col-lg-7">
+                            <div class="sop-card card" style="min-height: 900px;">
                                 <div class="card-header p-2">
-                                    <h4>{{ __('Add Product') }}</h4>
                                     <div class="search-bar-left">
                                         <form>
-                                            <div class="row">
-                                                <div class="form-group col-md-2">
-                                                    {{ Form::label('name', __('Product Name'), ['class' => 'col-form-label']) }}
-                                                    {{ Form::text('name', null, ['class' => 'form-control', 'placeholder' => __('Enter Product Name'), 'required' => '']) }}
-                                                    <div id="autocomplete-list" class="autocomplete-items"></div>
-                                                    {{ Form::hidden('product_id', null, ['id' => 'product_id']) }}
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text"><i class="ti ti-search"></i></span>
                                                 </div>
-                                                <div class="form-group col-md-2">
-                                                    {{ Form::label('stock', __('Stock'), ['class' => 'col-form-label']) }}
-                                                    {{ Form::text('stock', null, ['class' => 'form-control', 'id' => 'stock', 'readonly' => 'readonly']) }}
-                                                </div>
-                                                <div class="form-group col-md-2">
-                                                    {{ Form::label('purchase_price', __('Purchase price') . ' (' . Auth::user()->currencySymbol() . ')', ['class' => 'col-form-label']) }}
-                                                    {{ Form::text('purchase_price', null, ['class' => 'form-control', 'readonly' => 'readonly']) }}
-                                                </div>
-                                                <div class="form-group col-md-2">
-                                                    {{ Form::label('new_purchase_price', __('New Purchase price') . ' (' . Auth::user()->currencySymbol() . ')', ['class' => 'col-form-label']) }}
-                                                    {{ Form::text('new_purchase_price', null, ['class' => 'form-control', 'id' => 'new_purchase_price', 'placeholder' => 'Harga baru jika ada' ]) }}
-                                                </div>
-                                                <div class="form-group col-md-2">
-                                                    {{ Form::label('qty', __('Purchase Qty.'), ['class' => 'col-form-label']) }}
-                                                    {{ Form::number('qty', null, ['class' => 'form-control', 'id' => 'qty']) }}
-                                                </div>
-                                                <div class="form-group col-md-2 d-flex align-items-end">
-                                                    <button class="btn btn-primary w-100 to toacart">{{ __('Tambah') }}</button>
+                                                {{-- {{ Form::text('searchcustomers', null, ['class' => 'form-control pr-4 rounded-right', 'id' => 'searchcustomers', 'placeholder' => __('Search Customer')]) }}
+               
+                                                {{ Form::hidden('vc_name_hidden', '', ['id' => 'vc_name_hidden']) }} --}}
+                                                <input id="searchproduct" type="text" data-url="{{ route('search.products') }}" placeholder="{{ __('Search Product') }}" class="form-control pr-4 rounded-right">
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                                <div class="card-body p-2">
+                                    <div class="right-content">
+                                        <div class="button-list b-bottom catgory-pad">
+                                            <div class="form-row m-0" id="categories-listing">
+                                            </div>
+                                        </div>
+                                        <div class="product-body-nop">
+                                                <div class="form-row" id="product-listing">
                                                 </div>
                                             </div>
-                                            
-                                        </form>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="mt-2 row">
-                        <div class="col-lg-12 ps-lg-0">
+                        <div class="col-lg-5 ps-lg-0">
                             <div class="card m-0" style="min-height: 200px;">
                                 <div class="card-header p-2">
+                                      <div class="row" hidden>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                {{ Form::label('branch_id', __('Branch'), ['class' => 'col-form-label']) }}
+                                                <div class="input-group">
+                                                    {{ Form::select('branch_id', ['' => __('Select Branch Type')], 1, ['class' => 'form-control pos_branch_id']) }}
+                                                </div>
+                                                <span id="error_branch_id" style="color: red"></span>
+                                            </div>
+                                            {{-- {{ Form::label('branch_id', __('Branch'), ['class' => 'col-form-label']) }}
+                                            {{ Form::select('branch_id', ['' => __('Select Branch Type')], null, ['class' => 'form-control']) }}
+                                            {{ Form::select('branch_id', $brands, null, ['class' => 'form-control select customer_select', 'data-toggle' => 'select2']) }}
+                                            {{ Form::hidden('vc_name_hidden', '',['id' => 'vc_name_hidden']) }} --}}
+            
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                {{ Form::label('cash_register_id', __('Cash Register'), ['class' => 'col-form-label']) }}
+                                                <div class="input-group">
+                                                    {{ Form::select('cash_register_id', ['' => __('Select Cash Register')], null, ['class' => 'form-control pos_cash_register_id']) }}
+                                                    
+                                                </div>
+                                                <span id="error_cash_register_id" style="color: red"></span>
+                                            </div>
+                                            {{-- {{ Form::select('cash_register_id', $cashregister, null, ['class' => 'form-control select warehouse_select', 'data-toggle' => 'select2']) }}
+                                            {{ Form::select('cash_register_id', ['' => __('Select Cash Register')], null, ['class' => 'form-control']) }}
+                                            {{ Form::hidden('warehouse_name_hidden', '',['id' => 'warehouse_name_hidden']) }} --}}
+            
+                                        </div>
+                                    </div>
+                                    <div class="row" hidden>
+                                        <div class="col-12">
+                                            <div class="input-group search_vendor_merge_input">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text"><i data-feather="user"></i></span>
+                                                </div>
+                                                {{ Form::text('searchcustomers', null, ['class' => 'form-control pr-4 rounded-right', 'id' => 'searchcustomers', 'placeholder' => __('Search Customer')]) }}
+                                                <a href="#" id="clearinput">
+                                                    <div class="input-group-text">
+                                                        <i data-feather="x-square"></i>
+                                                    </div>
+                                                </a>
+                                                {{ Form::hidden('vc_name_hidden', '', ['id' => 'vc_name_hidden']) }}
+                                            </div>
+                                        </div>
+                                    </div>
 
+                                    <div class="row align-items-center mb-3">
+                                        <div class="col-12 d-flex justify-content-start align-items-center">
+                                            <h3 class="mb-0">{{ __('Lokasi') }}: {{ $location->code }}</h3>
+                                            <h4 id="location_name" class="mb-0 ms-2 text-muted"></h4>
+                                            <a href="#" class="action-btn bg-info" data-ajax-popup="true" data-bs-toggle="tooltip"
+                                            data-title="{{ __('Change Location') }}" title="{{ __('Change Location') }}"
+                                            data-size="lg" data-url="{{ route('locations.getLocation') }}">
+                                                <i class="ti ti-pencil text-white mx-3 btn btn-sm" title="{{ __('Change Location') }}"></i>
+                                            </a>
+                                            {{ Form::hidden('current_location_hidden',$location->id, ['id' => 'current_location_hidden']) }}
+                                        </div>
+                                    </div>
+                                    
                                   
                                 </div>
                                 <div class="card-body carttable cart-product-list carttable-scroll"  id="carthtml" >
@@ -254,8 +217,8 @@ if (\Auth::user()->type == 'Super Admin') {
                                                     <tr>
                                                         <th class="text-left">Name</th>
                                                         <th class="text-center">QTY</th>
-                                                        <th class="text-end" >Price</th>
-                                                        <th class="text-end" >Sub Total</th>
+                                                        <th class="text-center" >Price</th>
+                                                        <th class="text-center" >Sub Total</th>
                                                         <th></th>
                                                     </tr>
                                                     </thead>
@@ -306,19 +269,40 @@ if (\Auth::user()->type == 'Super Admin') {
                                                             <h4 class="mb-0 text-gray-800" id="displaytotal">{{ Auth::user()->priceFormat($total) }}</h4>
                                                         </div>
                                                     <div class="d-flex align-items-center justify-content-between pt-3" id="btn-pur">
-
+                                                        {{-- <button type="button" class="btn btn-primary rounded"  data-ajax-popup="true" data-size="lg" data-align="centered" data-url="{{route('pos.create')}}" data-title="{{__('POS Invoice')}}"
+                                                                @if(session($lastsegment) && !empty(session($lastsegment)) && count(session($lastsegment)) > 0) @else disabled="disabled" @endif>
+                                                            {{ __('PAY') }}
+                                                        </button> --}}
                                                         <div class="tab-content">
-                                                            
+                                                            <button type="button" class="btn btn-primary rounded" style="width: 100%"
+                                                                 id="pos_payment"  @if (session($lastsegment) && !empty(session($lastsegment)) && count(session($lastsegment)) > 0) @else disabled="disabled" @endif>{{ __('PAY') }}</button>
+    
+    
+    
+                                                                 <a href="" id="pos_pay" data-ajax-popup="true" data-size="lg" data-align="centered"
+                                                                 data-url="{{ route('sales.create') }}"
+                                                                 data-title="{{ __('Sale Products') }}"></a>
                                                         </div>
 
-                                                        <div class="tab-content btn-empty text-end">
-                                                            <button type="button" class="btn btn-primary rounded" style="width: 100%"
-                                                            id="pos_payment"  disabled="disabled">{{ __('FINISH') }}</button>
 
-
-                                                            {{-- <a href="" id="pos_pay" data-ajax-popup="true" data-size="lg" data-align="centered"
+                                                        {{-- <div class="tab-content">
+                                                        <button type="button" class="btn btn-primary rounded" style="width: 100%"
+                                                            data-ajax-popup="true" data-size="lg" data-align="centered"
                                                             data-url="{{ route('sales.create') }}"
-                                                            data-title="{{ __('Sale Products') }}"></a> --}}
+                                                            data-title="{{ __('Sale Products') }}"
+                                                            @if (session($lastsegment) && !empty(session($lastsegment)) && count(session($lastsegment)) > 0) @else disabled="disabled" @endif>{{ __('PAY') }}</button>
+                                                        </div> --}}
+
+
+                                                        <div class="tab-content btn-empty text-end">
+                                                            <a href="#" class="btn btn-danger bs-pass-para rounded m-0"  data-toggle="tooltip" data-original-title="{{ __('Empty Cart') }}"
+                                                                       data-confirm="{{ __('Are You Sure?') }}" data-text="{{__('This action can not be undone. Do you want to continue?')}}"
+                                                                       data-confirm-yes="delete-form-emptycart">
+                                                                        {{ __('Empty Cart') }}
+                                                                    </a>
+                                                            {!! Form::open(['method' => 'post', 'url' => ['empty-cart'],'id' => 'delete-form-emptycart']) !!}
+                                                            <input type="hidden" name="session_key" value="{{ $lastsegment }}" id="empty_cart">
+                                                            {!! Form::close() !!}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -384,9 +368,25 @@ if (\Auth::user()->type == 'Super Admin') {
     <script>
         $('#pos_payment').on('click', function() {
 
-           
+            var c_id = 1;
+            var b_id = 1;
+
+            $('#error_branch_id').empty();
+            $('#error_cash_register_id').empty();
+
+            if(!c_id){
+                $('#error_cash_register_id').text('Cash register is require')
+            }
+            if(!b_id){
+                $('#error_branch_id').text('Branch is require')
+            }
+
+            if(b_id && c_id ){
                 $( "#pos_pay" ).trigger( "click" );
-          
+            }
+            
+
+
         });
     </script>
 
@@ -521,7 +521,7 @@ if (\Auth::user()->type == 'Super Admin') {
 <style type="text/css">
 
 </style>
-<script src="{{ asset('js/jquery-ui.js') }}"></script>
+{{-- <script src="{{ asset('js/jquery-ui.js') }}"></script> --}}
 @stack('scripts')
 
 <script src="{{asset('js/jquery-ui.min.js')}}"></script>
@@ -534,188 +534,109 @@ if (\Auth::user()->type == 'Super Admin') {
         }
     });
 
-    //SUPPLIER HANDLING
 
-    $(document).ready(function() {
-        // Autocomplete for vendor name
-        $("#vendor_name").autocomplete({
-            minLength: 1,
-            source: function (request, response) {
-                $.getJSON("{{ route('search.vendors') }}", {
-                    search: request.term,
-                }, response);
-            },
-            search: function () {
-                var term = this.value;
-                if (term.length == 0) {
-                    $("#vendor_id").val('');
+
+    $( document ).ready(function() {
+        
+        $( "#vc_name_hidden" ).val($('.customer_select').val());
+        $( "#warehouse_name_hidden" ).val($('.warehouse_select').val());
+
+        $(function () {
+            getProductCategories();
+
+            var url = '{{ route('search.products') }}'
+            searchProducts(url,'','');
+
+        });
+
+        if ($('#searchproduct').length > 0) {
+            var url = $('#searchproduct').data('url');
+            searchProducts(url,'','0');
+        }
+
+        $( '#warehouse' ).change(function() {
+           var ware_id = $( "#warehouse" ).val();
+            searchProducts(url,'','0',ware_id);
+        });
+        $( '.customer_select' ).change(function() {
+            $( "#vc_name_hidden" ).val($(this).val());
+        });
+       
+
+
+
+        $(document).on('click', '#clearinput', function (e) {
+            var IDs = [];
+            $(this).closest('div').find("input").each(function () {
+                IDs.push('#' + this.id);
+            });
+            $(IDs.toString()).val('');
+        });
+
+
+
+
+        $(document).on('keyup', 'input#searchproduct', function () {
+            var url = $(this).data('url');
+            var value = this.value;
+            var cat = $('.cat-active').children().data('cat-id');
+            // console.log(cat);
+            searchProducts(url, value,cat);
+        });
+
+
+        function searchProducts(url, value,cat_id,war_id = '0') {
+            $.ajax({
+                type: 'GET',
+                url: url,
+                data: {
+                    'search': value,
+                    'cat_id': cat_id,
+                    'war_id' : war_id,
+                    'session_key': session_key
+                },
+                success: function (data) {
+                    console.log(data)
+                    $('#product-listing').html(data);
                 }
-                if (term.length < 1) {
-                    return false;
+            });
+        }
+
+        function getProductCategories() {
+            
+            $.ajax({
+                type: 'GET',
+                url: '{{ route('product.categories') }}',
+                success: function (data) {
+                    // console.log(data);
+                    $('#categories-listing').html(data);
                 }
-            },
-            focus: function (event, ui) {
-                $("#vendor_name").val(ui.item.name); 
-                return false;
-            },
-            select: function (event, ui) {
-                $("#vendor_name").val(ui.item.name);
-                $("#vendor_id").val(ui.item.id);  // Set vendor_id
-                $('#vendor_id').trigger('change');  // Trigger change event
+            });
+        }
 
-                return false;
-            },
-        }).autocomplete("instance")._renderItem = function (ul, item) {
-            return $("<li>")
-                .append("<div>" + item.name + "</div>")
-                .appendTo(ul);
-        };
+       // Use a static parent element that wraps the dynamically created elements
+        document.addEventListener('click', function (event) {
+            // Check if the clicked element has the 'toacart' class
+            if (event.target.closest('.toacart')) {
+                const element = event.target.closest('.toacart'); // Get the actual element clicked
 
-        // Change event for vendor_id
-        $('#vendor_id').on('change', function() {
-            const selectedVendorId = $(this).val();
-            if (selectedVendorId) {
-                // Make the AJAX request to fetch vendor details
-                $.ajax({
-                    url: "{{ route('get.vendor') }}", // Your route
-                    method: "GET",
-                    data: { vendor_id: selectedVendorId }, // Send the vendor ID
-                    success: function (response) {
-                        // Update the address and phone fields with the response
-                        $('#address').val(response.address);
-                        $('#phone').val(response.phone);
-                    },
-                    error: function () {
-                        alert('Failed to fetch vendor details. Please try again.');
+                // Get the data-product attribute
+                const dataProduct = element.getAttribute('data-product');
+
+                if (dataProduct) {
+                    // Parse the JSON string into an object
+                    const product = JSON.parse(dataProduct);
+
+                    if (product.quantity === 0) {
+                        // Show an error toast if the quantity is 0
+                        show_toastr('{{ __("Error") }}', '{{ __("Product is out of stock.") }}', 'error');
+                    } else {
+                        // Add or update the row if quantity is greater than 0
+                        addOrUpdateRow(product);
                     }
-                });
-            } else {
-                // Clear fields if no vendor selected
-                $('#address').val('');
-                $('#phone').val('');
+                }
             }
         });
-    });
-
-    
-
-
-    //ADD PRODUCT HANDLING
-    $("#name").autocomplete({
-        minLength: 0, // Trigger even when no input is entered
-        source: function (request, response) {
-            $.getJSON("{{ route('search.product.json') }}", {
-                search: request.term, // Send the input value as 'search'
-            }, response);
-        },
-        search: function () {
-            var term = this.value;
-            if (term.length == 0) {
-                $("#product_id").val(''); // Clear product_id when input is empty
-            }
-            if (term.length < 2) {
-                return false; // Don't search if input is less than 2 characters
-            }
-        },
-        focus: function (event, ui) {
-            $("#name").val(ui.item.label); // Focus does not select an item
-            return false;
-        },
-        select: function (event, ui) {
-            // Set the values of other fields when an item is selected
-            $("#name").val(ui.item.label);
-            $("#product_id").val(ui.item.id);
-            $("#stock").val(ui.item.stock);
-            $("#purchase_price").val(ui.item.purchase_price);
-            return false; // Prevent default action
-        },
-    }).autocomplete("instance")._renderItem = function (ul, item) {
-        // Render the dropdown menu items
-        return $("<li>")
-            .append("<div>" + item.label + "<br>Stock: " + item.stock + ", Harga: " + item.purchase_price + "</div>")
-            .appendTo(ul);
-    };
-
-
-    $(document).on('click', '.autocomplete-item', function () {
-        let selected = $(this);
-        let productId = selected.data('id');
-        let stock = selected.data('stock');
-        let price = selected.data('price');
-        let name = selected.text();
-
-        // Set values to fields
-        $('#product_id').val(productId);
-        $('#name').val(name);
-        $('#stock').val(stock);
-        $('#purchase_price').val(price);
-
-        // Clear the autocomplete list
-        $('#autocomplete-list').empty();
-    });
-
-    // Close autocomplete on outside click
-    $(document).on('click', function (e) {
-        if (!$(e.target).closest('#name, #autocomplete-list').length) {
-            $('#autocomplete-list').empty();
-        }
-    });
-
-    function dataProduct(clear = false) {
-        if (clear) {
-            // Clear all input fields
-            $('#name').val('');
-            $('#product_id').val('');
-            $('#new_purchase_price').val('');
-            $('#purchase_price').val('');
-            $('#stock').val('');
-            $('#qty').val('');
-
-            // Set focus to the "name" field
-            $('#name').focus();
-        } else {
-            // Fetch values from input fields
-            var productName = $('#name').val();
-            var productId = $('#product_id').val();
-            var price = $('#new_purchase_price').val() ? $('#new_purchase_price').val() : $('#purchase_price').val();
-            var stock = $('#stock').val();
-            var quantity = $('#qty').val();
-
-            // Create a product data object with proper type conversion
-            var data = {
-                name: productName || '', // Default to an empty string if no value
-                id: productId || '', // Default to an empty string if no value
-                sale_price: parseFloat(price) || 0, // Default to 0 if price is invalid
-                quantity: parseInt(quantity) || 0, // Default to 0 if quantity is invalid
-                stock: parseInt(stock) || 0 // Default to 0 if stock is invalid
-            };
-
-            return data;
-        }
-    }
-
-    document.addEventListener('click', function (event) {
-        
-        // Check if the clicked element has the 'toacart' class
-        if (event.target.closest('.toacart')) {
-            event.preventDefault();
-            const element = event.target.closest('.toacart'); // Get the actual element clicked
-
-            // Get the product data
-            const product = dataProduct();
-
-            if (product) {
-                if (product.quantity === 0 || isNaN(product.quantity)) {
-                    // Show an error toast if the quantity is 0 or invalid
-                    show_toastr('{{ __("Error") }}', '{{ __("Please enter purchase quantity.") }}', 'error');
-                } else {
-                    // Add or update the row if quantity is valid and greater than 0
-                    addOrUpdateRow(product);
-                    dataProduct(true);
-                }
-            }
-        }
-    });
 
         function addOrUpdateRow(product) {
             // Calculate subtotal (assuming 1 quantity for simplicity)
@@ -725,7 +646,7 @@ if (\Auth::user()->type == 'Super Admin') {
             if (existingRow) {
                 // Update the quantity and subtotal
                 const quantityInput = existingRow.querySelector('.input-number');
-                const quantity = parseInt(quantityInput.value) + product.quantity; // Increment the quantity by 1
+                const quantity = parseInt(quantityInput.value) + 1; // Increment the quantity by 1
                 quantityInput.value = quantity;
 
                 // Update subtotal
@@ -734,7 +655,7 @@ if (\Auth::user()->type == 'Super Admin') {
                 subtotalElement.textContent = `Rp.${newSubtotal.toLocaleString()}`;
             } else {
                 // Add new row if product doesn't exist in the table
-                const quantity = product.quantity;
+                const quantity = 1;
                 const subtotal = product.sale_price * quantity;
 
                 const newRow = document.createElement('tr');
@@ -744,7 +665,7 @@ if (\Auth::user()->type == 'Super Admin') {
                     <td class="col-sm-2">
                         <span class="name">${product.name}</span>
                     </td>
-                    <td class="col-sm-2 text-center">
+                    <td class="col-sm-2">
                         <span class="quantity buttons_added">
                             <input type="button" value="-" class="minus">
                             <input type="number" step="1" min="1" style="color: white" name="quantity" title="Quantity" class="input-number" size="4" 
@@ -752,10 +673,10 @@ if (\Auth::user()->type == 'Super Admin') {
                             <input type="button" value="+" class="plus">
                         </span>
                     </td>
-                    <td class="col-sm-2 text-end">
+                    <td class="col-sm-2">
                         <span class="price">Rp.${product.sale_price.toLocaleString()}</span>
                     </td>
-                    <td class="col-sm-2 text-end">
+                    <td class="col-sm-2">
                         <span class="subtotal">Rp.${subtotal.toLocaleString()}</span>
                     </td>
                     <td class="col-sm-2">
@@ -777,48 +698,24 @@ if (\Auth::user()->type == 'Super Admin') {
 
         function updateDisplayTotal() {
             let total = 0;
-            const rows = document.querySelectorAll('#carthtml tbody tr');
-            const displayTotal = document.getElementById('displaytotal');
 
             // Loop through all rows in the table
-            rows.forEach(row => {
+            document.querySelectorAll('#carthtml tbody tr').forEach(row => {
                 const quantityInput = row.querySelector('input[name="quantity"]');
                 const priceElement = row.querySelector('.price');
+                const price = parseFloat(priceElement.textContent.replace('Rp.', '').replace(',', ''));
 
-                if (quantityInput && priceElement) {
-                    // Parse price and quantity
-                    const price = parseFloat(priceElement.textContent.replace('Rp.', '').replace(',', '')) || 0;
-                    const quantity = parseInt(quantityInput.value) || 0;
+                // Get quantity
+                const quantity = parseInt(quantityInput.value);
 
-                    // Add to total
-                    total += price * quantity;
-                }
+                // Add to total
+                total += price * quantity;
             });
 
             // Update the total display
+            const displayTotal = document.getElementById('displaytotal');
             displayTotal.textContent = `Rp.${total.toLocaleString()}`;
-
-            // Check payment button condition
-            checkPaymentButtonCondition();
         }
-
-        function checkPaymentButtonCondition() {
-            const rows = document.querySelectorAll('#carthtml tbody tr');
-            const vendorId = document.getElementById('vendor_id') ? document.getElementById('vendor_id').value : null;
-            const posPaymentButton = document.getElementById('pos_payment');
-
-            // Enable or disable the payment button based on rows and vendor_id
-            if (rows.length > 0 && vendorId) {
-                posPaymentButton.disabled = false;
-            } else {
-                posPaymentButton.disabled = true;
-            }
-        }
-
-        // Event listener for vendor_id select changes
-        document.getElementById('vendor_id').addEventListener('change', checkPaymentButtonCondition);
-
-
 
         document.addEventListener('click', function (event) {
             if (event.target.closest('.delete-btn')) {
@@ -857,6 +754,9 @@ if (\Auth::user()->type == 'Super Admin') {
             }
         });
 
+
+
+
         $(document).on('change keyup', '#carthtml input[name="quantity"]', function (e) {
             e.preventDefault();
             const $input = $(this);
@@ -875,135 +775,47 @@ if (\Auth::user()->type == 'Super Admin') {
             updateDisplayTotal();
         });
 
-        document.getElementById('pos_payment').addEventListener('click', function (event) {
-            event.preventDefault(); // Prevent any default behavior, e.g., form submission
+        $(document).on('click', '.remove-from-cart', function (e) {
+            e.preventDefault();
 
-            // Display SweetAlert confirmation
-            Swal.fire({
-                title: '{{ __("Finish Purchase") }}', // Dynamically localize the title
-                text: '{{ __("Are you sure you want to complete this purchase?") }}',
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: '{{ __("Yes, finish it!") }}',
-                cancelButtonText: '{{ __("Cancel") }}'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    // Fetch purchase data
-                    const data = getPurchaseData();
+            var ele = $(this);
+            var sum = 0;
 
-                    // Make AJAX request to store purchase
-                    $.ajax({
-                        url: '{{ route("purchases.store") }}', // Route to handle the store logic
-                        type: 'POST', // HTTP method
-                        data: data, // Data payload
-                        headers: {
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}' // Include CSRF token
-                        },
-                        success: function (response) {
-                            // Check response status
-                            if (response.status === 200) {
-                                Swal.fire({
-                                    title: '{{ __("Success") }}',
-                                    text: '{{ __("The purchase has been completed successfully.") }}',
-                                    icon: 'success',
-                                    showCancelButton: true,
-                                    confirmButtonText: '{{ __("Print the Purchase Invoice") }}',
-                                    cancelButtonText: '{{ __("Close") }}',
-                                }).then((printResult) => {
-                                    if (printResult.isConfirmed) {
-                                        // Open the invoice link in a new tab
-                                        window.open(response.invoice_url, '_blank');
-                                    }
-                                    // Reload the current page regardless of the user's choice
-                                    window.location.reload();
-                                });
-                            } else if (response.status === 400) {
-                                Swal.fire(
-                                    '{{ __("Error") }}',
-                                    response.message || '{{ __("Invalid data. Please check and try again.") }}',
-                                    'error'
-                                );
-                            } else {
-                                Swal.fire(
-                                    '{{ __("Error") }}',
-                                    '{{ __("Something went wrong. Please try again later.") }}',
-                                    'error'
-                                );
-                            }
-                        },
-                        error: function (xhr) {
-                            const errorMessage = xhr.responseJSON?.message || '{{ __("There was an issue completing the purchase. Please try again.") }}';
-                            Swal.fire(
-                                '{{ __("Error") }}',
-                                errorMessage,
-                                'error'
-                            );
-                        }
-                    });
-                }
-            });
-        });
-
-
-
-
-        function getPurchaseData() {
-            // Get Vendor ID, Purchase Date, and Vendor Invoice
-            const vendorId = $('#vendor_id').val();
-            const purcDate = $('#purchase_date').val();
-            const vendorInv = $('#vendor_invoice').val();
-
-            // Initialize products array
-            const products = [];
-
-            // Loop through each table row in the tbody
-            $('#tbody tr').each(function () {
-                const row = $(this); // Current row
-                const productId = row.data('product-id'); // Get product ID from data attribute
-                const qty = parseInt(row.find('input[name="quantity"]').val()) || 0; // Get quantity
-                const price = parseFloat(row.find('.price').text().replace('Rp.', '').replace(',', '')) || 0; // Parse price
-                const subtotal = parseFloat(row.find('.subtotal').text().replace('Rp.', '').replace(',', '')) || 0; // Parse subtotal
-
-                // Add product data to the array
-                products.push({
-                    product_id: productId,
-                    quantity: qty,
-                    price: price,
-                    subtotal: subtotal
+            if (confirm('{{ __("Are you sure?") }}')) {
+                ele.closest(".row").hide(250, function () {
+                    ele.closest(".row").parent().parent().remove();
                 });
-            });
-
-            // Return all collected data
-            return {
-                vendor_id: vendorId,
-                purchase_date: purcDate,
-                vendor_invoice: vendorInv,
-                products: products
-            };
-        }
-
-        function searchProducts(value,cat_id,war_id = '0') {
-            $.ajax({
-                type: 'GET',
-                url: "{{ route('search.products') }}",
-                data: {
-                    'search': value,
-                    'cat_id': cat_id,
-                    'war_id' : war_id,
-                    'session_key': session_key
-                },
-                success: function (data) {
-                    console.log(data)
-                    $('#product-listing').html(data);
+                if (ele.closest(".row").is(":last-child")) {
+                    $('#btn-pur button').attr('disabled', 'disabled');
+                    $('.btn-empty button').removeClass('btn-clear-cart');
                 }
-            });
-        }
+                $.ajax({
+                    url: ele.data('url'),
+                    method: "DELETE",
+                    data: {
+                        id: ele.attr("data-id"),
+                        // session_key: session_key
+                    },
+                    success: function (data) {
+                        if (data.code == '200') {
 
+                            $.each(data.product, function (key, value) {
+                                sum += value.subtotal;
+                                $('#product-id-' + value.id + ' .subtotal').text(addCommas(value.subtotal));
+                            });
 
-       // Use a static parent element that wraps the dynamically created elements
-        
+                            $('#displaytotal').text(addCommas(sum));
+
+                            show_toastr('Success', data.success, 'success')
+                        }
+                    },
+                    error: function (data) {
+                        data = data.responseJSON;
+                        show_toastr('{{ __("Error") }}', data.error, 'error');
+                    }
+                });
+            }
+        });
 
         $(document).on('click', '.btn-clear-cart', function (e) {
             e.preventDefault();
@@ -1027,7 +839,23 @@ if (\Auth::user()->type == 'Super Admin') {
         });
 
       
-           $(document).on('click', '.btn-done-payment', function(e) {
+        $(document).on('click', '.category-select', function (e) {
+            var cat = $(this).data('cat-id');
+            var white = 'text-white';
+            var dark = 'text-dark';
+            $('.category-select').parent().removeClass('cat-active');
+            $('.category-select').find('.card-title').removeClass('text-white').addClass('text-dark');
+            $('.category-select').find('.card-title').parent().removeClass('text-white').addClass('text-dark');
+            $(this).find('.card-title').removeClass('text-dark').addClass('text-white');
+            $(this).find('.card-title').parent().removeClass('text-dark').addClass('text-white');
+            $(this).parent().addClass('cat-active');
+            var url = '{{ route('search.products') }}'
+            searchProducts(url,'',cat);
+        });
+    });
+
+
+            $(document).on('click', '.btn-done-payment', function(e) {
                 e.preventDefault();
 
                 var ele = $(this);
@@ -1058,9 +886,194 @@ if (\Auth::user()->type == 'Super Admin') {
                 });
             });
 
-            document.getElementById('home-btn').addEventListener('click', function () {
-                window.location.href = '{{ route("home") }}';
+
+
+
+            // $.ajax({
+            //     url: '{{ route('user.type') }}',
+            //     dataType: 'json',
+            //     success: function(data) {
+            //         console.log(data);
+            //         if (data) {
+
+            //             if (data[0].isOwner = 'false') {
+            //                 $.ajax({
+            //                     url: '{{ route('get.branches') }}',
+            //                     dataType: 'json',
+            //                     success: function(data) {
+
+            //                         if (data.length == 0) {
+            //                             // $('#branchModal').modal('show');  
+            //                             $('#branchModal .branch-warning').show();
+            //                         } else {
+            //                             // $('#branchModal .select-warning').show();
+
+            //                             $('#branchModal ').modal('show');
+            //                             // $('#branchModal .select-warning').modal();
+            //                             $.each(data, function(key, value) {
+            //                                 $('#branch_id')
+            //                                     .append($("<option></option>")
+            //                                         .attr("value", value.id)
+            //                                         .text(value.name));
+            //                             });
+
+            //                         }
+
+            //                         if ($('[data-toggle="select"]').length > 0) {
+            //                             $("select option[value='']").prop('disabled', !$(
+            //                                 "select option[value='']").prop(
+            //                                 'disabled'));
+            //                             $('[data-toggle="select"]').select2({});
+            //                         }
+            //                         $('#branchModal').modal({
+            //                             backdrop: 'static',
+            //                             keyboard: false
+            //                         })
+            //                     },
+            //                     error: function(data) {
+            //                         data = data.responseJSON;
+            //                         show_toastr('{{ __('Error') }}', data.error,
+            //                             'error');
+            //                     }
+            //                 });
+            //             } else if (data[0].isUser = 'false') {
+
+            //                 $('#display-branch').text(data[0].branchname);
+            //                 $('#display-cash-register').text(data[0].cashregistername);
+
+            //                 $('#branch_id')
+            //                     .append($("<option></option>")
+            //                         .attr("value", data[0].branch_id)
+            //                         .text(data[0].branchname));
+            //                 $('#cash_register_id')
+            //                     .append($("<option></option>")
+            //                         .attr("value", data[0].cash_register_id)
+            //                         .text(data[0].cashregistername));
+            //                 $('#branch_id').val(data[0].branch_id);
+            //                 $('#cash_register_id').val(data[0].cash_register_id);
+            //                 $('#display-bnc').removeClass('d-none');
+            //                 $('#display-bnc').show();
+            //             }
+            //         }
+            //     },
+            //     error: function(data) {
+            //         data = data.responseJSON;
+            //         show_toastr('{{ __('Error') }}', data.error, 'error');
+            //     }
+            // });
+
+
+            $(document).on('change', '#branch_id', function(e) {
+
+                $.ajax({
+                    url: '{{ route('get.cash.registers') }}',
+                    dataType: 'json',
+                    data: {
+                        'branch_id': 1
+                    },
+                    success: function(data) {
+                        $('#cash_register_id').find('option').not(':first').remove();
+                        $.each(data, function(key, value) {
+                            $('#cash_register_id')
+                                .append($("<option></option>")
+                                    .attr("value", value.id)
+                                    .text(value.name));
+                        });
+                    },
+                    error: function(data) {
+                        data = data.responseJSON;
+                        show_toastr('{{ __('Error') }}', data.error, 'error');
+                    }
+                });
             });
+
+            $(document).on('change', '#cash_register_id', function(e) {
+                if ($(this).val() != '') {
+                    $('#display-branch').text($('#branch_id option:selected').text());
+                    $('#display-cash-register').text($('#cash_register_id option:selected').text());
+                    $('#display-bnc').removeClass('d-none');
+                    $('#display-bnc').show();
+                    $('#branchModal').modal('toggle');
+                    var cat = $('.cat-active').children().data('cat-id');
+                    searchProducts(url, '', cat);
+                }
+            });
+
+
+
+            $("#searchcustomers").autocomplete({
+                    minLength: 0,
+                    source: function(request, response) {
+                        $.getJSON("{{ route('search.customers') }}", {
+                            search: request.term
+                        }, response);
+                    },
+                    search: function() {
+                        var term = this.value;
+                        if (term.length == 0) {
+                            $("#vc_name_hidden").val('');
+                        }
+                        if (term.length < 2) {
+                            return false;
+                        }
+                    },
+                    focus: function(event, ui) {
+                        $("#searchcustomers, #vc_name_hidden").val(ui.item.label);
+                        return false;
+                    },
+                    select: function(event, ui) {
+                        $("#searchcustomers, #vc_name_hidden").val(ui.item.label);
+                        return false;
+                    }
+                })
+                .autocomplete("instance")._renderItem = function(ul, item) {
+
+                    return $("<li>")
+                        .append("<div>" + item.label + "<br>" + item.email + "</div>")
+                        .appendTo(ul);
+                };
+
+    
+                function locationInProcess() {
+                    // Get the value from the hidden element with ID 'current_location_hidden'
+                    const currentLocation = document.getElementById('current_location_hidden')?.value;
+
+                    if (!currentLocation) {
+                        console.error('Current location is not set.');
+                        return;
+                    }
+
+                    // Function to make the AJAX call
+                    function checkInProcess() {
+                        $.ajax({
+                            url: '{{ route("locations.inProcess") }}',
+                            method: 'POST', // Replace with your actual route
+                            data: {
+                                location_id: currentLocation,
+                                _token: '{{ csrf_token() }}' // Include CSRF token if using Laravel
+                            },
+                            success: function (response) {
+                                // Handle success response (e.g., update the UI)
+                                console.log('Room status:', response);
+                                // You can display indicators or handle data as needed
+                            },
+                            error: function (xhr, status, error) {
+                                console.error('Error checking room in process:', error);
+                            }
+                        });
+                    }
+
+                    // Call the function every 10 seconds (10000 milliseconds)
+                    setInterval(checkInProcess, 10000);
+
+                    // Optionally, make an initial call immediately
+                    checkInProcess();
+                }
+
+                // Call the function to start the continuous checks
+                locationInProcess();
+
+
 
 </script>
 

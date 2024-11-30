@@ -615,10 +615,13 @@ function pickLocation(idLocation) {
         method: 'POST',
         data: { location_id: idLocation },
         success: function(response) {
-            if (response) {
+            if (response.status == "error") {
                 show_toastr("Error", response.message, "error");
             } else if (hiddenInput) {
                 hiddenInput.value = idLocation;
+                $('#commonModal').modal('hide');
+                $('#location_name').text(response.location);
+                locationInProcess();
             } else {
                 window.location.href = `/sales?location_id=${idLocation}`;
             }

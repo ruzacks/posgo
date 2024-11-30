@@ -51,12 +51,12 @@
 
         <div class="form-group col-md-6">
             {{ Form::label('min_stock', __('Minimum Stock'), ['class' => 'col-form-label']) }}
-            {{ Form::number('min_stock', null, ['class' => 'form-control', 'placeholder' => __('Enter new Minimum Stock'), 'step' => '1', 'id' => 'min_stock', 'readonly' => 'readonly']) }}
+            {{ Form::number('min_stock', null, ['class' => 'form-control', 'placeholder' => __('Enter new Minimum Stock'), 'step' => '1', 'id' => 'min_stock']) }}
         </div>
         
         <div class="form-group col-md-6">
             {{ Form::label('max_stock', __('Maximum Stock'), ['class' => 'col-form-label']) }}
-            {{ Form::number('max_stock', null, ['class' => 'form-control', 'placeholder' => __('Enter new Maximum Stock'), 'step' => '1', 'id' => 'max_stock', 'readonly' => 'readonly']) }}
+            {{ Form::number('max_stock', null, ['class' => 'form-control', 'placeholder' => __('Enter new Maximum Stock'), 'step' => '1', 'id' => 'max_stock']) }}
         </div>
 
         <div class="form-group col-md-6">

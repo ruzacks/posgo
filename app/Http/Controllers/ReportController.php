@@ -372,7 +372,7 @@ class ReportController extends Controller
 
                 $invoicearray[$key]['id']         = $invoice->id;
                 $invoicearray[$key]['username']   = ucfirst($invoice->user->name);
-                $invoicearray[$key]['created_at'] = Auth::user()->datetimeFormat($invoice->created_at);
+                $invoicearray[$key]['created_at'] = Auth::user()->datetimeFormat($invoice->purchase_date);
                 $invoicearray[$key]['itemscount'] = $invoice->items->count();
                 $invoicearray[$key]['itemstotal'] = Auth::user()->priceFormat($invoice->getTotal());
 

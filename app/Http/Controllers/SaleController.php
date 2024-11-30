@@ -27,19 +27,19 @@ class SaleController extends Controller
 {
     public function index(Request $request)
     {
-        if (Auth::user()->can('Manage Sales')) {
+        if ($request->location_id){
+            $accessSale = $this->reserveLocation($request);
             $location = Location::where('id', $request->location_id)->first();
-    
-            if ($location->processing_by == null || now()->diffInSeconds($location->last_process_call) > 15) {
+ 
+            if($accessSale['status'] == 'success'){
+
                 return view('sales.index', compact('location'));
-            } else if ($location && $location->last_process_call && 
-                now()->diffInSeconds($location->last_process_call) < 15 &&
-                $location->processing_by != Auth::user()->name) {
-               return redirect()->back()->with('error','Location is still being processed by ' . $location->processing_by);
             } else {
-                return view('sales.index', compact('location'));
+                return redirect('/')->with('error', $accessSale['message']);
             }
-    
+        }
+        if (Auth::user()->can('Manage Sales')) {        
+            return view('sales.index');
         } else {
             return redirect()->back()->with('error', __('Permission denied.'));
         }
@@ -554,16 +554,39 @@ class SaleController extends Controller
         return response()->json(['message' => 'Call is logged.']);
     }
 
-    public function reserveLocation(Request $request){
-        $location = Location::where('id', $request->location_id)->first();
+    public function reserveLocation(Request $request)
+    {
+        $location = Location::find($request->location_id);
     
-        if ($location && $location->last_process_call && 
-            now()->diffInSeconds($location->last_process_call) < 15 &&
-            $location->processing_by != Auth::user()->name) {
-            return response()->json([
+        if (!$location) {
+            return [
                 'status' => 'error',
-                'message' => 'Location is still being processed by ' . $location->processing_by . '.'
-            ]);
-        } 
+                'message' => __('Location not found.')
+            ];
+        }
+    
+        if (
+            $location->last_process_call &&
+            now()->diffInSeconds($location->last_process_call) < 15 &&
+            $location->processing_by != Auth::user()->name
+        ) {
+            return [
+                'status' => 'error',
+                'message' => __('Location is still being processed by :user.', ['user' => $location->processing_by])
+            ];
+        }
+    
+        // Logic to reserve location (optional: update DB fields like `processing_by` here)
+        $location->update([
+            'last_process_call' => now(),
+            'processing_by' => Auth::user()->name,
+        ]);
+    
+        return [
+            'status' => 'success',
+            'message' => __('Location reserved successfully.'),
+            'location' => $location->code
+        ];
     }
+    
 }

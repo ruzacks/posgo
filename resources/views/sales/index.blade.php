@@ -90,6 +90,11 @@ if (\Auth::user()->type == 'Super Admin') {
 
     @stack('old-datatable-css')
     @stack('stylesheets')
+    <style>
+        .table td, .table th {
+            padding: 0.5rem !important;
+        }
+    </style>
 
 </head>
 
@@ -111,204 +116,152 @@ if (\Auth::user()->type == 'Super Admin') {
                 </div>
             
                     <div class="mt-2 row">
-                        <div class="col-lg-7">
-                            <div class="sop-card card" style="min-height: 900px;">
-                                <div class="card-header p-2">
-                                    <div class="search-bar-left">
-                                        <form>
-                                            <div class="input-group">
-                                                <div class="input-group-prepend">
-                                                    <span class="input-group-text"><i class="ti ti-search"></i></span>
-                                                </div>
-                                                {{-- {{ Form::text('searchcustomers', null, ['class' => 'form-control pr-4 rounded-right', 'id' => 'searchcustomers', 'placeholder' => __('Search Customer')]) }}
-               
-                                                {{ Form::hidden('vc_name_hidden', '', ['id' => 'vc_name_hidden']) }} --}}
-                                                <input id="searchproduct" type="text" data-url="{{ route('search.products') }}" placeholder="{{ __('Search Product') }}" class="form-control pr-4 rounded-right">
+                        <div class="col-lg-10 px-3">
+                            <div class="row">
+                                <div class="card m-0">
+                                    <div class="col-lg-12">
+                                        <div class="card-header p-2 mt-2">
+                                            <h5>Product</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="table-responsive">
+                                                <table class="table">
+                                                    <thead>
+                                                    <tr>
+                                                        <th width="30%" class="text-left">Product</th>
+                                                        <th width="10%" class="text-center">QTY</th>
+                                                        <th width="20%" class="text-center" >Harga</th>
+                                                        <th width="30%" class="text-center" >Sub Total</th>
+                                                        <th width="10%"></th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody id="tbody">
+                                                     
+                                                    </tbody>
+                                                </table>
                                             </div>
-                                        </form>
+                                            
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="card-body p-2">
-                                    <div class="right-content">
-                                        <div class="button-list b-bottom catgory-pad">
-                                            <div class="form-row m-0" id="categories-listing">
-                                            </div>
+                            </div>
+                            <div class="row">
+                                <div class="card m-0 mt-2">
+                                    <div class="col-lg-12">
+                                        <div class="card-header p-2 mt-2">
+                                            <h5>Talent</h5>
                                         </div>
-                                        <div class="product-body-nop">
-                                                <div class="form-row" id="product-listing">
+                                        <div class="card-body">
+                                            <div class="table-responsive">
+                                                <table class="table">
+                                                    <thead>
+                                                    <tr>
+                                                        <th width="30%" class="text-left">Nama</th>
+                                                        <th width="10%" class="text-center">Durasi</th>
+                                                        <th width="20%" class="text-center" >Harga</th>
+                                                        <th width="30%" class="text-center" >Sub Total</th>
+                                                        <th width="10%"></th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody id="tbody">
+                                                     
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="card m-0 mt-2">
+                                    <div class="col-lg-12">
+                                        <div class="card-header p-2 mt-2">
+                                            <h5>Package</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="table-responsive">
+                                                <table class="table">
+                                                    <thead>
+                                                    <tr>
+                                                        <th width="30%" class="text-left">Paket</th>
+                                                        <th width="10%" class="text-center"></th>
+                                                        <th width="20%" class="text-center" >Harga</th>
+                                                        <th width="30%" class="text-center" >Sub Total</th>
+                                                        <th width="10%"></th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody id="tbody">
+                                                     
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col-lg-12">
+                                    <div class="card">
+                                        <div class="total-section">
+                                            <div class="sub-total">
+                                                    <div class="d-flex align-items-center justify-content-between">
+                                                        <h4 class="mb-0 text-gray-800">Total</h4>
+                                                        <h4 class="mb-0 text-gray-800" id="displaytotal">Rp.</h4>
+                                                    </div>
+                                                <div class="d-flex align-items-center justify-content-between pt-3" id="btn-pur">
+                                                    <div class="tab-content">
+                                                       
+                                                    </div>
+
+
+                                                    {{-- <div class="tab-content">
+                                                    <button type="button" class="btn btn-primary rounded" style="width: 100%"
+                                                        data-ajax-popup="true" data-size="lg" data-align="centered"
+                                                        data-url="{{ route('sales.create') }}"
+                                                        data-title="{{ __('Sale Products') }}"
+                                                        @if (session($lastsegment) && !empty(session($lastsegment)) && count(session($lastsegment)) > 0) @else disabled="disabled" @endif>{{ __('PAY') }}</button>
+                                                    </div> --}}
+
+
+                                                    <div class="tab-content btn-empty text-end">
+                                                        <button type="button" class="btn btn-primary rounded" style="width: 100%"
+                                                        id="pos_payment"  @if (session($lastsegment) && !empty(session($lastsegment)) && count(session($lastsegment)) > 0) @else disabled="disabled" @endif>{{ __('PAY') }}</button>
+
+
+
+                                                        <a href="" id="pos_pay" data-ajax-popup="true" data-size="lg" data-align="centered"
+                                                        data-url="{{ route('sales.create') }}"
+                                                        data-title="{{ __('Sale Products') }}"></a>
+                                                    </div>
                                                 </div>
                                             </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-lg-5 ps-lg-0">
+                        <div class="col-lg-2 ps-lg-0">
                             <div class="card m-0" style="min-height: 200px;">
                                 <div class="card-header p-2">
-                                      <div class="row" hidden>
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                {{ Form::label('branch_id', __('Branch'), ['class' => 'col-form-label']) }}
-                                                <div class="input-group">
-                                                    {{ Form::select('branch_id', ['' => __('Select Branch Type')], 1, ['class' => 'form-control pos_branch_id']) }}
-                                                </div>
-                                                <span id="error_branch_id" style="color: red"></span>
-                                            </div>
-                                            {{-- {{ Form::label('branch_id', __('Branch'), ['class' => 'col-form-label']) }}
-                                            {{ Form::select('branch_id', ['' => __('Select Branch Type')], null, ['class' => 'form-control']) }}
-                                            {{ Form::select('branch_id', $brands, null, ['class' => 'form-control select customer_select', 'data-toggle' => 'select2']) }}
-                                            {{ Form::hidden('vc_name_hidden', '',['id' => 'vc_name_hidden']) }} --}}
-            
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                {{ Form::label('cash_register_id', __('Cash Register'), ['class' => 'col-form-label']) }}
-                                                <div class="input-group">
-                                                    {{ Form::select('cash_register_id', ['' => __('Select Cash Register')], null, ['class' => 'form-control pos_cash_register_id']) }}
-                                                    
-                                                </div>
-                                                <span id="error_cash_register_id" style="color: red"></span>
-                                            </div>
-                                            {{-- {{ Form::select('cash_register_id', $cashregister, null, ['class' => 'form-control select warehouse_select', 'data-toggle' => 'select2']) }}
-                                            {{ Form::select('cash_register_id', ['' => __('Select Cash Register')], null, ['class' => 'form-control']) }}
-                                            {{ Form::hidden('warehouse_name_hidden', '',['id' => 'warehouse_name_hidden']) }} --}}
-            
-                                        </div>
-                                    </div>
-                                    <div class="row" hidden>
-                                        <div class="col-12">
-                                            <div class="input-group search_vendor_merge_input">
-                                                <div class="input-group-prepend">
-                                                    <span class="input-group-text"><i data-feather="user"></i></span>
-                                                </div>
-                                                {{ Form::text('searchcustomers', null, ['class' => 'form-control pr-4 rounded-right', 'id' => 'searchcustomers', 'placeholder' => __('Search Customer')]) }}
-                                                <a href="#" id="clearinput">
-                                                    <div class="input-group-text">
-                                                        <i data-feather="x-square"></i>
-                                                    </div>
-                                                </a>
-                                                {{ Form::hidden('vc_name_hidden', '', ['id' => 'vc_name_hidden']) }}
-                                            </div>
-                                        </div>
-                                    </div>
 
                                     <div class="row align-items-center mb-3">
                                         <div class="col-12 d-flex justify-content-start align-items-center">
-                                            <h3 class="mb-0">{{ __('Lokasi') }}: {{ $location->code }}</h3>
-                                            <h4 id="location_name" class="mb-0 ms-2 text-muted"></h4>
+                                            <h3 class="mb-0">{{ __('Lokasi') }}: </h3>
+                                            <h4 id="location_name" class="mb-0 ms-2 text-muted">{{ $location->name ?? '' }}</h4>
                                             <a href="#" class="action-btn bg-info" data-ajax-popup="true" data-bs-toggle="tooltip"
                                             data-title="{{ __('Change Location') }}" title="{{ __('Change Location') }}"
                                             data-size="lg" data-url="{{ route('locations.getLocation') }}">
                                                 <i class="ti ti-pencil text-white mx-3 btn btn-sm" title="{{ __('Change Location') }}"></i>
                                             </a>
-                                            {{ Form::hidden('current_location_hidden',$location->id, ['id' => 'current_location_hidden']) }}
+                                            {{ Form::hidden('current_location_hidden', $location->id ?? '', ['id' => 'current_location_hidden']) }}
                                         </div>
                                     </div>
                                     
                                   
                                 </div>
-                                <div class="card-body carttable cart-product-list carttable-scroll"  id="carthtml" >
-                                        @php $total = 0 @endphp
-                                        <div class="card-header card-body table-border-style">
-            
-                                            <div class="table-responsive">
-                                                <table class="table">
-                                                    <thead>
-                                                    <tr>
-                                                        <th class="text-left">Name</th>
-                                                        <th class="text-center">QTY</th>
-                                                        <th class="text-center" >Price</th>
-                                                        <th class="text-center" >Sub Total</th>
-                                                        <th></th>
-                                                    </tr>
-                                                    </thead>
-                                                    <tbody id="tbody">
-                                                        @if(session($lastsegment) && !empty(session($lastsegment)) && count(session($lastsegment)) > 0)
-                                                            @foreach(session($lastsegment) as $id => $details)
-                                                                @php
-                                                                $product = \App\Models\Product::find($details['id']);
-                                                                    $total += $details['subtotal'];
-                                                                @endphp
-                                                                    <tr data-product-id="{{$id}}" id="product-id-{{$id}}">
-                                                                        <td class="col-sm-3 name">{{ $details['name'] }}</td>
-                                                                        <td>
-                                                                            <span class="col-sm-6 quantity buttons_added">
-                                                                                <input type="button" value="-" class="minus">
-                                                                                <input type="number" step="1" min="1" max="" name="quantity"
-                                                                                                        title="{{ __('Quantity') }}" class="input-number"
-                                                                                                        data-url="{{ url('update-cart/') }}" data-id="{{ $id }}"
-                                                                                                        size="10" style="color: white" value="{{ $details['quantity'] }}">
-                                                                                <input type="button" value="+" class="plus">
-                                                                            </span>
-                                                                        </td>
-                                                                        <td class="col-sm-6 price text-center">{{ Auth::user()->priceFormat($details['price']) }}</td>
-                                                                        <td class="col-sm-3 text-center">
-                                                                            <span class="subtotal">{{ Auth::user()->priceFormat($details['subtotal']) }}</span>
-                                                                        </td>
-                    
-                                                                        <td class="col-sm-2 mt-2">
-                                                                            <a href="#" class="action-btn bg-danger bs-pass-para" data-confirm="{{ __('Are You Sure?') }}" data-text="{{__('This action can not be undone. Do you want to continue?')}}"
-                                                                            data-confirm-yes="delete-form-{{ $id }}" title="{{ __('Delete') }}" data-id="{{ $id }}">
-                                                                                <i class="ti ti-trash text-white mx-3 btn btn-sm" title="{{ __('Delete') }}"></i>
-                                                                            </a>
-                                                                            {!! Form::open(['method' => 'delete', 'url' => ['remove-from-cart'],'id' => 'delete-form-'.$id]) !!}
-                                                                            <input type="hidden" name="session_key" value="{{ $lastsegment }}">
-                                                                            <input type="hidden" name="id" value="{{ $id }}">
-                                                                            {!! Form::close() !!}
-                                                                        </td>
-                                                                    </tr>
-                                                            @endforeach
-                                                            @endif
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                            <div class="total-section">
-                                                <div class="sub-total">
-                                                        <div class="d-flex align-items-center justify-content-between">
-                                                            <h4 class="mb-0 text-gray-800">Total</h4>
-                                                            <h4 class="mb-0 text-gray-800" id="displaytotal">{{ Auth::user()->priceFormat($total) }}</h4>
-                                                        </div>
-                                                    <div class="d-flex align-items-center justify-content-between pt-3" id="btn-pur">
-                                                        {{-- <button type="button" class="btn btn-primary rounded"  data-ajax-popup="true" data-size="lg" data-align="centered" data-url="{{route('pos.create')}}" data-title="{{__('POS Invoice')}}"
-                                                                @if(session($lastsegment) && !empty(session($lastsegment)) && count(session($lastsegment)) > 0) @else disabled="disabled" @endif>
-                                                            {{ __('PAY') }}
-                                                        </button> --}}
-                                                        <div class="tab-content">
-                                                            <button type="button" class="btn btn-primary rounded" style="width: 100%"
-                                                                 id="pos_payment"  @if (session($lastsegment) && !empty(session($lastsegment)) && count(session($lastsegment)) > 0) @else disabled="disabled" @endif>{{ __('PAY') }}</button>
-    
-    
-    
-                                                                 <a href="" id="pos_pay" data-ajax-popup="true" data-size="lg" data-align="centered"
-                                                                 data-url="{{ route('sales.create') }}"
-                                                                 data-title="{{ __('Sale Products') }}"></a>
-                                                        </div>
 
-
-                                                        {{-- <div class="tab-content">
-                                                        <button type="button" class="btn btn-primary rounded" style="width: 100%"
-                                                            data-ajax-popup="true" data-size="lg" data-align="centered"
-                                                            data-url="{{ route('sales.create') }}"
-                                                            data-title="{{ __('Sale Products') }}"
-                                                            @if (session($lastsegment) && !empty(session($lastsegment)) && count(session($lastsegment)) > 0) @else disabled="disabled" @endif>{{ __('PAY') }}</button>
-                                                        </div> --}}
-
-
-                                                        <div class="tab-content btn-empty text-end">
-                                                            <a href="#" class="btn btn-danger bs-pass-para rounded m-0"  data-toggle="tooltip" data-original-title="{{ __('Empty Cart') }}"
-                                                                       data-confirm="{{ __('Are You Sure?') }}" data-text="{{__('This action can not be undone. Do you want to continue?')}}"
-                                                                       data-confirm-yes="delete-form-emptycart">
-                                                                        {{ __('Empty Cart') }}
-                                                                    </a>
-                                                            {!! Form::open(['method' => 'post', 'url' => ['empty-cart'],'id' => 'delete-form-emptycart']) !!}
-                                                            <input type="hidden" name="session_key" value="{{ $lastsegment }}" id="empty_cart">
-                                                            {!! Form::close() !!}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                    </div>
-                            </div>
                         </div>
                     </div>
             
@@ -817,262 +770,47 @@ if (\Auth::user()->type == 'Super Admin') {
             }
         });
 
-        $(document).on('click', '.btn-clear-cart', function (e) {
-            e.preventDefault();
-
-            if (confirm('{{ __("Remove all items from cart?") }}')) {
-
-                $.ajax({
-                    url: $(this).data('url'),
-                    data: {
-                        session_key: session_key
-                    },
-                    success: function (data) {
-                        location.reload();
-                    },
-                    error: function (data) {
-                        data = data.responseJSON;
-                        show_toastr('{{ __("Error") }}', data.error, 'error');
-                    }
-                });
-            }
-        });
-
-      
-        $(document).on('click', '.category-select', function (e) {
-            var cat = $(this).data('cat-id');
-            var white = 'text-white';
-            var dark = 'text-dark';
-            $('.category-select').parent().removeClass('cat-active');
-            $('.category-select').find('.card-title').removeClass('text-white').addClass('text-dark');
-            $('.category-select').find('.card-title').parent().removeClass('text-white').addClass('text-dark');
-            $(this).find('.card-title').removeClass('text-dark').addClass('text-white');
-            $(this).find('.card-title').parent().removeClass('text-dark').addClass('text-white');
-            $(this).parent().addClass('cat-active');
-            var url = '{{ route('search.products') }}'
-            searchProducts(url,'',cat);
-        });
-    });
-
-
-            $(document).on('click', '.btn-done-payment', function(e) {
-                e.preventDefault();
-
-                var ele = $(this);
-
-                $.ajax({
-                    url: ele.data('url'),
-                    method: 'POST',
-                    data: {
-                        vc_name: $('#vc_name_hidden').val(),
-                        branch_id: 1,
-                        cash_register_id: 1,
-                    },
-                    beforeSend: function() {
-                        ele.remove();
-                    },
-                    success: function(data) {
-                        if (data.code == 200) {
-                            show_toastr('Success', data.success, 'success')
-                        }
-                        setTimeout(function() {
-                            window.location.reload();
-                        }, 1000);
-                    },
-                    error: function(data) {
-                        data = data.responseJSON;
-                        show_toastr('{{ __('Error') }}', data.error, 'error');
-                    }
-                });
-            });
-
-
-
-
-            // $.ajax({
-            //     url: '{{ route('user.type') }}',
-            //     dataType: 'json',
-            //     success: function(data) {
-            //         console.log(data);
-            //         if (data) {
-
-            //             if (data[0].isOwner = 'false') {
-            //                 $.ajax({
-            //                     url: '{{ route('get.branches') }}',
-            //                     dataType: 'json',
-            //                     success: function(data) {
-
-            //                         if (data.length == 0) {
-            //                             // $('#branchModal').modal('show');  
-            //                             $('#branchModal .branch-warning').show();
-            //                         } else {
-            //                             // $('#branchModal .select-warning').show();
-
-            //                             $('#branchModal ').modal('show');
-            //                             // $('#branchModal .select-warning').modal();
-            //                             $.each(data, function(key, value) {
-            //                                 $('#branch_id')
-            //                                     .append($("<option></option>")
-            //                                         .attr("value", value.id)
-            //                                         .text(value.name));
-            //                             });
-
-            //                         }
-
-            //                         if ($('[data-toggle="select"]').length > 0) {
-            //                             $("select option[value='']").prop('disabled', !$(
-            //                                 "select option[value='']").prop(
-            //                                 'disabled'));
-            //                             $('[data-toggle="select"]').select2({});
-            //                         }
-            //                         $('#branchModal').modal({
-            //                             backdrop: 'static',
-            //                             keyboard: false
-            //                         })
-            //                     },
-            //                     error: function(data) {
-            //                         data = data.responseJSON;
-            //                         show_toastr('{{ __('Error') }}', data.error,
-            //                             'error');
-            //                     }
-            //                 });
-            //             } else if (data[0].isUser = 'false') {
-
-            //                 $('#display-branch').text(data[0].branchname);
-            //                 $('#display-cash-register').text(data[0].cashregistername);
-
-            //                 $('#branch_id')
-            //                     .append($("<option></option>")
-            //                         .attr("value", data[0].branch_id)
-            //                         .text(data[0].branchname));
-            //                 $('#cash_register_id')
-            //                     .append($("<option></option>")
-            //                         .attr("value", data[0].cash_register_id)
-            //                         .text(data[0].cashregistername));
-            //                 $('#branch_id').val(data[0].branch_id);
-            //                 $('#cash_register_id').val(data[0].cash_register_id);
-            //                 $('#display-bnc').removeClass('d-none');
-            //                 $('#display-bnc').show();
-            //             }
-            //         }
-            //     },
-            //     error: function(data) {
-            //         data = data.responseJSON;
-            //         show_toastr('{{ __('Error') }}', data.error, 'error');
-            //     }
-            // });
-
-
-            $(document).on('change', '#branch_id', function(e) {
-
-                $.ajax({
-                    url: '{{ route('get.cash.registers') }}',
-                    dataType: 'json',
-                    data: {
-                        'branch_id': 1
-                    },
-                    success: function(data) {
-                        $('#cash_register_id').find('option').not(':first').remove();
-                        $.each(data, function(key, value) {
-                            $('#cash_register_id')
-                                .append($("<option></option>")
-                                    .attr("value", value.id)
-                                    .text(value.name));
-                        });
-                    },
-                    error: function(data) {
-                        data = data.responseJSON;
-                        show_toastr('{{ __('Error') }}', data.error, 'error');
-                    }
-                });
-            });
-
-            $(document).on('change', '#cash_register_id', function(e) {
-                if ($(this).val() != '') {
-                    $('#display-branch').text($('#branch_id option:selected').text());
-                    $('#display-cash-register').text($('#cash_register_id option:selected').text());
-                    $('#display-bnc').removeClass('d-none');
-                    $('#display-bnc').show();
-                    $('#branchModal').modal('toggle');
-                    var cat = $('.cat-active').children().data('cat-id');
-                    searchProducts(url, '', cat);
-                }
-            });
-
-
-
-            $("#searchcustomers").autocomplete({
-                    minLength: 0,
-                    source: function(request, response) {
-                        $.getJSON("{{ route('search.customers') }}", {
-                            search: request.term
-                        }, response);
-                    },
-                    search: function() {
-                        var term = this.value;
-                        if (term.length == 0) {
-                            $("#vc_name_hidden").val('');
-                        }
-                        if (term.length < 2) {
-                            return false;
-                        }
-                    },
-                    focus: function(event, ui) {
-                        $("#searchcustomers, #vc_name_hidden").val(ui.item.label);
-                        return false;
-                    },
-                    select: function(event, ui) {
-                        $("#searchcustomers, #vc_name_hidden").val(ui.item.label);
-                        return false;
-                    }
-                })
-                .autocomplete("instance")._renderItem = function(ul, item) {
-
-                    return $("<li>")
-                        .append("<div>" + item.label + "<br>" + item.email + "</div>")
-                        .appendTo(ul);
-                };
 
     
-                function locationInProcess() {
-                    // Get the value from the hidden element with ID 'current_location_hidden'
-                    const currentLocation = document.getElementById('current_location_hidden')?.value;
+    });
+    function locationInProcess() {
+        // Get the value from the hidden element with ID 'current_location_hidden'
+        const currentLocation = document.getElementById('current_location_hidden')?.value;
 
-                    if (!currentLocation) {
-                        console.error('Current location is not set.');
-                        return;
-                    }
+        if (!currentLocation) {
+            console.error('Current location is not set.');
+            return;
+        }
 
-                    // Function to make the AJAX call
-                    function checkInProcess() {
-                        $.ajax({
-                            url: '{{ route("locations.inProcess") }}',
-                            method: 'POST', // Replace with your actual route
-                            data: {
-                                location_id: currentLocation,
-                                _token: '{{ csrf_token() }}' // Include CSRF token if using Laravel
-                            },
-                            success: function (response) {
-                                // Handle success response (e.g., update the UI)
-                                console.log('Room status:', response);
-                                // You can display indicators or handle data as needed
-                            },
-                            error: function (xhr, status, error) {
-                                console.error('Error checking room in process:', error);
-                            }
-                        });
-                    }
-
-                    // Call the function every 10 seconds (10000 milliseconds)
-                    setInterval(checkInProcess, 10000);
-
-                    // Optionally, make an initial call immediately
-                    checkInProcess();
+        // Function to make the AJAX call
+        function checkInProcess() {
+            $.ajax({
+                url: '{{ route("locations.inProcess") }}',
+                method: 'POST', // Replace with your actual route
+                data: {
+                    location_id: currentLocation,
+                    _token: '{{ csrf_token() }}' // Include CSRF token if using Laravel
+                },
+                success: function (response) {
+                    // Handle success response (e.g., update the UI)
+                    console.log('Room status:', response);
+                    // You can display indicators or handle data as needed
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error checking room in process:', error);
                 }
+            });
+        }
 
-                // Call the function to start the continuous checks
-                locationInProcess();
+        // Call the function every 10 seconds (10000 milliseconds)
+        setInterval(checkInProcess, 1000);
 
+        // Optionally, make an initial call immediately
+        checkInProcess();
+    }
+
+    // Call the function to start the continuous checks
+    locationInProcess();
 
 
 </script>

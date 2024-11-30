@@ -107,7 +107,7 @@ class User extends Authenticatable
     {
         $settings = Utility::settings();
 
-        return date($settings['site_date_format'], strtotime($datetime)) . ' ' . date($settings['site_time_format'], strtotime($datetime));
+        return date($settings['site_date_format'], strtotime($datetime));
     }
 
     // public function purchaseInvoiceNumberFormat($number)

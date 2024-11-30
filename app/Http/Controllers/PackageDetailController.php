@@ -28,74 +28,45 @@ class PackageDetailController extends Controller
 
     public function updatePackage(Product $product, Request $request)
     {
-        // Validate the incoming request data
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'duration' => 'required|integer|min:1',
-            'location' => 'required|string|max:255',
-            'min_sale' => 'required|integer|min:1',
-            'fixed_product' => 'array', // Make optional
-            'fixed_quantity' => 'array', // Make optional
-            'fixed_quantity.*' => 'integer|min:1',
-            'optional_product' => 'array', // Make optional
-            'optional_quantity' => 'array', // Make optional
-            'optional_quantity.*' => 'integer|min:1',
-            'talent_grade' => 'array', // Make optional
-            'talent_quantity' => 'array', // Make optional
-            'talent_quantity.*' => 'integer|min:1',
-        ]);
-
-        $fixedProductsWithQuantities = [];
-        $optionalProductsWithQuantities = [];
-        $talentsWithQuantities = [];
-
-        // Process fixed products and quantities if they are present
-        if (!empty($validated['fixed_product']) && !empty($validated['fixed_quantity'])) {
-            foreach ($validated['fixed_product'] as $index => $productId) {
-                $fixedProductsWithQuantities[] = [
-                    'product_id' => $productId,
-                    'quantity' => $validated['fixed_quantity'][$index],
-                ];
+        try {
+            // Update product details
+            $product->name = $request->package_name;
+            $product->purchase_price = $request->hpp;
+            $product->sale_price = $product->sale_price;
+            $product->save();
+    
+            // Update package details
+            $packageDetail = PackageDetail::where('product_id', $product->id)->first();
+    
+            if (!$packageDetail) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Package detail not found.'
+                ]);
             }
+    
+            $packageDetail->fixed_products = $request->fixed_product;
+            $packageDetail->optional_products = $request->optional_product ?? null;
+            $packageDetail->optional_talents = $request->talents ?? null;
+            $packageDetail->duration = $request->duration;
+            $packageDetail->save();
+    
+            // Return success response
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Paket berhasil diperbarui.'
+            ]);
+    
+        } catch (\Exception $e) {
+            // Handle exceptions and return error response
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Terjadi kesalahan saat memperbarui paket.',
+                'error' => $e->getMessage(),
+            ]);
         }
-
-        // Process optional products and quantities if they are present
-        if (!empty($validated['optional_product']) && !empty($validated['optional_quantity'])) {
-            foreach ($validated['optional_product'] as $index => $productId) {
-                $optionalProductsWithQuantities[] = [
-                    'product_id' => $productId,
-                    'quantity' => $validated['optional_quantity'][$index],
-                ];
-            }
-        }
-
-        // Process optional products and quantities if they are present
-        if (!empty($validated['talent_grade']) && !empty($validated['talent_quantity'])) {
-            foreach ($validated['talent_grade'] as $index => $productId) {
-                $talentsWithQuantities[] = [
-                    'grade_id' => $productId,
-                    'quantity' => $validated['talent_quantity'][$index],
-                ];
-            }
-        }
-
-        $product->name = $request->name;
-        $product->sale_price = $request->sale_price;
-        $product->save();
-
-        // Update the package details
-        $package = PackageDetail::where('product_id', $product->id)->first();
-        $package->fixed_products = $fixedProductsWithQuantities ?: null;
-        $package->optional_products = $optionalProductsWithQuantities ?: null;
-        $package->optional_talents = $talentsWithQuantities ?: null;
-        $package->duration = $request->duration;
-        $package->location = $request->location;
-        $package->min_sale = $request->min_sale;
-        $package->number_optional_choice = $request->number_optional_choice;
-        $package->save();
-
-        return redirect()->back()->with('success', __('Package Updated.'));
     }
+    
 
     public function packageItems(Request $request)
     {
