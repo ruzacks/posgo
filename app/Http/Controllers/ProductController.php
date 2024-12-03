@@ -768,15 +768,18 @@ class ProductController extends Controller
     public function searchProductsJson(Request $request)
     {
         $search = $request->name;
-        $products = Product::getallproducts()->where('products.name', 'LIKE', "%{$request->search}%")
-                    ->where('is_stock',1)
-                    ->select('products.id', 'products.name as label', 'quantity as stock', 'purchase_price')
-                    ->get();
+        $query = Product::getallproducts()
+                        ->where('products.name', 'LIKE', "%{$request->search}%");
 
-        // return $products;
+        // If the request has 'type' and its value is 'sale', don't filter by 'is_stock'
+        if (!$request->has('type') || $request->type !== 'sale') {
+            $query->where('is_stock', 1);
+        }
+
+        $products = $query->select('products.id', 'products.name as label', 'quantity as stock', 'purchase_price', 'sale_price', 'u.name as unit_name')
+                        ->get();
 
         return $products;
-
     }
 
     

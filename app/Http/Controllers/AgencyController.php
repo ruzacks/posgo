@@ -54,8 +54,8 @@ class AgencyController extends Controller
                 [
                     'name' => 'required|max:120',
                     'code' => 'required|unique:agencies,code',
-                    'phone_number' => 'required|min:10|max:15',
-                    'address' => 'required|max:255',
+                    // 'phone_number' => 'required|min:10|max:15',
+                    // 'address' => 'required|max:255',
                 ]
             );
 
@@ -100,8 +100,8 @@ class AgencyController extends Controller
                 [
                     'name' => 'required|max:120',
                     'code' => 'required|unique:agencies,code,' . $agency->id,
-                    'phone_number' => 'required|min:10|max:15',
-                    'address' => 'required|max:255',
+                    // 'phone_number' => 'required|min:10|max:15',
+                    // 'address' => 'required|max:255',
                 ]
             );
 

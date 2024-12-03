@@ -29,7 +29,15 @@ class PackageDetail extends Model
         $fixedProducts = json_decode($value); // Decode JSON as object
     
         foreach ($fixedProducts as $item) {
-            $item->product = Product::find($item->productId); // Attach Product instance
+            $product = Product::find($item->productId); // Find the Product instance
+            if ($product) {
+                $item->product = $product; // Attach Product instance
+                $item->product->unit_name = $product->unit_id 
+                    ? Unit::find($product->unit_id)->shortname ?? 'N/A' 
+                    : 'N/A'; // Fetch and attach the unit name
+            } else {
+                $item->unit_name = 'N/A'; // Handle cases where the product is not found
+            }
         }
     
         return $fixedProducts;
@@ -46,7 +54,15 @@ class PackageDetail extends Model
     
         foreach ($optionalProducts as $item) {
             foreach ($item->products as $productData) {
-                $productData->product = Product::find($productData->id); // Attach Product instance
+                $product = Product::find($productData->id); // Find the Product instance
+                if ($product) {
+                    $productData->product = $product; // Attach Product instance
+                    $productData->product->unit_name = $product->unit_id 
+                        ? Unit::find($product->unit_id)->shortname ?? 'N/A' 
+                        : 'N/A'; // Fetch and attach the unit name
+                } else {
+                    $productData->unit_name = 'N/A'; // Handle cases where the product is not found
+                }
             }
         }
     
@@ -63,7 +79,7 @@ class PackageDetail extends Model
         $optionalTalents = json_decode($value);
     
         foreach ($optionalTalents as $item) {
-            $item->talent = Talent::find($item->grade_id); // Attach Talent instance
+            $item->talent = TalentGrade::find($item->grade_id); // Attach Talent instance
         }
     
         return $optionalTalents;

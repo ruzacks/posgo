@@ -3,7 +3,7 @@
 
     <div class="form-group">
         {{ Form::label('name', __('Talent Grade Name'), ['class' => 'col-form-label']) }}
-        {{ Form::text('name', null, ['class' => 'form-control', 'placeholder' => __('Enter Talent Grade Name')]) }}
+        {{ Form::text('name', null, ['class' => 'form-control', 'placeholder' => __('Enter Talent Grade Name'), 'autocomplete' => 'off']) }}
     </div>
     <div class="form-group">
         {{ Form::label('', __('Price Stucture'), ['class' => 'col-form-label']) }}

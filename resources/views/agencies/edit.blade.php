@@ -3,25 +3,25 @@
 <div class="row">
     <div class="form-group col-md-6">
         {{ Form::label('name', __('Name'), ['class' => 'col-form-label']) }}
-        {{ Form::text('name', null, ['class' => 'form-control', 'placeholder' => __('Enter new talent name'), 'required'=>'required']) }}
+        {{ Form::text('name', null, ['class' => 'form-control', 'placeholder' => __('Enter new talent name'), 'required'=>'required', 'autocomplete' => 'off']) }}
     </div>
     <div class="form-group col-md-6">
         {{ Form::label('phone_number', __('Phone number'), ['class' => 'col-form-label']) }}
-        {{ Form::text('phone_number', null, ['class' => 'form-control', 'maxlength' => '15', 'placeholder' => __('Enter phone number')]) }}
+        {{ Form::text('phone_number', null, ['class' => 'form-control', 'maxlength' => '15', 'placeholder' => __('Enter phone number'), 'autocomplete' => 'off']) }}
     </div>
     <div class="form-group col-md-6">
         {{ Form::label('grade_id', __('Grade'), ['class' => 'col-form-label']) }}
         <div class="input-group">
-            {{ Form::select('grade_id', $grades, null, ['class' => 'form-control', 'data-toggle' => 'select']) }}
+            {{ Form::select('grade_id', $grades, null, ['class' => 'form-control', 'data-toggle' => 'select', 'autocomplete' => 'off']) }}
         </div>
     </div>
     <div class="form-group col-md-6">
         {{ Form::label('price', __('Price per Hour'), ['class' => 'col-form-label']) }}
-        {{ Form::text('price', null, ['class' => 'form-control', 'maxlength' => '15', 'placeholder' => __('Enter price per hour')]) }}
+        {{ Form::text('price', null, ['class' => 'form-control', 'maxlength' => '15', 'placeholder' => __('Enter price per hour'), 'autocomplete' => 'off']) }}
     </div>
     <div class="form-group col-md-6">
         {{ Form::label('address', __('Address'), ['class' => 'col-form-label']) }}
-        {{ Form::text('address', null, ['class' => 'form-control', 'placeholder' => __('Enter Address')]) }}
+        {{ Form::text('address', null, ['class' => 'form-control', 'placeholder' => __('Enter Address'), 'autocomplete' => 'off']) }}
     </div>
 </div>
 </div>

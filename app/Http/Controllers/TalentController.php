@@ -64,7 +64,7 @@ class TalentController extends Controller
                 $request->all(),
                 [
                     'name' => 'required|max:120',
-                    'phone_number' => 'required|min:10|max:15',
+                    // 'phone_number' => 'required|min:10|max:15',
                     'code' => 'required|max:120',
                 ]
             );
@@ -126,7 +126,7 @@ class TalentController extends Controller
                 $request->all(),
                 [
                     'name' => 'required|max:120',
-                    'phone_number' => 'required|min:10|max:15',
+                    // 'phone_number' => 'required|min:10|max:15',
                     'code' => 'required|max:120',
                 ]
             );
@@ -186,4 +186,39 @@ class TalentController extends Controller
             return redirect()->back()->with('error', __('Permission denied.'));
         }
     }
+
+    public function getByGrade(Request $request)
+    {
+        $gradeId = $request->input('grade_id');
+    
+        // Check if grade_id is provided
+        if ($gradeId) {
+            // Fetch talents by grade
+            $talents = Talent::where('grade_id', $gradeId)->get();
+    
+            // Check if any talents were found for the grade
+            if ($talents->isEmpty()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No talents found for the specified grade.',
+                ]);
+            }
+    
+            // Return talents as a JSON response
+            return response()->json([
+                'success' => true,
+                'talents' => $talents,
+            ]);
+        } else {
+            // If grade_id is not provided, fetch all talents with their grade information
+            $talents = TalentGrade::with('talent')->get();
+    
+            // Return talents as a JSON response
+            return response()->json([
+                'success' => true,
+                'talents' => $talents,
+            ]);
+        }
+    }
+    
 }

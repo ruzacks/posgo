@@ -35,6 +35,7 @@ class Product extends Model
         return Product::select('products.*', 'b.name as brandname', 'c.name as categoryname')
                     ->leftjoin('brands as b', 'b.id', '=', 'products.brand_id')
                     ->leftjoin('categories as c', 'c.id', '=', 'products.category_id')
+                    ->leftjoin('units as u', 'u.id', '=', 'products.unit_id')
                     ->where('products.created_by', '=', Auth::user()->getCreatedBy())
                     ->orderBy('products.id', 'DESC');
     }
@@ -227,6 +228,11 @@ class Product extends Model
         }
 
         return $brandRate;
+    }
+
+    public function PackageDetail()
+    {
+        return $this->hasOne(PackageDetail::class, 'product_id', 'id');
     }
 
 }

@@ -190,7 +190,7 @@ if (\Auth::user()->type == 'Super Admin') {
                                 No. Faktur Supplier
                             </div>
                             <div class="col-md-8">
-                                {{ Form::text('vendor_invoice', null, ['class' => 'form-control', 'id' => 'vendor_invoice', ]) }}
+                                {{ Form::text('vendor_invoice', null, ['class' => 'form-control', 'id' => 'vendor_invoice', 'autocomplete' => 'off' ]) }}
                             </div>
                         </div>
                     </div>

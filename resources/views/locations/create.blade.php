@@ -3,7 +3,7 @@
 <div class="row">
     <div class="form-group col-md-6">
         {{ Form::label('location_code', __('Room Code'), ['class' => 'col-form-label']) }}
-        {{ Form::text('location_code', null, ['class' => 'form-control', 'placeholder' => __('Enter new location code'), 'required'=>'required']) }}
+        {{ Form::text('location_code', null, ['class' => 'form-control', 'placeholder' => __('Enter new location code'), 'required'=>'required', 'autocomplete' => 'off']) }}
     </div>
     <div class="form-group col-md-6">
         {{ Form::label('location_type', __('Room Type'), ['class' => 'col-form-label']) }}

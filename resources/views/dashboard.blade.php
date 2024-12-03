@@ -174,34 +174,26 @@
                                                 $statusColor = '';
                                                 switch ($location->status) {
                                                     case 'occupied':
-                                                        $checkInDisplay = $randomCheckIn->format('d M H:i');
-                                                        $checkOutDisplay = $randomCheckOut->format('d M H:i');
+                                                      
                                                         $statusColor = 'text-success'; // Green for occupied
-                                                        $sale = 2000000;
+                                                       
                                                         break;
                                                     case 'booked':
-                                                        $checkInDisplay = $randomCheckIn->format('d M H:i');
-                                                        $checkOutDisplay = ''; // No check-out time for booked
+                                                       
                                                         $statusColor = 'text-warning'; // Yellow for booked
-                                                        $sale = 300000;
+                                                       
                                                         break;
                                                     case 'available':
-                                                        $checkInDisplay = '';
-                                                        $checkOutDisplay = '';
+                                                       
                                                         $statusColor = 'text-info'; // Blue for available
-                                                        $sale = 0;
                                                         break;
                                                     case 'maintenance':
-                                                        $checkInDisplay = '';
-                                                        $checkOutDisplay = '';
+                                                       
                                                         $statusColor = 'text-secondary'; // Gray for maintenance
-                                                        $sale = 200000;
                                                         break;
                                                     default:
-                                                        $checkInDisplay = '';
-                                                        $checkOutDisplay = '';
+                                                        
                                                         $statusColor = 'text-muted'; // Default for unknown status
-                                                        $sale = 0;
                                                         break;
                                                 }
                                             @endphp
@@ -209,11 +201,10 @@
                                                 <td>{{ $key + 1 }}</td>
                                                 <td class="code-cell">{{ $location->code }}</td>
                                                 <td class="{{ $statusColor }}">{{ $location->status }}</td>
-                                                <td>{{ $sale }}</td>
-                                                <td>{{ $checkInDisplay }}</td>
-                                                <td>{{ $checkOutDisplay }}</td>
-                                                <td class="elapsed-time" data-start="{{ $randomCheckIn }}">
-                                                    00:00:00
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td class="elapsed-time" data-start="">
                                                 </td>
                                                 <td class="Action">
                                                     <div class="d-flex justify-content-start align-items-center gap-2">
@@ -232,8 +223,8 @@
                                                                         
                                                             <!-- Money Badge Button -->
                                                             <div class="action-btn bg-primary">
-                                                                <a href="#"
-                                                                    class="bs-pass-para mx-3 btn btn-sm d-inline-flex align-items-center"
+                                                                <a href="{{ route('sales.index', ['location_id' => $location->id]) }}"
+                                                                    class="mx-3 btn btn-sm d-inline-flex align-items-center"
                                                                     data-bs-toggle="tooltip"
                                                                     title="{{ __('Transaction') }}">
                                                                     <i class="ti ti-credit-card text-white"></i>
@@ -539,21 +530,21 @@
         });
 
         // Ticking Elapsed Time Counter
-        function updateElapsedTime() {
-            document.querySelectorAll('.elapsed-time').forEach(function(element) {
-                const startTime = new Date(element.getAttribute('data-start')).getTime();
-                const now = new Date().getTime();
-                const elapsed = new Date(now - startTime);
+        // function updateElapsedTime() {
+        //     document.querySelectorAll('.elapsed-time').forEach(function(element) {
+        //         const startTime = new Date(element.getAttribute('data-start')).getTime();
+        //         const now = new Date().getTime();
+        //         const elapsed = new Date(now - startTime);
 
-                const hours = String(elapsed.getUTCHours()).padStart(2, '0');
-                const minutes = String(elapsed.getUTCMinutes()).padStart(2, '0');
-                const seconds = String(elapsed.getUTCSeconds()).padStart(2, '0');
+        //         const hours = String(elapsed.getUTCHours()).padStart(2, '0');
+        //         const minutes = String(elapsed.getUTCMinutes()).padStart(2, '0');
+        //         const seconds = String(elapsed.getUTCSeconds()).padStart(2, '0');
 
-                element.textContent = `${hours}:${minutes}:${seconds}`;
-            });
-        }
+        //         element.textContent = `${hours}:${minutes}:${seconds}`;
+        //     });
+        // }
 
-        setInterval(updateElapsedTime, 1000);
+        // setInterval(updateElapsedTime, 1000);
 
         function applyFilters() {
             // let categoryFilter = document.getElementById('categoryFilter').value.toLowerCase();

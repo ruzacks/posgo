@@ -3,7 +3,7 @@
 
 <div class="form-group">
     {{ Form::label('name', __('Location Name'), ['class' => 'col-form-label']) }}
-    {{ Form::text('name', null, ['class' => 'form-control', 'placeholder' => __('Enter new Location Name')]) }}
+    {{ Form::text('name', null, ['class' => 'form-control', 'placeholder' => __('Enter new Location Name'), 'autocomplete' => 'off']) }}
 </div>
 </div>
 

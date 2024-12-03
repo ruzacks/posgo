@@ -11,6 +11,14 @@ class TalentGrade extends Model
 
     protected $guarded = ['id'];
 
+    // Add a computed property for the total price
+    protected $appends = ['price'];
+
+    public function getPriceAttribute()
+    {
+        return $this->talent_price + $this->agency_price + $this->office_price;
+    }
+
     public function talent()
     {
         return $this->hasMany(Talent::class, 'grade_id', 'id');

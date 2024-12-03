@@ -60,6 +60,7 @@ Route::resource('customers', CustomerController::class)->middleware(['auth','XSS
 
 Route::resource('talents', TalentController::class)->middleware(['auth','XSS']);
 Route::resource('talent-grades', TalentGradeController::class)->middleware(['auth','XSS']);
+Route::get('get-talent-by-grade', [TalentController::class, 'getByGrade'])->name('get.talent.by.grade')->middleware(['auth','XSS']);
 
 Route::resource('agencies', AgencyController::class)->middleware(['auth','XSS']);
 
@@ -125,6 +126,8 @@ Route::get('package-items', [PackageDetailController::class, 'packageItems'])->n
 
 Route::put('edit-package/{product}', [PackageDetailController::class, 'updatePackage'])->name('update.package')->middleware(['auth','XSS']);
 Route::get('package-add-talent', [PackageDetailController::class, 'addTalent'])->name('package.add.talent')->middleware(['auth','XSS']);
+Route::get('search-package', [PackageDetailController::class, 'searchPackage'])->name('search.package')->middleware(['auth','XSS']);
+Route::get('get-package', [PackageDetailController::class, 'getPackage'])->name('get.package')->middleware(['auth','XSS']);
 
 Route::resource('categories', CategoryController::class)->middleware(['auth','XSS']);
 

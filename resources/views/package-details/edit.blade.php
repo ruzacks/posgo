@@ -46,7 +46,7 @@
                                     {{ Form::label('name', __('Package Name'), ['class' => 'col-form-label']) }}
                                 </div>
                                 <div class="col-md-8">
-                                    {{ Form::text('name', $product->name, ['class' => 'form-control', 'placeholder' => __('Enter new Product Name'), 'required' => true, 'id' => 'name']) }}
+                                    {{ Form::text('name', $product->name, ['class' => 'form-control', 'placeholder' => __('Enter new Product Name'), 'required' => true, 'id' => 'name', 'autocomplete' => 'off']) }}
                                 </div>
                             </div>
                             <div class="row form-group">

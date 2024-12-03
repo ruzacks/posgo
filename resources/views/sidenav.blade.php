@@ -123,13 +123,13 @@ $cust_theme_bg = App\Models\Utility::getValByName('cust_theme_bg');
                                 </li>
                             @endcan
 
-                            {{-- @can('Manage Sales')
+                            @can('Manage Sales')
                                 <li class="dash-item dash-hasmenu">
                                     <a class="dash-link sub-item" href="{{ route('reports.sales') }}">
                                         <span class="dash-micon"><i class="ti ti-users"></i></span>{{ __('Sale') }}
                                     </a>
                                 </li>
-                            @endcan --}}
+                            @endcan
 
                         </ul>
                     </li>

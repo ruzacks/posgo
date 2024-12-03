@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use App\Models\PackageDetail;
 use App\Models\Product;
 use App\Models\TalentGrade;
@@ -123,5 +124,29 @@ class PackageDetailController extends Controller
         } else {
             return redirect()->back()->with('error', __('Permission denied.'));
         }
+    }
+
+    public function searchPackage(Request $request)
+    {
+        $packageId = Category::where('name', 'PAKET')->pluck('id')->first();
+
+        $products = Product::where('category_id', $packageId)
+            ->where('name', 'like', '%' . $request->search . '%')
+            ->select('name', 'id', 'sale_price')->get(); // Correct order for pluck
+
+        return response()->json($products); // Returning JSON for better API practices
+    }
+
+    public function getPackage(Request $request)
+    {
+        // Fix the typo in the variable name
+        $package = Product::where('id', $request->package_id)->with('PackageDetail')->first();
+
+        if (!$package) {
+            return response()->json(['error' => 'Package not found'], 404); // Handle null cases
+        }
+
+        // Use the correct relationship name and return the desired attribute
+        return $package; 
     }
 }

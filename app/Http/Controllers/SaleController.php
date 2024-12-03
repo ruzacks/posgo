@@ -32,7 +32,6 @@ class SaleController extends Controller
             $location = Location::where('id', $request->location_id)->first();
  
             if($accessSale['status'] == 'success'){
-
                 return view('sales.index', compact('location'));
             } else {
                 return redirect('/')->with('error', $accessSale['message']);

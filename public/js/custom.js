@@ -620,7 +620,7 @@ function pickLocation(idLocation) {
             } else if (hiddenInput) {
                 hiddenInput.value = idLocation;
                 $('#commonModal').modal('hide');
-                $('#location_name').text(response.location);
+                $('#location_code').text(response.location);
                 locationInProcess();
             } else {
                 window.location.href = `/sales?location_id=${idLocation}`;
