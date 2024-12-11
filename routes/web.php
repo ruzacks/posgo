@@ -156,9 +156,11 @@ Route::get('sales-items', [SaleController::class,'salesItems'])->name('sales.ite
 Route::resource('sales', SaleController::class)->middleware(['auth','XSS']);
 
 Route::get('get-location', [SaleController::class, 'getLocation'])->name('locations.getLocation')->middleware(['auth', 'XSS']);
+Route::get('get-location-sale/{location_id}', [SaleController::class, 'getLocationSale'])->name('getLocation.sale')->middleware(['auth', 'XSS']);
 Route::post('process-location', [SaleController::class, 'inProcess'])->name('locations.inProcess')->middleware(['auth', 'XSS']);
 Route::post('reserve-location', [SaleController::class, 'reserveLocation'])->name('locations.reserve')->middleware(['auth', 'XSS']);
 
+Route::get('check-out', [SaleController::class, 'checkOut']);
 
 Route::get('returned-items', [ProductsReturnController::class,'returnedItems'])->name('returned.items')->middleware(['auth','XSS']);
 // Route::get('returned-items', 'ProductsReturnController@returnedItems')->name('returned.items')->middleware(['auth', 'XSS']);

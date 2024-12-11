@@ -188,19 +188,19 @@ class Product extends Model
         return $unitRate;
     }
 
-    public static function unit($unit)
-    {
-        $categoryArr  = explode(',', $unit);
-        $unitRate = 0;
-        foreach($categoryArr as $unit)
-        {
-            $unit    = Unit::find($unit);
-            $unitRate        = (!empty($unit->name) ? $unit->name : '');
+    // public static function unit($unit)
+    // {
+    //     $categoryArr  = explode(',', $unit);
+    //     $unitRate = 0;
+    //     foreach($categoryArr as $unit)
+    //     {
+    //         $unit    = Unit::find($unit);
+    //         $unitRate        = (!empty($unit->name) ? $unit->name : '');
             
-        }
+    //     }
 
-        return $unitRate;
-    }
+    //     return $unitRate;
+    // }
 
     public static function Category($category)
     {
@@ -233,6 +233,11 @@ class Product extends Model
     public function PackageDetail()
     {
         return $this->hasOne(PackageDetail::class, 'product_id', 'id');
+    }
+
+    public function unit()
+    {
+        return $this->hasOne(Unit::class, 'id','unit_id');
     }
 
 }

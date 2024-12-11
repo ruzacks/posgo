@@ -13,9 +13,8 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('selled_items', function (Blueprint $table) {
-            $table->double('purchase_price',15,2);
-            $table->string('unit');
+        Schema::table('selled_talent', function (Blueprint $table) {
+            $table->integer('hour')->after('talent_id');
         });
     }
 
@@ -26,9 +25,8 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('selled_items', function (Blueprint $table) {
-            $table->dropColumn('purchase_price');
-            $table->dropColumn('unit');
+        Schema::table('selled_talent', function (Blueprint $table) {
+            $table->dropColumn('hour');
         });
     }
 };

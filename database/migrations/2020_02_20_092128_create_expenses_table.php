@@ -18,7 +18,7 @@ class CreateExpensesTable extends Migration
             $table->date('date')->nullable();
             $table->tinyInteger('branch_id')->default('0');
             $table->integer('category_id')->default('0');
-            $table->float('amount')->default('0.00');
+            $table->double('amount',15,2)->default('0.00');
             $table->text('note')->nullable();
             $table->integer('created_by')->default('0');
             $table->timestamps();

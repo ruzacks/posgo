@@ -20,7 +20,7 @@ class CreateReturnedItemsTable extends Migration
             $table->decimal('price', 15, 2)->default('0.00');
             $table->integer('quantity')->default('0');
             $table->integer('tax_id')->default('0');
-            $table->float('tax')->default('0.00');
+            $table->double('tax',15,2)->default('0.00');
             $table->timestamps();
         });
     }

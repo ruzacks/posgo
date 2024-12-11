@@ -19,7 +19,7 @@ return new class extends Migration
             $table->integer('product_id');
             $table->integer('quantity');
             $table->string('unit');
-            $table->float('purchase_price');
+            $table->double('purchase_price',15,2);
             $table->timestamps();
         });
     }

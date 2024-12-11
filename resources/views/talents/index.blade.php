@@ -53,6 +53,7 @@
                                         <th>#</th>
                                         <th>{{ __('Code') }}</th>
                                         <th>{{ __('Name') }}</th>
+                                        <th>{{ __('Status') }}</th>
                                         <th>{{ __('Phone') }}</th>
                                         <th style="text-align: center">{{ __('Grade') }} </th>
                                         <th style="text-align: center">{{ __('Agency') }} </th>
@@ -65,6 +66,7 @@
                                             <td>{{ $key + 1 }}</td>
                                             <td>{{ $talent->code }}</td>
                                             <td>{{ $talent->name }}</td>
+                                            <td>{{ $talent->status }}</td>
                                             <td>{{ $talent->phone_number }}</td>
                                             <td style="text-align: center">{{ $talent->talentGrade() }}</td>
                                             <td style="text-align: center">{{ $talent->talentAgency() }}</td>

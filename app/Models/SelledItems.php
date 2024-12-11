@@ -15,12 +15,23 @@ class SelledItems extends Model
         'tax',
     ];
 
-    public function product(){
-        return $this->hasOne('App\Models\Product', 'id', 'product_id');
-    }
-
+    
     public function sale()
     {
         return $this->belongsTo(Sale::class, 'sell_id', 'id');
+    }
+
+    public function product(){
+        return $this->hasOne('App\Models\Product', 'id', 'product_id');
+    }
+    
+    public function selledPackageItem()
+    {
+        return $this->hasMany(SelledPackageItem::class, 'selled_item_id', 'id');
+    }
+
+    public function selledPackageTalent()
+    {
+        return $this->hasMany(SelledPackageTalent::class, 'selled_item_id', 'id');
     }
 }

@@ -16,7 +16,7 @@ class CreatePlansTable extends Migration
         Schema::create('plans', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('name',100)->unique();
-            $table->float('price')->default(0);
+            $table->double('price',15,2)->default(0);
             $table->string('duration',100);
             $table->integer('max_users')->default(0);
             $table->integer('max_customers')->default(0);

@@ -13,13 +13,14 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('talent_grades', function (Blueprint $table) {
+        Schema::create('selled_package_talent', function (Blueprint $table) {
             $table->id();
-            $table->string('name'); // e.g., 'Beginner', 'Expert', etc.
-            $table->double('talent_price',15,2)->nullable();
-            $table->double('office_price',15,2)->nullable();
-            $table->double('agency_price',15,2)->nullable();
-            $table->integer('created_by')->default('0');
+            $table->integer('selled_item_id');
+            $table->integer('talent_id');
+            $table->integer('hour');
+            $table->double('talent_price',15,2);
+            $table->double('agency_price',15,2);
+            $table->double('office_price',15,2);
             $table->timestamps();
         });
     }
@@ -31,6 +32,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('talent_grades');
+        Schema::dropIfExists('selled_package_talent');
     }
 };

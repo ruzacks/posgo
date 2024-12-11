@@ -5,11 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class SelledPackageItem extends Model
+class SelledPackageTalent extends Model
 {
     use HasFactory;
 
-    public function product(){
-        return $this->hasOne('App\Models\Product', 'id', 'product_id');
+    public function talent()
+    {
+        return $this->belongsTo(Talent::class, 'talent_id', 'id');
     }
 }

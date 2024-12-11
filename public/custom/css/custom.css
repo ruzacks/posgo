@@ -1094,3 +1094,106 @@ img.card-image.avatar.rounded-circle.shadow.hover-shadow-lg {
 .product-body-nop .card .product-title-name {
     min-height: unset;
 }
+
+
+/* /easy-ui window section/ */
+.panel.window, .window-shadow {
+    display: none; /* Without !important */
+}
+
+.window {
+    background: var(--bs-primary) !important;
+}
+
+.window, .window .window-body {
+    border-color: #95b9e700 !important;
+}
+
+[class*="shadow"] {
+    display: none !important;
+}
+
+.panel-title {
+    color: white !important;
+}
+
+.panel-tool-collapse, .panel-tool-min, .panel-tool-max {
+    display: none !important;
+}
+
+.form-window {
+    padding: 0.2rem 1rem !important;
+}
+
+.form-group-window {
+    margin-bottom : 0.3rem !important;
+}
+
+.form-window-label {
+    margin-bottom: 0;
+    font-size: inherit;
+    line-height: 1.5;
+    padding: 0.2rem 1rem;
+}
+
+.window .table td, .table th {
+    padding: 0.5rem 0.75rem !important;
+}
+
+#commonModal {
+    z-index: 9020 !important;  /* Set a higher z-index value than the panel */
+}
+
+.window-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5); /* Semi-transparent black */
+    z-index: 9000; /* Ensure it is below the window */
+    display: none; /* Initially hidden */
+}
+
+.ui-autocomplete {
+    z-index: 9999 !important; /* Ensure the dropdown is on top of other content */
+    background-color: #FFF;
+    list-style-type: none; /* Removes the bullet points */
+    padding-left: 0; /* Removes any left padding if needed */
+    width: fit-content;
+}
+
+.ui-autocomplete li {
+    padding-left: 0; /* Remove any padding if present */
+}
+
+.ui-autocomplete :hover {
+    background-color: #1062f9;
+    color: white;
+}
+
+#additional-product-body .quantity .input-number {
+    width: 50px;
+    height: 35px;
+    padding: 0 5px;
+    text-align: center;
+    background-color: transparent;
+    border: 1px solid #efefef;
+}
+
+#additional-talent-body .quantity .input-number {
+    width: 50px;
+    height: 35px;
+    padding: 0 5px;
+    text-align: center;
+    background-color: transparent;
+    border: 1px solid #efefef;
+}
+
+.swal2-container {
+    z-index: 9999 !important;
+  }
+
+  .toast {
+    z-index: 9999 !important;
+  }

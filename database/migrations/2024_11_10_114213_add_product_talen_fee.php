@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::table('products', function (Blueprint $table) {
-            $table->float('talent_fee')->nullable()->default('0');
+            $table->double('talent_fee',15,2)->nullable()->default('0');
         });
     }
 

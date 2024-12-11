@@ -7,9 +7,13 @@ use App\Mail\SelledInvoice;
 use App\Models\Customer;
 use App\Models\Location;
 use App\Models\LocationType;
+use App\Models\PackageDetail;
 use App\Models\Product;
 use App\Models\Sale;
 use App\Models\SelledItems;
+use App\Models\SelledPackageItem;
+use App\Models\SelledPackageTalent;
+use App\Models\Talent;
 use App\Models\User;
 use App\Models\Utility;
 use Carbon\Carbon;
@@ -27,18 +31,22 @@ class SaleController extends Controller
 {
     public function index(Request $request)
     {
+        $user_id = Auth::user()->getCreatedBy();
+        $tempInvoice = Sale::where('created_by', $user_id)->pluck('id')->max();
+        $tempInvoice = Auth::user()->sellInvoiceNumberFormat($tempInvoice + 1);
+
         if ($request->location_id){
             $accessSale = $this->reserveLocation($request);
             $location = Location::where('id', $request->location_id)->first();
  
             if($accessSale['status'] == 'success'){
-                return view('sales.index', compact('location'));
+                return view('sales.index', compact('location','tempInvoice'));
             } else {
                 return redirect('/')->with('error', $accessSale['message']);
             }
         }
         if (Auth::user()->can('Manage Sales')) {        
-            return view('sales.index');
+            return view('sales.index', compact('tempInvoice'));
         } else {
             return redirect()->back()->with('error', __('Permission denied.'));
         }
@@ -111,92 +119,102 @@ class SaleController extends Controller
 
     public function store(Request $request)
     {
+        // return $request;
         if (Auth::user()->can('Manage Sales')) {
             $user_id = Auth::user()->getCreatedBy();
+        
+            DB::transaction(function () use ($request, $user_id) {
+                $location = Location::where('id', $request->location_id)->first();
+                
+                //TODO ADD LOCATION STATUS CHECKING
 
-            $customer_id      = Customer::customer_id($request->vc_name);
-            $branch_id        = $request->branch_id != '' ? $request->branch_id : 0;
-            $cash_register_id = $request->cash_register_id != '' ? $request->cash_register_id : 0;
-            $invoice_id       = $this->invoiceSellNumber();
-            $sales            = session()->get('sales');
+                $location->status = 'booked';
+                $location->save();
+                
+                $sale = new Sale();
+        
+                $sale->location_id = $request->location_id;
+                $sale->check_in = Carbon::now();
+                $sale->invoice_id = $this->invoiceSellNumber();
+                $sale->total = 0;
+                $sale->tax = 0;
+                $sale->save();
+        
+                if ($request->sale_type == 'paket') {
+                    $package = Product::with('unit')->where('id', $request->package_id)->first();
+        
+                    $selledItem = new SelledItems();
+                    $selledItem->sell_id = $sale->id;
+                    $selledItem->product_id = $request->package_id;
+                    $selledItem->price = $package->sale_price;
+                    $selledItem->quantity = 1;
+                    $selledItem->purchase_price = $package->purchase_price;
+                    $selledItem->unit = $package->unit->name;
+                    $selledItem->save();
+        
+                    $packageDetail = PackageDetail::where('product_id', $request->package_id)->first();
+                    foreach ($packageDetail->fixed_products as $fixedProduct) {
+                        $product = Product::with('unit')->where('id', $fixedProduct->productId)->first();
+                        
+                        //TODO ADD STOCK CHECKING HERE
+                        
+                        $selledPackageItem = new SelledPackageItem();
+                        $selledPackageItem->selled_item_id = $selledItem->id;
+                        $selledPackageItem->product_id = $fixedProduct->productId;
+                        $selledPackageItem->price = $product->sale_price;
+                        $selledPackageItem->purchase_price = $product->purchase_price;
+                        $selledPackageItem->quantity = $fixedProduct->quantity;
+                        $selledPackageItem->unit = $product->unit->name;
+                        $selledPackageItem->save();
+                    }
+        
+                    foreach ($request->optional_products as $optionalProduct) {
+                        foreach ($optionalProduct['selected'] as $selectedProduct) {
+                            $product = Product::with('unit')->where('id', $selectedProduct['product_id'])->first();
+                            
+                            //TODO ADD STOCK CHECKING HERE
 
-            if (isset($sales) && !empty($sales) && count($sales) > 0) {
-                $result = DB::table('sales')->where('invoice_id', $invoice_id)->where('created_by', $user_id)->get();
-                if (count($result) > 0) {
-                    return response()->json(
-                        [
-                            'code' => 200,
-                            'success' => __('Payment is already completed!'),
-                        ]
-                    );
-                } else {
-                    $sale = new Sale();
+                            $selledPackageItem = new SelledPackageItem();
+                            $selledPackageItem->selled_item_id = $selledItem->id;
+                            $selledPackageItem->product_id = $selectedProduct['product_id'];
+                            $selledPackageItem->price = $product->sale_price;
+                            $selledPackageItem->purchase_price = $product->purchase_price;
+                            $selledPackageItem->quantity = $selectedProduct['qty'];
+                            $selledPackageItem->unit = $product->unit->name;
+        
+                            $selledPackageItem->save();
+                        }
+                    }
+        
+                    foreach ($request->optional_talents as $optionalTalent) {
+                        $talent = Talent::with('talentGradeDetail')->where('id', $optionalTalent)->first();
+                        
+                        //TODO ADD TALENT STATUS CHECKING
 
-                    $sale->invoice_id       = $invoice_id;
-                    $sale->customer_id      = $customer_id;
-                    $sale->branch_id        = $branch_id;
-                    $sale->cash_register_id = $cash_register_id;
-                    $sale->created_by       = $user_id;
-
+                        $talent->status = 'booked';
+                        $talent->save();
+                        
+                        $selledPackageTalent = new SelledPackageTalent();
+                        $selledPackageTalent->selled_item_id = $selledItem->id;
+                        $selledPackageTalent->talent_id = $talent->id;
+                        $selledPackageTalent->hour = $packageDetail->duration;
+                        $selledPackageTalent->talent_price = $talent->talentGradeDetail->talent_price;
+                        $selledPackageTalent->agency_price = $talent->talentGradeDetail->agency_price;
+                        $selledPackageTalent->office_price = $talent->talentGradeDetail->office_price;
+                        $selledPackageTalent->save();
+                        
+                    }
+        
+                    $sale->total = $selledItem->price;
+                    $sale->tax = $sale->total * 0.11;
                     $sale->save();
 
-                    foreach ($sales as $key => $value) {
-                        $product_id = $value['id'];
-
-                        $product = Product::whereId($product_id)->where('created_by', $user_id)->first();
-
-                        $original_quantity = ($product == null) ? 0 : (int)$product->quantity;
-
-                        $product_quantity = $original_quantity - $value['quantity'];
-
-                        if ($product != null && !empty($product)) {
-                            Product::where('id', $product_id)->update(['quantity' => $product_quantity]);
-                        }
-
-                        $tax_id = Product::tax_id($product_id);
-
-                        $selleditems = new SelledItems();
-
-                        $selleditems->sell_id    = $sale->id;
-                        $selleditems->product_id = $product_id;
-                        $selleditems->price      = $value['price'];
-                        $selleditems->quantity   = $value['quantity'];
-                        $selleditems->tax_id     = $tax_id;
-                        $selleditems->tax        = $value['tax'];
-
-                        $selleditems->save();
-                    }
-
-                    session()->forget('sales');
-
-                    if ($sale->customer != null) {
-                        $sale_id              = Crypt::encrypt($sale->id);
-                        $sale->customer_name  = ucfirst($sale->customer->name);
-                        $sale->customer_email = $sale->customer->email;
-                        $sale->url            = route('get.sales.invoice', $sale_id);
-
-                        try {
-                            Mail::to($sale->customer_email)->send(new SelledInvoice($sale));
-                        } catch (\Exception $e) {
-                            $smtp_error = "<br><span class='text-danger'>" . __('E-Mail has been not sent due to SMTP configuration') . '</span>';
-                        }
-                    }
-
-                    return response()->json(
-                        [
-                            'code' => 200,
-                            'success' => __('Payment completed successfully!') . ((isset($smtp_error)) ? $smtp_error : ''),
-                        ]
-                    );
                 }
-            } else {
-                return response()->json(
-                    [
-                        'code' => 404,
-                        'success' => __('Items not found!'),
-                    ]
-                );
-            }
+            });
+            return response()->json([
+                'status' => 200,
+                'message' => __('Reservation saved successfully!'),
+            ]);
         } else {
             return redirect()->back()->with('error', __('Permission denied.'));
         }
@@ -205,7 +223,7 @@ class SaleController extends Controller
     function invoiceSellNumber()
     {
         if (Auth::user()->can('Manage Purchases')) {
-            $latest = Sale::where('created_by', '=', Auth::user()->getCreatedBy())->latest()->first();
+            $latest = Sale::latest()->first();
 
             return $latest ? $latest->invoice_id + 1 : 1;
         } else {
@@ -541,6 +559,26 @@ class SaleController extends Controller
         return view('sales.get-location', compact('locations'));
     }
 
+    public function getLocationSale($location_id)
+    {
+        $sale = Sale::with([
+            'selledItem.product', 
+            'selledItem.selledPackageItem.product',
+            'selledTalent.talent',
+            'selledItem.selledPackageTalent.talent',
+            // 'location',
+
+        ]) // Eager load both relationships
+        ->where('location_id', $location_id)
+        ->where('check_out', null)
+        ->orderBy('created_at', 'desc')
+        ->first();
+
+        $sale->invoice_id = Auth::user()->sellInvoiceNumberFormat($sale->invoice_id);
+
+        return $sale;
+    }
+
     public function inProcess(Request $request)
     {
         $location = Location::where('id', $request->location_id)->where('created_by', Auth::user()->getCreatedBy())->first();
@@ -586,6 +624,20 @@ class SaleController extends Controller
             'message' => __('Location reserved successfully.'),
             'location' => $location->code
         ];
+    }
+
+    public function checkOut(Request $request)
+    {
+        $location = Location::where('code', $request->location)->first();
+        $location->status = 'available';
+        $location->save();
+        
+        $sale = Sale::where('location_id', $location->id)->whereNull('check_out')->first();
+        $sale->check_out = Carbon::now();
+        $sale->save();
+
+        return redirect()->back()->with('success', "Penjualan di Lokasi $sale->location_code check-out");
+
     }
     
 }

@@ -182,7 +182,7 @@ if (\Auth::user()->type == 'Super Admin') {
                                 Tanggal
                             </div>
                             <div class="col-md-8">
-                                {{ Form::date('sale_date', now(), ['class' => 'form-control']) }}
+                                {{ Form::date('sale_date', now(), ['class' => 'form-control', 'readonly' => true]) }}
                             </div>
                         </div>
                         <div class="row mt-2">
@@ -190,7 +190,7 @@ if (\Auth::user()->type == 'Super Admin') {
                                 No Invoice
                             </div>
                             <div class="col-md-8">
-                                {{ Form::text('sale_id', '', ['class' => 'form-control', 'id' => 'sale_id']) }}
+                                {{ Form::text('sale_id', $tempInvoice, ['class' => 'form-control', 'id' => 'sale_id', 'readonly' => true]) }}
                             </div>
                         </div>
                     </div>
@@ -211,7 +211,9 @@ if (\Auth::user()->type == 'Super Admin') {
                                                     <div id="autocomplete-list" class="autocomplete-items"></div>
                                                     {{ Form::hidden('package_id', null, ['id' => 'package_id']) }}
                                                     {{ Form::hidden('package_price', null, ['id' => 'package_price']) }}
-
+                                                    {{ Form::hidden('package_fixed_product', null, ['id' => 'package_fixed_product']) }}
+                                                    {{ Form::hidden('package_optional_product', null, ['id' => 'package_optional_product']) }}
+                                                    {{ Form::hidden('package_optional_talent', null, ['id' => 'package_optional_talent']) }}
                                                 </div> 
                                             </div>
                                         </div>
@@ -221,7 +223,7 @@ if (\Auth::user()->type == 'Super Admin') {
                                                     {{ Form::label('min_trans', __('Minimum Transaksi'), ['class' => 'col-form-label']) }}
                                                 </div>
                                                 <div class="col-md-6">                       
-                                                    {{ Form::number('min_trans', null, ['class' => 'form-control', 'required' => '']) }}
+                                                    {{ Form::text('min_trans', null, ['class' => 'form-control', 'required' => '', 'id' => 'min_trans']) }}
                                                     
                                                 </div> 
                                             </div>
@@ -249,7 +251,7 @@ if (\Auth::user()->type == 'Super Admin') {
                                                             </tbody>
                                                         </table>
                                                         <br>
-                                                        <div class="optional-product-container mt-2 mb-2"></div>
+                                                        <div class="optional-product-container mt-2 mb-2" id="optional-product-container"></div>
                                                         <br>
                                                         <div class="label mt-2" id="talent-title">Pilihan Talent</div>
                                                         <table class="table">
@@ -342,7 +344,7 @@ if (\Auth::user()->type == 'Super Admin') {
 
                                                         <div class="tab-content btn-empty text-end">
                                                             <button type="button" class="btn btn-primary rounded" style="width: 100%"
-                                                            id="pos_payment"  disabled="disabled">{{ __('FINISH') }}</button>
+                                                            id="pos_payment"  disabled="disabled">{{ __('SAVE') }}</button>
 
 
                                                             {{-- <a href="" id="pos_pay" data-ajax-popup="true" data-size="lg" data-align="centered"
@@ -425,6 +427,7 @@ if (\Auth::user()->type == 'Super Admin') {
     <script src="{{ asset('custom/libs/moment/moment.js') }}"></script>
     
     <script src="{{ asset('js/custom.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/5.0.8/jquery.inputmask.min.js"></script>
 
     <script>
         if ($("#pc-dt-simple").length > 0) {
@@ -438,12 +441,12 @@ if (\Auth::user()->type == 'Super Admin') {
 
 
     <script>
-        $('#pos_payment').on('click', function() {
+        // $('#pos_payment').on('click', function() {
 
            
-                $( "#pos_pay" ).trigger( "click" );
+        //         $( "#pos_pay" ).trigger( "click" );
           
-        });
+        // });
     </script>
 
 
@@ -451,6 +454,20 @@ if (\Auth::user()->type == 'Super Admin') {
 
     <script>
         $(document).ready(function() {
+
+            $(document).ready(function () {
+                $('#min_trans').inputmask({
+                    alias: 'numeric',
+                    groupSeparator: ',',
+                    autoGroup: true,
+                    digits: 0, // No decimal places
+                    decimalProtect: true, // Ensures the decimal separator is ignored
+                    placeholder: '',
+                    rightAlign: false,
+                    clearMaskOnLostFocus: false
+                });
+            });
+
             // cust_theme_bg();
             // cust_darklayout();
 
@@ -600,6 +617,9 @@ if (\Auth::user()->type == 'Super Admin') {
             handleSaleTypeChange();
             updateDisplayTotal();  // Call your update function
         });
+
+        setInterval(checkPaymentButtonCondition, 1000);
+
     });
 
     function handleSaleTypeChange() {
@@ -608,6 +628,7 @@ if (\Auth::user()->type == 'Super Admin') {
         // Regular sale type selected
         if (saleType === 'regular') {
             document.getElementById('package-attribute').hidden = true;
+            document.getElementById('regular-attribute').hidden = false;;
             document.getElementById('regular-attribute').classList.add('col-md-12');
             document.getElementById('regular-attribute').classList.remove('col-md-6');
             document.getElementById('additional-product-title').textContent = 'Pilih produk';
@@ -616,16 +637,23 @@ if (\Auth::user()->type == 'Super Admin') {
             document.getElementById('regular-mintrans-section').hidden = false;
             document.querySelector('input[name="package_name"]').value = ''; // Clear package name
             document.querySelector('input[name="package_price"]').value = ''; // Clear package price
+            selectedTalentIds = [];
         }
         // Package sale type selected
         else if (saleType === 'paket') {
             document.getElementById('package-attribute').hidden = false;
+            document.getElementById('regular-attribute').hidden = true;
             document.getElementById('regular-attribute').classList.add('col-md-6');
-            document.getElementById('regular-attribute').classList.remove('col-md-12');
+            document.getElementById('package-attribute').classList.add('col-md-12');
             document.getElementById('additional-product-title').textContent = 'Produk tambahan';
             document.getElementById('talent-title').textContent = 'Talent tambahan';
             document.getElementById('package-name-section').hidden = false;
             document.getElementById('regular-mintrans-section').hidden = true;
+            document.getElementById('fixed-product-body').innerHTML = '';
+            document.getElementById('optional-product-container').innerHTML = '';
+            document.getElementById('optional-talent-body').innerHTML = '';
+            selectedTalentIds = [];
+
         }
 
         updateDisplayTotal();
@@ -657,13 +685,19 @@ if (\Auth::user()->type == 'Super Admin') {
                 return false;
             },
             select: function (event, ui) {
-                $("#package_name").val(ui.item.name);
-                $("#package_id").val(ui.item.id);  // Set package_id
-                $("#package_price").val(ui.item.sale_price);
-                $('#package_id').trigger('change');  // Trigger change event
+            
+            // Set values in the form fields
+            $("#package_name").val(ui.item.name);
+            $("#package_id").val(ui.item.id); // Set package_id
+            $("#package_price").val(ui.item.sale_price);
 
-                updateDisplayTotal();
-                return false;
+            // Trigger events
+            $('#package_id').trigger('change'); // Trigger change event
+
+            // Update display totals
+            updateDisplayTotal();
+
+            return false;
             },
         }).autocomplete("instance")._renderItem = function (ul, item) {
             return $("<li>")
@@ -684,6 +718,31 @@ if (\Auth::user()->type == 'Super Admin') {
                         populatefixedProductbody(response.package_detail.fixed_products);
                         populateOptionalProducts(response.package_detail.optional_products);
                         populateOptionalTalents(response.package_detail.optional_talents);
+
+                        // Fixed products count
+                        const numberOfFixed = response.package_detail.fixed_products.length;
+
+                        // Optional products count
+                        let numberOfOptional = 0;
+                        response.package_detail.optional_products.forEach(optional => {
+                            numberOfOptional += parseInt(optional.numOfItems, 10);
+                        });
+
+                        // Optional talents count
+                        let numberOfOptionalTalent = 0;
+                        response.package_detail.optional_talents.forEach(optionalTalent => {
+                            numberOfOptionalTalent += parseInt(optionalTalent.quantity, 10);
+                        });
+
+
+                        $("#package_fixed_product").val(numberOfFixed);
+                        $("#package_optional_product").val(numberOfOptional);
+                        $("#package_optional_talent").val(numberOfOptionalTalent);
+
+                        // Log variables for debugging
+                        console.log("Fixed Products:", numberOfFixed);
+                        console.log("Optional Products:", numberOfOptional);
+                        console.log("Optional Talents:", numberOfOptionalTalent);
                     },
                     error: function () {
                         alert('Failed to fetch vendor details. Please try again.');
@@ -751,7 +810,7 @@ if (\Auth::user()->type == 'Super Admin') {
 
                 // Checkbox input with a change event listener
                 var checkboxCell = $('<td class="text-center"></td>');
-                var checkbox = $('<input type="checkbox" class="product-checkbox">');
+                var checkbox = $(`<input type="checkbox" class="product-checkbox" value="${productData.product.id}">`);
                 checkbox.on('change', function () {
                     if (this.checked) {
                         selectedCount++;
@@ -807,7 +866,7 @@ if (\Auth::user()->type == 'Super Admin') {
                                         class="form-control talent-input" 
                                         placeholder="Pilih Talent Grade ${optionalTalent.talent.name}" 
                                         readonly>`);
-                var hiddenInput = $(`<input type="hidden" class="talent-id-input" name="talents[${index}][${i}][talent_id]">`);
+                var hiddenInput = $(`<input type="hidden" class="talent-id-input" name="package_talents[]">`);
 
                 // Add click event to open modal
                 talentInput.on('click', function () {
@@ -1057,7 +1116,7 @@ if (\Auth::user()->type == 'Super Admin') {
                     const $input = $(this);
                     const duration = parseInt($input.val());
                     const $row = $input.closest('tr');
-                    const price = parseFloat($row.find('.price').text().replace('Rp.', '').replace(',', '')); // Extract price
+                    const price = parseFloat($row.find('.price').text().replace('Rp.', '').replace(/,/g, '')); // Extract price
                     const subtotalElement = $row.find('.subtotal');
 
                     if (!isNaN(duration) && duration > 0) {
@@ -1299,7 +1358,7 @@ if (\Auth::user()->type == 'Super Admin') {
                 const quantity = parseInt($input.val());
                 const $row = $input.closest('tr'); // Find the parent row
                 const productId = $row.data('product-id');
-                const price = parseFloat($row.find('.price').text().replace('Rp.', '').replace(',', '')); // Extract price
+                const price = parseFloat($row.find('.price').text().replace('Rp.', '').replace(/,/g, '')); // Extract price
                 const subtotalElement = $row.find('.subtotal');
 
                 if (!isNaN(quantity) && quantity > 0) {
@@ -1363,7 +1422,7 @@ if (\Auth::user()->type == 'Super Admin') {
 
                 if (quantityInput && priceElement) {
                     // Parse price and quantity
-                    const price = parseFloat(priceElement.textContent.replace('Rp.', '').replace(',', '')) || 0;
+                    const price = parseFloat(priceElement.textContent.replace('Rp.', '').replace(/,/g, ''));
                     const quantity = parseInt(quantityInput.value) || 0;
 
                     // Add to total
@@ -1379,7 +1438,7 @@ if (\Auth::user()->type == 'Super Admin') {
 
                 if (quantityInput && priceElement) {
                     // Parse price and quantity
-                    const price = parseFloat(priceElement.textContent.replace('Rp.', '').replace(',', '')) || 0;
+                    const price = parseFloat(priceElement.textContent.replace('Rp.', '').replace(/,/g, ''));
                     const quantity = parseInt(quantityInput.value) || 0;
 
                     // Add talent subtotal to total
@@ -1411,20 +1470,45 @@ if (\Auth::user()->type == 'Super Admin') {
 
 
         function checkPaymentButtonCondition() {
-            const rows = document.querySelectorAll('#carthtml tbody tr');
-            const vendorId = document.getElementById('vendor_id') ? document.getElementById('vendor_id').value : null;
             const posPaymentButton = document.getElementById('pos_payment');
 
-            // Enable or disable the payment button based on rows and vendor_id
-            if (rows.length > 0 && vendorId) {
-                posPaymentButton.disabled = false;
-            } else {
-                posPaymentButton.disabled = true;
+            // Check the sale type
+            if ($('#sale_type').val() === 'paket') {
+                // Count the number of selected optional products
+                const numOfSelectedOptional = $('#optional-product-container .product-checkbox:checked').length;
+
+                // Count the number of selected optional talents
+                const numOfSelectedOptionalTalent = $('#optional-talent-body .talent-id-input')
+                    .filter(function () {
+                        return $(this).val().trim() !== '';
+                    })
+                    .length;
+
+                // Validate optional products and talents
+                if (numOfSelectedOptional === parseInt($("#package_optional_product").val(), 10) &&
+                    numOfSelectedOptionalTalent === parseInt($("#package_optional_talent").val(), 10)) {
+                    // Enable the payment button
+                    posPaymentButton.disabled = false;
+                } else {
+                    // Disable the payment button if validation fails
+                    posPaymentButton.disabled = true;
+                }
+            } else if ($('#sale_type').val() === 'regular') {
+                // Ensure #min_trans is filled
+                const minTransValue = $('#min_trans').val().trim();
+                if (minTransValue !== '') {
+                    // Enable the payment button
+                    posPaymentButton.disabled = false;
+                } else {
+                    // Disable the payment button if #min_trans is not filled
+                    posPaymentButton.disabled = true;
+                }
             }
+
         }
 
         // Event listener for vendor_id select changes
-        document.getElementById('vendor_id').addEventListener('change', checkPaymentButtonCondition);
+        // document.getElementById('vendor_id').addEventListener('change', checkPaymentButtonCondition);
 
 
 
@@ -1483,13 +1567,99 @@ if (\Auth::user()->type == 'Super Admin') {
         //     updateDisplayTotal();
         // });
 
+        function getSaleData(){
+            const saleType = $('#sale_type').val();
+            const locationId = $('#current_location_hidden').val();
+            var optionalProducts = {};
+            if (saleType == 'paket'){
+                const packageId = $('#package_id').val();
+
+                const container = document.getElementById('optional-product-container');
+
+                // Find all product groups in the container
+                const productGroups = container.querySelectorAll('.optional-product-group');
+
+                // Initialize the result array to collect all groups' data
+                const optionalProducts = [];
+
+                // Loop through each product group to process them
+                productGroups.forEach(group => {
+                    // Get the description of the group
+                    const descriptionText = group.querySelector('div:first-child').textContent.trim();
+                    const parts = descriptionText.split(':');  // Split by colon
+
+                    // Get the part after the colon, trim any extra whitespace
+                    const description = parts[1].split('(')[0].trim();
+
+                    // Find all checked products within this group
+                    const selectedProducts = Array.from(group.querySelectorAll('.product-checkbox:checked')).map(checkbox => {
+                        const row = checkbox.closest('tr'); // Get the parent row of the checkbox
+                        return {
+                            product_id: checkbox.value, // Extract product ID
+                            qty: row.querySelector('td:nth-child(3)').textContent.trim() // Extract quantity from the 3rd column
+                        };
+                    });
+
+                    // Push the data for this group into the result array
+                    if (selectedProducts.length > 0) {
+                        optionalProducts.push({
+                            description: description,
+                            selected: selectedProducts
+                        });
+                    }
+                });
+                const talentInputs = document.querySelectorAll('input[name="package_talents[]"]');
+                const optionalTalents = Array.from(talentInputs).map(input => input.value);
+
+                var data = {
+                    sale_type : saleType,
+                    package_id : packageId,
+                    location_id : locationId,
+                    optional_products : optionalProducts,
+                    optional_talents : optionalTalents
+                }
+
+                return data;
+            } else {
+                const rows = document.querySelectorAll('#additional-product-body tr');
+
+                // Extract product IDs and quantities
+                const selledItems = Array.from(rows).map(row => {
+                    return {
+                        productId: row.getAttribute('data-product-id'), // Get product ID from the data attribute
+                        quantity: row.querySelector('input.input-number').value // Get quantity from the input field
+                    };
+                });
+
+                const talentRows = document.querySelectorAll('#additional-talent-body tr');
+
+                // Extract talent IDs and quantities
+                const selledTalents = Array.from(talentRows).map(row => {
+                    return {
+                        talentId: row.getAttribute('data-talent-id'), // Get talent ID from the data attribute
+                        quantity: row.querySelector('input.input-number').value // Get quantity from the input field
+                    };
+                });
+
+                var data = {
+                    sale_type : saleType,
+                    location_id : locationId,
+                    selled_items : selledItems,
+                    selled_talents :selledTalents
+                }
+
+                return data;
+
+            }
+        }
+
         document.getElementById('pos_payment').addEventListener('click', function (event) {
             event.preventDefault(); // Prevent any default behavior, e.g., form submission
-
+            console.log('sdfsfdsf');
             // Display SweetAlert confirmation
             Swal.fire({
-                title: '{{ __("Finish Purchase") }}', // Dynamically localize the title
-                text: '{{ __("Are you sure you want to complete this purchase?") }}',
+                title: '{{ __("Finish Reservation") }}', // Dynamically localize the title
+                text: '{{ __("Save this reservation?") }}',
                 icon: 'question',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
@@ -1499,11 +1669,11 @@ if (\Auth::user()->type == 'Super Admin') {
             }).then((result) => {
                 if (result.isConfirmed) {
                     // Fetch purchase data
-                    const data = getPurchaseData();
+                    const data = getSaleData();
 
                     // Make AJAX request to store purchase
                     $.ajax({
-                        url: '{{ route("purchases.store") }}', // Route to handle the store logic
+                        url: '{{ route("sales.store") }}', // Route to handle the store logic
                         type: 'POST', // HTTP method
                         data: data, // Data payload
                         headers: {
@@ -1514,18 +1684,12 @@ if (\Auth::user()->type == 'Super Admin') {
                             if (response.status === 200) {
                                 Swal.fire({
                                     title: '{{ __("Success") }}',
-                                    text: '{{ __("The purchase has been completed successfully.") }}',
+                                    text: response.message,
                                     icon: 'success',
-                                    showCancelButton: true,
-                                    confirmButtonText: '{{ __("Print the Purchase Invoice") }}',
-                                    cancelButtonText: '{{ __("Close") }}',
-                                }).then((printResult) => {
-                                    if (printResult.isConfirmed) {
-                                        // Open the invoice link in a new tab
-                                        window.open(response.invoice_url, '_blank');
-                                    }
-                                    // Reload the current page regardless of the user's choice
-                                    window.location.reload();
+                                    timer: 2000, // Automatically close after 2 seconds
+                                    showConfirmButton: false
+                                }).then(() => {
+                                    window.location.href = "{{ route('reports.sales') }}";
                                 });
                             } else if (response.status === 400) {
                                 Swal.fire(

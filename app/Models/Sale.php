@@ -293,4 +293,38 @@ class Sale extends Model
 
         return $unitRate;
     }
+
+    public function selledItem()
+    {
+        return $this->hasMany(SelledItems::class, 'sell_id', 'id');
+    }
+
+    public function selledTalent()
+    {
+        return $this->hasMany(SelledTalent::class, 'sell_id', 'id');
+    }
+
+    public function location()
+    {
+        return $this->belongsTo(Location::class, 'location_id', 'id');
+    }
+
+    public function getLocationCodeAttribute()
+    {
+        return $this->location ? $this->location->code : null; // Assuming the name field exists in the Location model
+    }
+
+    public function getFormattedCheckInAttribute()
+    {
+        $checkIn = $this->attributes['check_in'];
+        return $checkIn ? date('H:i:00', strtotime($checkIn)) : null; // Round down to nearest minute
+    }
+
+    public function getSalDateAttribute()
+    {
+        $salDate = $this->attributes['created_at'];
+        return $salDate ? date('Y-m-d', strtotime($salDate)) : null; // Round down to nearest minute
+    }
+
+    protected $appends = ['location_code', 'formatted_check_in', 'sal_date'];
 }

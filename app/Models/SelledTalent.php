@@ -8,4 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class SelledTalent extends Model
 {
     use HasFactory;
+
+    public function talent()
+    {
+        return $this->belongsTo(Talent::class, 'talent_id', 'id');
+    }
 }

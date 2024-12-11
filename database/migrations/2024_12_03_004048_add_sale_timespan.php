@@ -18,8 +18,8 @@ return new class extends Migration
             $table->dateTime('check_in')->nullable();
             $table->dateTime('check_out')->nullable();
             $table->string('type')->nullable();
-            $table->float('total');
-            $table->float('tax');
+            $table->double('total',15,2);
+            $table->double('tax',15,2);
         });
     }
 

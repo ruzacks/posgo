@@ -31,5 +31,10 @@ class Talent extends Model
         return $this->agency()->first()->name ?? null;;
     }
 
+    public function talentGradeDetail()
+    {
+        return $this->hasOne(TalentGrade::class, 'id', 'grade_id');
+    }
+
 
 }
