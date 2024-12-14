@@ -86,7 +86,7 @@ class HomeController extends Controller
 
             $saletarget = BranchSalesTarget::getBranchTargets(true);
 
-            $locations = Location::where('created_by', '=', Auth::user()->getCreatedBy())->orderBy('id', 'ASC')->get();
+            $locations = Location::with('latestSale')->where('created_by', '=', Auth::user()->getCreatedBy())->orderBy('id', 'ASC')->get();
             $locationTypes = LocationType::where('created_by', '=', Auth::user()->getCreatedBy())->orderBy('id', 'ASC')->pluck('name', 'name');
             $locationTypes->prepend(__('All Location'), '');
 

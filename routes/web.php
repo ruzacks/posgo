@@ -66,6 +66,7 @@ Route::resource('agencies', AgencyController::class)->middleware(['auth','XSS'])
 
 Route::resource('locations', LocationController::class)->middleware(['auth','XSS']);
 Route::resource('location-types', LocationTypeController::class)->middleware(['auth','XSS']);
+route::get('location-updatestatus',[LocationController::class, 'updateStatus'])->name('locations.updateStatus')->middleware(['auth', 'XSS']);
 
 Route::post('update-number-locations', [LocationController::class, 'numberOfLocationUpdate'])->middleware(['auth', 'XSS']);
 route::get('location-detail/{locationType}',[LocationController::class, 'detailLocations'])->name('locations.detail')->middleware(['auth', 'XSS']);

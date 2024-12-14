@@ -15,4 +15,22 @@ class Location extends Model
     {
         return $this->belongsTo(LocationType::class, 'location_type_id', 'id');
     }
+
+    public function latestSale()
+    {
+        return $this->hasOne(Sale::class, 'location_id', 'id')->whereNull('check_out');
+    }
+
+    public function getLatestSaleTotal()
+    {
+        $total = $this->latestSale()->pluck('total')->first();
+        return $total;
+    }
+
+    public function getLatestSaleCheckIn()
+    {
+        $sale = $this->latestSale()->first(); // Resolves the query builder into a model instance
+        return $sale ? $sale->formatted_check_in : null; // Access formatted_check_in if $sale exists
+    }
+
 }

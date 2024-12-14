@@ -223,4 +223,12 @@ class LocationController extends Controller
 
         return 0;
     }
+
+    public function updateStatus()
+    {
+        $locations = Location::with('latestSale')->where('created_by', '=', Auth::user()->getCreatedBy())->orderBy('id', 'ASC')->get();
+        
+        return $locations;
+        
+    }
 }

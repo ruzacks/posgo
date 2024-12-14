@@ -137,8 +137,15 @@
                 <div class="col-md-9">
                     <div class="card">
                         <div class="card-header card-body table-border-style">
+                            <div class="row mb-5">
+                                <div class="col-md-3">
+                                    {{ Form::select('', $locationTypes, null, ['class' => 'form-control', 'data-toggle' => 'select', 'id' => 'codeFilter']) }}
+                                </div>    
+                            </div>
+
                             <div class="table-responsive">
-                                <table class="table" id="pc-dt-simple">
+                                {{-- <input type="text" id="codeFilter" class="form-control" placeholder="{{ __('Kode Lokasi') }}"> --}}
+                                <table class="table" style="border: #22242C 1px solid;" id="table-location">
                                     <thead>
                                         <tr>
                                             <th>#</th>
@@ -146,24 +153,13 @@
                                             <th>{{ __('Status') }}</th>
                                             <th>{{ __('Sale') }}</th>
                                             <th>{{ __('Check In') }}</th>
-                                            <th>{{ __('Check Out') }}</th>
+                                            {{-- <th>{{ __('Check Out') }}</th> --}}
                                             <th>{{ __('Elapsed') }}</th>
-                                            <th width="200px">{{ __('Action') }}</th>
+                                            <th width="200px" class="text-center">{{ __('Action') }}</th>
                                         </tr>
-                                        <tr>
-                                            <td></td>
-                                            <td colspan="2">
-                                                {{-- <input type="text" id="codeFilter" class="form-control" placeholder="{{ __('Kode Lokasi') }}"> --}}
-                                                {{ Form::select('', $locationTypes, null, ['class' => 'form-control', 'data-toggle' => 'select', 'id' => 'codeFilter']) }}
-                                            </td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                        </tr>
+
                                     </thead>
-                                    <tbody>
+                                    <tbody id="location-body">
                                         @foreach ($locations as $key => $location)
                                             @php
                                                 // Generate random check-in time within a specific range
@@ -201,13 +197,14 @@
                                                 <td>{{ $key + 1 }}</td>
                                                 <td class="code-cell">{{ $location->code }}</td>
                                                 <td class="{{ $statusColor }}">{{ $location->status }}</td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td class="elapsed-time" data-start="">
+                                                <td>{{ Auth::user()->priceFormat($location->getLatestSaleTotal()) }}</td>
+                                                <td>{{ $location->getLatestSaleCheckIn() }}</td>
+                                                {{-- <td></td> --}}
+                                                <td class="elapsed-time" 
+                                                    data-start="{{ $location->latestSale ? $location->latestSale->check_in : '' }}">
                                                 </td>
-                                                <td class="Action">
-                                                    <div class="d-flex justify-content-start align-items-center gap-2">
+                                                <td>
+                                                    <div class="d-flex justify-content-center align-items-center gap-2">
                                                         @if ($location->is_active == 1)
                                                             {{-- @can('Edit Location')
                                                                 <div class="action-btn btn-info">
@@ -223,22 +220,20 @@
                                                                         
                                                             <!-- Money Badge Button -->
                                                             @if($location->status == 'available')
-                                                            <div class="action-btn bg-primary">
+                                                            
                                                                 <a href="{{ route('sales.index', ['location_id' => $location->id]) }}"
-                                                                    class="mx-3 btn btn-primary d-inline-flex align-items-center"
-                                                                    data-bs-toggle="tooltip"
+                                                                    class="mx-3 btn-sm btn-primary d-inline-flex align-items-center"
                                                                     title="{{ __('Transaction') }}">
                                                                     check-in</i>
                                                                 </a>
-                                                            </div>
                                                             @else
-                                                            <div class="action-btn bg-primary">
-                                                                <a href="#" class="mx-3 btn btn-success d-inline-flex align-items-center" data-bs-toggle="tooltip"
+                                                            
+                                                                <a href="#" class="mx-3 btn-sm btn-success d-inline-flex align-items-center" 
                                                                     title="{{ __('Transaction') }}"
                                                                     onclick="toggleWindow({{ $location->id }})">
                                                                     add-item/check-out</i>
                                                                 </a>
-                                                            </div>
+                                                            
                                                             @endif
                                                         @else
                                                             <a href="#" class="btn btn-danger btn-sm">
@@ -813,6 +808,11 @@ function toggleWindow(locationId = null) {
         const backdrop = $('.window-mask'); // The backdrop element
 
         console.log(locationId);
+        $('#additional-product-body').empty();
+        $('#invoice_id').val('');
+       $('#location').val('');
+       $('#sal_date').val('');
+       $('#check_in').val('');
 
         // Toggle the window visibility
         parentWindow.toggle();
@@ -858,7 +858,7 @@ function toggleWindow(locationId = null) {
        $('#check_in').val(paymentData.formatted_check_in);
 
        //selled_item
-       $('#additional-product-body').innerHTML = '';
+       $('#additional-product-body').empty();
        paymentData.selled_item.forEach(selledItem => {
             const productData = {
                 id: selledItem.product_id,
@@ -872,7 +872,7 @@ function toggleWindow(locationId = null) {
             addOrUpdateRow(productData);
         });
 
-        $('#additional-talent-body').innerHTML = '';
+        $('#additional-talent-body').empty();
     }
 
     function checkOut() {
@@ -1313,28 +1313,85 @@ function toggleWindow(locationId = null) {
             fetchStockNotification(selectedStockType);
         });
 
+        function updateLocationsData() {
+            $.ajax({
+                url: '{{ route('locations.updateStatus') }}', // Pass the route URL
+                method: 'GET', // HTTP method
+                success: function (response) {
+                    response.forEach(element => {
+                        // Find the row with the matching code
+                        const row = $(`#location-body tr`).filter(function () {
+                            return $(this).find('td').eq(1).text() === element.code; // Match the second column
+                        });
+
+                        if (row.length) {
+                            // Update the third column with the status
+                            row.find('td').eq(2).text(element.status);
+
+                            // Update the fourth column with total or set it to 0
+                            if (element.latest_sale) {
+                                row.find('td').eq(3).text(`Rp.${element.latest_sale.total.toLocaleString()}.00`);
+                                row.find('td').eq(4).text(element.latest_sale.formatted_check_in);
+                                row.find('td.elapsed-time').attr('data-start', element.latest_sale.check_in);
+                                row.find('td').eq(6).html(`
+                                    <a href="#" class="mx-3 btn-sm btn-success d-inline-flex align-items-center" title="Transaction" onclick="toggleWindow(${element.id})">
+                                        add-item/check-out
+                                    </a>
+                                `);
+                            } else {
+                                row.find('td').eq(3).text('Rp.0.00');
+                                row.find('td').eq(4).text('');
+                                row.find('td.elapsed-time').attr('data-start', '');
+                                row.find('td').eq(6).html(`
+                                    <a href="http://posgo.local/sales?location_id=${element.id}" class="mx-3 btn-sm btn-primary d-inline-flex align-items-center" title="Transaction">
+                                        check-in
+                                    </a>
+                                `);
+                            }
+                        }
+                    });
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error:', error);
+                    alert('Failed to update location data. Please try again.');
+                }
+            });
+        }
+
+        // setInterval(updateLocationsData, 1000);
+
+
         // Ticking Elapsed Time Counter
-        // function updateElapsedTime() {
-        //     document.querySelectorAll('.elapsed-time').forEach(function(element) {
-        //         const startTime = new Date(element.getAttribute('data-start')).getTime();
-        //         const now = new Date().getTime();
-        //         const elapsed = new Date(now - startTime);
+        function updateElapsedTime() {
+            document.querySelectorAll('.elapsed-time').forEach(function (element) {
+                const startTimeAttr = element.getAttribute('data-start');
 
-        //         const hours = String(elapsed.getUTCHours()).padStart(2, '0');
-        //         const minutes = String(elapsed.getUTCMinutes()).padStart(2, '0');
-        //         const seconds = String(elapsed.getUTCSeconds()).padStart(2, '0');
+                // If `data-start` is null or empty, clear the text content and skip
+                if (!startTimeAttr) {
+                    element.textContent = '';
+                    return;
+                }
 
-        //         element.textContent = `${hours}:${minutes}:${seconds}`;
-        //     });
-        // }
+                const startTime = new Date(startTimeAttr).getTime();
+                const now = new Date().getTime();
+                const elapsed = new Date(now - startTime);
 
-        // setInterval(updateElapsedTime, 1000);
+                const hours = String(elapsed.getUTCHours()).padStart(2, '0');
+                const minutes = String(elapsed.getUTCMinutes()).padStart(2, '0');
+                const seconds = String(elapsed.getUTCSeconds()).padStart(2, '0');
+
+                element.textContent = `${hours}:${minutes}:${seconds}`;
+            });
+        }
+
+
+        setInterval(updateElapsedTime, 1000);
 
         function applyFilters() {
             // let categoryFilter = document.getElementById('categoryFilter').value.toLowerCase();
             // let nameFilter = document.getElementById('nameFilter').value.toLowerCase();
             let codeFilter = document.getElementById('codeFilter').value.toLowerCase();
-            let rows = document.querySelectorAll('#pc-dt-simple tbody tr');
+            let rows = document.querySelectorAll('#table-location tbody tr');
 
             rows.forEach(row => {
                 // let category = row.querySelector('.category-cell').textContent.toLowerCase();
