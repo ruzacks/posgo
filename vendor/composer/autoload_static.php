@@ -824,6 +824,7 @@ class ComposerStaticInit8342c07d9161854d53f44a94c2ace5e8
         'App\\Models\\ReturnedItems' => __DIR__ . '/../..' . '/app/Models/ReturnedItems.php',
         'App\\Models\\Role' => __DIR__ . '/../..' . '/app/Models/Role.php',
         'App\\Models\\Sale' => __DIR__ . '/../..' . '/app/Models/Sale.php',
+        'App\\Models\\SalePayment' => __DIR__ . '/../..' . '/app/Models/SalePayment.php',
         'App\\Models\\SelledItems' => __DIR__ . '/../..' . '/app/Models/SelledItems.php',
         'App\\Models\\SelledPackageItem' => __DIR__ . '/../..' . '/app/Models/SelledPackageItem.php',
         'App\\Models\\SelledPackageTalent' => __DIR__ . '/../..' . '/app/Models/SelledPackageTalent.php',

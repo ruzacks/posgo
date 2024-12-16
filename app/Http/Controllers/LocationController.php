@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Location;
 use App\Models\LocationType;
+use App\Models\Sale;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -230,5 +231,20 @@ class LocationController extends Controller
         
         return $locations;
         
+    }
+
+    public function updateAvailable($location_id){
+        $location = Location::where('id',$location_id)->first();
+        $sale = Sale::where('location_id', $location->id)->latest()->first();
+
+        if($sale->check_out != null || $sale->check_out != ''){
+            $location->status = 'available';
+
+            $location->save();
+
+            return redirect()->back()->with('success', __('Location updated successfully.'));
+        } else {
+            return redirect()->back()->with('error', __('Sale not checked out yet'));
+        }
     }
 }

@@ -1157,20 +1157,22 @@ img.card-image.avatar.rounded-circle.shadow.hover-shadow-lg {
 
 .ui-autocomplete {
     z-index: 9999 !important; /* Ensure the dropdown is on top of other content */
-    background-color: #FFF;
-    list-style-type: none; /* Removes the bullet points */
-    padding-left: 0; /* Removes any left padding if needed */
-    width: fit-content;
+    background-color: #FFF; /* White background for the dropdown */
+    list-style-type: none; /* Removes bullet points */
+    padding-left: 0; /* Remove left padding */
+    width: fit-content; /* Adjust width based on content */
 }
 
 .ui-autocomplete li {
-    padding-left: 0; /* Remove any padding if present */
+    padding: 5px 10px; /* Add padding for better readability */
+    cursor: pointer; /* Make items clickable */
 }
 
-.ui-autocomplete :hover {
-    background-color: #1062f9;
-    color: white;
+.ui-autocomplete .ui-state-active {
+    background-color: #1062f9; /* Highlight selected item */
+    color: white; /* Change text color for contrast */
 }
+
 
 #additional-product-body .quantity .input-number {
     width: 50px;

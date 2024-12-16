@@ -76,10 +76,10 @@
                                                 @if($product->is_stock)
                                                     @if ($product->getTotalProductQuantity() > \App\Models\Utility::settings()['low_product_stock_threshold'])
                                                         <span
-                                                            class="badge bg-success p-2 px-3 rounded">{{ $product->quantity }}</span>
+                                                            class="badge bg-success p-2 px-3 rounded">{{ $product->getTotalProductQuantity() }}</span>
                                                     @else
                                                         <span
-                                                            class="badge bg-danger p-2 px-3 rounded">{{ $product->quantity }}</span>
+                                                            class="badge bg-danger p-2 px-3 rounded">{{ $product->getTotalProductQuantity() }}</span>
                                                     @endif
                                                 @endif
                                             </td>

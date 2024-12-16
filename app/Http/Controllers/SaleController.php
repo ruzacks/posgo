@@ -13,6 +13,7 @@ use App\Models\Sale;
 use App\Models\SelledItems;
 use App\Models\SelledPackageItem;
 use App\Models\SelledPackageTalent;
+use App\Models\SelledTalent;
 use App\Models\Talent;
 use App\Models\User;
 use App\Models\Utility;
@@ -32,7 +33,7 @@ class SaleController extends Controller
     public function index(Request $request)
     {
         $user_id = Auth::user()->getCreatedBy();
-        $tempInvoice = Sale::where('created_by', $user_id)->pluck('id')->max();
+        $tempInvoice = Sale::pluck('invoice_id')->max();
         $tempInvoice = Auth::user()->sellInvoiceNumberFormat($tempInvoice + 1);
 
         if ($request->location_id){
@@ -123,7 +124,7 @@ class SaleController extends Controller
         if (Auth::user()->can('Manage Sales')) {
             $user_id = Auth::user()->getCreatedBy();
         
-            DB::transaction(function () use ($request, $user_id) {
+            DB::beginTransaction();
                 $location = Location::where('id', $request->location_id)->first();
                 
                 //TODO ADD LOCATION STATUS CHECKING
@@ -153,11 +154,20 @@ class SaleController extends Controller
                     $selledItem->save();
         
                     $packageDetail = PackageDetail::where('product_id', $request->package_id)->first();
+                    // return $packageDetail;
                     foreach ($packageDetail->fixed_products as $fixedProduct) {
                         $product = Product::with('unit')->where('id', $fixedProduct->productId)->first();
                         
-                        //TODO ADD STOCK CHECKING HERE
-                        
+                        //STOCK CHECKING HERE
+                        if($product->is_stock == 1){
+                            if (!$product->hasSufficientStock($fixedProduct->quantity)) {
+                                return response()->json([
+                                    'status' => 400,
+                                    'message' => __('Insufficient stock for product: ') . $product->name,
+                                ]);
+                            }
+                        }
+                       
                         $selledPackageItem = new SelledPackageItem();
                         $selledPackageItem->selled_item_id = $selledItem->id;
                         $selledPackageItem->product_id = $fixedProduct->productId;
@@ -172,7 +182,15 @@ class SaleController extends Controller
                         foreach ($optionalProduct['selected'] as $selectedProduct) {
                             $product = Product::with('unit')->where('id', $selectedProduct['product_id'])->first();
                             
-                            //TODO ADD STOCK CHECKING HERE
+                            //ADD STOCK CHECKING HERE
+                            if($product->is_stock == 1){
+                                if (!$product->hasSufficientStock($selectedProduct['qty'])) {
+                                    return response()->json([
+                                        'status' => 400,
+                                        'message' => __('Insufficient stock for product: ') . $product->name,
+                                    ]);
+                                }
+                            }
 
                             $selledPackageItem = new SelledPackageItem();
                             $selledPackageItem->selled_item_id = $selledItem->id;
@@ -204,13 +222,66 @@ class SaleController extends Controller
                         $selledPackageTalent->save();
                         
                     }
-        
+                    $sale->type = 'paket';
                     $sale->total = $selledItem->price;
                     $sale->tax = $sale->total * 0.11;
                     $sale->save();
 
+                } else {
+                    if($request->selled_talents){
+                        foreach ($request->selled_talents as $selledTalent) {
+                            $talent = Talent::with('talentGradeDetail')->where('id', $selledTalent['talentId'])->first();
+                            
+                            //TODO ADD TALENT STATUS CHECKING
+    
+                            $talent->status = 'booked';
+                            $talent->save();
+                            
+                            $bookedTalent = new SelledTalent();
+                            $bookedTalent->sell_id = $sale->id;
+                            $bookedTalent->talent_id = $talent->id;
+                            $bookedTalent->hour = $selledTalent['quantity'];
+                            $bookedTalent->talent_price = $talent->talentGradeDetail->talent_price;
+                            $bookedTalent->agency_price = $talent->talentGradeDetail->agency_price;
+                            $bookedTalent->office_price = $talent->talentGradeDetail->office_price;
+                            $bookedTalent->save();
+                            
+                            $sale->total += ($bookedTalent->talent_price +  $bookedTalent->agency_price + $bookedTalent->office_price) * $bookedTalent->hour;
+                        }
+                    }
+
+                    if($request->selled_items){
+                        foreach ($request->selled_items as $selledItem) {
+                            $product = Product::with('unit')->where('id', $selledItem['productId'])->first();
+                            //ADD STOCK CHECKING HERE
+                            if($product->is_stock == 1){
+                                if (!$product->hasSufficientStock($selledItem['quantity'])) {
+                                    return response()->json([
+                                        'status' => 400,
+                                        'message' => __('Insufficient stock for product: ') . $product->name,
+                                    ]);
+                                }
+                            }
+                            $bookedItem = new SelledItems();
+                            $bookedItem->sell_id = $sale->id;
+                            $bookedItem->product_id =  $selledItem['productId'];
+                            $bookedItem->price = $product->sale_price;
+                            $bookedItem->purchase_price = $product->purchase_price;
+                            $bookedItem->quantity = $selledItem['quantity'];
+                            $bookedItem->unit = $product->unit->name;
+                            $bookedItem->save();
+    
+                            $sale->total += $bookedItem->price *  $bookedItem->quantity;
+    
+                        }
+                    }
+
+                    $sale->type = 'regular';
+                    $sale->tax = $sale->total * 0.11;
+                    $sale->save();
                 }
-            });
+            DB::commit();
+
             return response()->json([
                 'status' => 200,
                 'message' => __('Reservation saved successfully!'),
@@ -243,55 +314,102 @@ class SaleController extends Controller
 
     public function update(Request $request, Sale $sale)
     {
-        if (Auth::user()->can('Manage Sales')) {
-            $user_id = Auth::user()->getCreatedBy();
-
-            if ($request->has('product') && $request->has('quantity')) {
-                $products   = $request->product;
-                $quantities = $request->quantity;
-
-                $sale->customer_id = $request->customer_id;
-
-                if (Auth::user()->isOwner()) {
-
-                    $sale->branch_id        = $request->branch_id;
-                    $sale->cash_register_id = $request->cash_register_id;
+        try {
+            // Start the transaction
+            DB::beginTransaction();
+        
+            $sale->total = 0;
+        
+            // Delete existing records
+            SelledTalent::where('sell_id', $sale->id)->delete();
+        
+            $prevPackageTalent = SelledItems::where('sell_id', $sale->id)->where('unit', 'PAKET')->pluck('id')->first();
+            SelledItems::where('sell_id', $sale->id)->delete();
+            
+            // Re-add talents
+            if ($request->selled_talents) {
+                foreach ($request->selled_talents as $selledTalent) {
+                    $talent = Talent::with('talentGradeDetail')->where('id', $selledTalent['id'])->firstOrFail();
+        
+                    // TODO: Add talent status checking
+                    $talent->status = 'booked';
+                    $talent->save();
+        
+                    $bookedTalent = new SelledTalent();
+                    $bookedTalent->sell_id = $sale->id;
+                    $bookedTalent->talent_id = $talent->id;
+                    $bookedTalent->hour = $selledTalent['qty'];
+                    $bookedTalent->talent_price = $talent->talentGradeDetail->talent_price;
+                    $bookedTalent->agency_price = $talent->talentGradeDetail->agency_price;
+                    $bookedTalent->office_price = $talent->talentGradeDetail->office_price;
+                    $bookedTalent->save();
+        
+                    $sale->total += ($bookedTalent->talent_price + $bookedTalent->agency_price + $bookedTalent->office_price) * $bookedTalent->hour;
                 }
-
-                $sale->save();
-
-                if (count($products) == count($quantities)) {
-                    SelledItems::where('sell_id', $sale->id)->delete();
-
-                    for ($i = 0; $i < count($products); $i++) {
-                        $product_id = $products[$i];
-                        $quantity   = (int)$quantities[$i];
-
-                        $product = Product::whereId($product_id)->where('created_by', $user_id)->first();
-
-                        $tax   = ($product->taxes == null) ? 0 : (float)$product->taxes->percentage;
-                        $price = $product->sale_price;
-
-                        $tax_id = Product::tax_id($product_id);
-
-                        $ri             = new SelledItems();
-                        $ri->sell_id    = $sale->id;
-                        $ri->product_id = $product_id;
-                        $ri->price      = $price;
-                        $ri->quantity   = $quantity;
-                        $ri->tax_id     = $tax_id;
-                        $ri->tax        = $tax;
-                        $ri->save();
-                    }
-
-                    return redirect()->route('reports.sales')->with('success', __('Sales Order updated successfully.'));
-                }
-            } else {
-                return redirect()->back()->with('error', __('Please add some Products!'));
             }
-        } else {
-            return redirect()->back()->with('error', __('Permission denied.'));
+        
+            // Re-add items
+            if ($request->selled_items) {
+                foreach ($request->selled_items as $selledItem) {
+                    $product = Product::with('unit')->where('id', $selledItem['id'])->firstOrFail();
+        
+                    // TODO: Add stock checking here
+                    if ($product->is_stock == 1) {
+                        if (!$product->hasSufficientStock($selledItem['qty'])) {
+                            return response()->json([
+                                'status' => 400,
+                                'message' => __('Insufficient stock for product: ') . $product->name,
+                            ]);
+                        }
+                    }
+                    
+                    $bookedItem = new SelledItems();
+                    $bookedItem->sell_id = $sale->id;
+                    $bookedItem->product_id = $selledItem['id'];
+                    $bookedItem->price = $product->sale_price;
+                    $bookedItem->purchase_price = $product->purchase_price;
+                    $bookedItem->quantity = $selledItem['qty'];
+                    $bookedItem->unit = $product->unit->name;
+                    $bookedItem->save();
+        
+                    $sale->total += $bookedItem->price * $bookedItem->quantity;
+        
+                    if ($product->unit->name == 'PAKET') {
+                        // Get the corresponding SelledPackageTalents for the previous package
+                        $selledPackageTalents = SelledPackageTalent::where('selled_item_id', $prevPackageTalent)->get();
+                        if ($selledPackageTalents->isNotEmpty()) {
+                            foreach ($selledPackageTalents as $selledTalent) {
+                                // Update the selled_item_id for the package talents with the new selled_item_id
+                                $selledTalent->selled_item_id = $bookedItem->id; // Fix the extra $ sign here
+                                $selledTalent->save();
+                            }
+                        }
+                    }
+                }
+            }
+        
+            $sale->tax = $sale->total * 0.11;
+        
+            // Save updated sale
+            $sale->save();
+        
+            // Commit the transaction
+            DB::commit();
+        
+            return response()->json([
+                'status' => 200,
+                'message' => 'Sale updated successfully.',
+            ]);
+        } catch (\Exception $e) {
+            // Rollback the transaction on error
+            DB::rollBack();
+        
+            return response()->json([
+                'status' => 500,
+                'message' => 'Failed to update sale. Error: ' . $e->getMessage(),
+            ], 500);
         }
+        
     }
 
     public function destroy(Sale $sale)
@@ -570,8 +688,9 @@ class SaleController extends Controller
 
         ]) // Eager load both relationships
         ->where('location_id', $location_id)
-        ->where('check_out', null)
+        // ->where('check_out', null)
         ->orderBy('created_at', 'desc')
+        ->latest()
         ->first();
 
         $sale->invoice_id = Auth::user()->sellInvoiceNumberFormat($sale->invoice_id);
@@ -628,15 +747,62 @@ class SaleController extends Controller
 
     public function checkOut(Request $request)
     {
+         // Find the location by its code
         $location = Location::where('code', $request->location)->first();
-        $location->status = 'available';
-        $location->save();
-        
-        $sale = Sale::where('location_id', $location->id)->whereNull('check_out')->first();
-        $sale->check_out = Carbon::now();
-        $sale->save();
 
-        return redirect()->back()->with('success', "Penjualan di Lokasi $sale->location_code check-out");
+        if (!$location) {
+            return response()->json(['status' => 400, 'message' => 'Location not found.']);
+        }
+
+        // Find the sale for the location where check_out is null (i.e., not yet checked out)
+        $sale = Sale::where('location_id', $location->id)->whereNull('check_out')->first();
+
+        if (!$sale) {
+            return response()->json(['status' => 400, 'message' => 'No ongoing sale found for this location.']);
+        }
+
+        // Check if the total payment (total + tax) matches the paid amount
+        if (($sale->total + $sale->tax) == $sale->paid) {
+            // Mark the sale as checked out
+            $sale->check_out = Carbon::now();
+            // $sale->save();
+
+            $selledTalents = SelledTalent::where('sell_id', $sale->id)->get();
+
+            if ($selledTalents->isNotEmpty()) {
+                foreach ($selledTalents as $selledTalent) {
+                    $talent = Talent::where('id', $selledTalent->talent_id)->first();
+                    if ($talent) {  // Check if talent exists
+                        $talent->status = 'available';
+                        $talent->save();
+                    }
+                }
+            }
+
+            if ($sale->type == 'paket') {
+                $packageId = SelledItems::where('sell_id', $sale->id)->where('unit', 'PAKET')->pluck('id')->first();
+                // return $packageId;
+                if ($packageId) {  // Check if package ID exists
+                    $selledPackageTalents = SelledPackageTalent::where('selled_item_id', $packageId)->get();
+
+                    if ($selledPackageTalents->isNotEmpty()) {
+                        foreach ($selledPackageTalents as $selledTalent) {
+                            $talent = Talent::where('id', $selledTalent->talent_id)->first();
+                            if ($talent) {  // Check if talent exists
+                                $talent->status = 'available';
+                                $talent->save();
+                            }
+                        }
+                    }
+                }
+            }
+
+            return response()->json(['status' => 200, 'message' => "Penjualan di Lokasi $sale->location_code check-out successfully."]);
+        } else {
+            // Payment is incomplete, return a response indicating that
+            return response()->json(['status' => 400, 'message' => 'Payment not completed. Please complete the payment first.']);
+        }
+        
 
     }
     

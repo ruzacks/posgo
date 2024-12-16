@@ -64,6 +64,12 @@
                             title="{{ __('Transaction') }}">
                             check-in</i>
                         </a>
+                    @elseif($location->getLatestSaleCheckOut() != null)
+                        <a href="{{ route('location.available', ['location_id' => $location->id]) }}"
+                            class="mx-3 btn-sm btn-primary d-inline-flex align-items-center"
+                            title="{{ __('Transaction') }}">
+                            available</i>
+                        </a>
                     @else
                     
                         <a href="#" class="mx-3 btn-sm btn-success d-inline-flex align-items-center" 

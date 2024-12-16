@@ -18,7 +18,7 @@ class Location extends Model
 
     public function latestSale()
     {
-        return $this->hasOne(Sale::class, 'location_id', 'id')->whereNull('check_out');
+        return $this->hasOne(Sale::class, 'location_id', 'id')->latest();
     }
 
     public function getLatestSaleTotal()
@@ -31,6 +31,12 @@ class Location extends Model
     {
         $sale = $this->latestSale()->first(); // Resolves the query builder into a model instance
         return $sale ? $sale->formatted_check_in : null; // Access formatted_check_in if $sale exists
+    }
+
+    public function getLatestSaleCheckOut()
+    {
+        $sale = $this->latestSale()->first(); // Resolves the query builder into a model instance
+        return $sale ? $sale->formatted_check_out : null; // Access formatted_check_in if $sale exists
     }
 
 }

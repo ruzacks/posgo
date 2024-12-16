@@ -92,33 +92,36 @@ class Product extends Model
         $product_id = $this->id;
 
         // Optimize purchase quantity query
-        $purchasedquantityQuery = PurchasedItems::where('product_id', $product_id)
-            ->whereHas('purchase', function ($query) use ($authuser) {
-                $query->where('created_by', $authuser->getCreatedBy());
+        $purchasedquantityQuery = PurchasedItems::where('product_id', $product_id);
+            // ->whereHas('purchase', function ($query) use ($authuser) {
+            //     $query->where('created_by', $authuser->getCreatedBy());
 
-                if ($authuser->isUser()) {
-                    $query->where('branch_id', $authuser->branch_id)
-                        ->where('cash_register_id', $authuser->cash_register_id);
-                }
-            });
+            //     if ($authuser->isUser()) {
+            //         $query->where('branch_id', $authuser->branch_id)
+            //             ->where('cash_register_id', $authuser->cash_register_id);
+            //     }
+            // });
 
         $purchasedquantity = $purchasedquantityQuery->sum('quantity'); // Aggregate sum instead of foreach
 
         // Optimize sold quantity query
-        $selledquantityQuery = SelledItems::where('product_id', $product_id)
-            ->whereHas('sale', function ($query) use ($authuser) {
-                $query->where('created_by', $authuser->getCreatedBy());
+        $selledquantityQuery = SelledItems::where('product_id', $product_id);
+            // ->whereHas('sale', function ($query) use ($authuser) {
+            //     // $query->where('created_by', $authuser->getCreatedBy());
 
-                if ($authuser->isUser()) {
-                    $query->where('branch_id', $authuser->branch_id)
-                        ->where('cash_register_id', $authuser->cash_register_id);
-                }
-            });
+            //     if ($authuser->isUser()) {
+            //         $query->where('branch_id', $authuser->branch_id)
+            //             ->where('cash_register_id', $authuser->cash_register_id);
+            //     }
+            // });
 
         $selledquantity = $selledquantityQuery->sum('quantity'); // Aggregate sum instead of foreach
 
+        $selledPackageQuantityQuery = SelledPackageItem::where('product_id', $product_id);
+        $selledPackageQuantity = $selledPackageQuantityQuery->sum('quantity');
+
         // Calculate total quantity
-        $totalquantity = $purchasedquantity - $selledquantity;
+        $totalquantity = $purchasedquantity - $selledquantity -$selledPackageQuantity;
 
         return $totalquantity;
     }
@@ -240,4 +243,9 @@ class Product extends Model
         return $this->hasOne(Unit::class, 'id','unit_id');
     }
 
+    public function hasSufficientStock($requiredQuantity)
+    {
+        $stock = $this->getTotalProductQuantity();
+        return $stock >= $requiredQuantity;
+    }
 }

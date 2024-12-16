@@ -139,7 +139,7 @@ if (\Auth::user()->type == 'Super Admin') {
                     <div class="col-12">
                         <div class="mt-2 pos-top-bar bg-primary d-flex justify-content-between">
                                                        
-                            <span class="text-white"> <a href="{{ route('reports.purchases') }}" class="text-white">
+                            <span class="text-white"> <a href="{{ route('reports.sales') }}" class="text-white">
                                 <i class="ti ti-arrow-left" style="font-size: 20px;"></i>
                             </a>
                             {{ __('Reservation (Check In)') }}</span>

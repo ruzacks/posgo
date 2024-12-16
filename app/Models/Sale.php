@@ -309,6 +309,11 @@ class Sale extends Model
         return $this->belongsTo(Location::class, 'location_id', 'id');
     }
 
+    public function salePayment()
+    {
+        return $this->hasMany(SalePayment::class, 'sale_id', 'id');
+    }
+
     public function getLocationCodeAttribute()
     {
         return $this->location ? $this->location->code : null; // Assuming the name field exists in the Location model
@@ -320,11 +325,22 @@ class Sale extends Model
         return $checkIn ? date('H:i:00', strtotime($checkIn)) : null; // Round down to nearest minute
     }
 
+    public function getFormattedCheckOutAttribute()
+    {
+        $checkOut = $this->attributes['check_out'];
+        return $checkOut ? date('H:i:00', strtotime($checkOut)) : null; // Round down to nearest minute
+    }
+
     public function getSalDateAttribute()
     {
         $salDate = $this->attributes['created_at'];
         return $salDate ? date('Y-m-d', strtotime($salDate)) : null; // Round down to nearest minute
     }
 
-    protected $appends = ['location_code', 'formatted_check_in', 'sal_date'];
+    public function getPaidAttribute()
+    {
+        return $this->salePayment()->sum('amount');
+    }
+
+    protected $appends = ['location_code', 'formatted_check_in', 'formatted_check_out', 'sal_date', 'paid'];
 }

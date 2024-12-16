@@ -151,6 +151,7 @@ return array(
     'App\\Models\\ReturnedItems' => $baseDir . '/app/Models/ReturnedItems.php',
     'App\\Models\\Role' => $baseDir . '/app/Models/Role.php',
     'App\\Models\\Sale' => $baseDir . '/app/Models/Sale.php',
+    'App\\Models\\SalePayment' => $baseDir . '/app/Models/SalePayment.php',
     'App\\Models\\SelledItems' => $baseDir . '/app/Models/SelledItems.php',
     'App\\Models\\SelledPackageItem' => $baseDir . '/app/Models/SelledPackageItem.php',
     'App\\Models\\SelledPackageTalent' => $baseDir . '/app/Models/SelledPackageTalent.php',

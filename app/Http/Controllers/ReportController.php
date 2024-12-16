@@ -2,25 +2,27 @@
 
 namespace App\Http\Controllers;
 
+use \Carbon\Carbon;
+use App\Models\Branch;
+use App\Models\Brand;
+use App\Models\CashRegister;
+use App\Models\Category;
+use App\Models\Customer;
+use App\Models\Expense;
+use App\Models\ExpenseCategory;
+use App\Models\Location;
+use App\Models\LocationType;
+use App\Models\Product;
+use App\Models\Purchase;
+use App\Models\PurchasedItems;
+use App\Models\Sale;
+use App\Models\Tax;
+use App\Models\User;
+use App\Models\Utility;
+use App\Models\Vendor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
-use App\Models\Utility;
-use App\Models\Purchase;
-use App\Models\Sale;
-use App\Models\User;
-use App\Models\Customer;
-use App\Models\Vendor;
-use App\Models\Product;
-use App\Models\Branch;
-use App\Models\CashRegister;
-use App\Models\PurchasedItems;
-use App\Models\Category;
-use App\Models\Brand;
-use App\Models\Tax;
-use App\Models\Expense;
-use App\Models\ExpenseCategory;
-use \Carbon\Carbon;
 
 class ReportController extends Controller
 {
@@ -168,6 +170,10 @@ class ReportController extends Controller
     public function reportsSales()
     {
         if (Auth::user()->can('Manage Sales')) {
+            $locations = Location::with('latestSale')->where('created_by', '=', Auth::user()->getCreatedBy())->orderBy('id', 'ASC')->get();
+            $locationTypes = LocationType::where('created_by', '=', Auth::user()->getCreatedBy())->orderBy('id', 'ASC')->pluck('name', 'name');
+            $locationTypes->prepend(__('All Location'), '');
+            
             $user_id = Auth::user()->getCreatedBy();
 
             $customers = Customer::where('created_by', $user_id)->pluck('name', 'id');
@@ -183,7 +189,7 @@ class ReportController extends Controller
             $start_date = $first_day_of_current_month;
             $end_date = $first_day_of_next_month;
 
-            return view('reports.sale', compact('customers', 'users', 'start_date', 'end_date'));
+            return view('reports.sale', compact('customers', 'users', 'start_date', 'end_date','locations', 'locationTypes'));
         } else {
             return redirect()->back()->with('error', __('Permission denied.'));
         }

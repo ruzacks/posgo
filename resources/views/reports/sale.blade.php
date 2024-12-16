@@ -98,9 +98,10 @@
                     </div>
                 </div>
 
-                <div class="card table-card">
+                @include('sales.sale-transaction', ['locations' => $locations])
+
+                {{-- <div class="card table-card">
                     <div class="card-header card-body table-border-style">
-                        {{-- <h5></h5> --}}
                     <div class="col-sm-12 table-responsive mt-3 table_over">
                         <table class="table dataTable" id="myTable" role="grid">
                             <thead class="thead-light">
@@ -139,7 +140,7 @@
                         </table>
                     </div>
                 </div>
-                </div>
+                </div> --}}
 
             </div>
         </div>
@@ -147,9 +148,47 @@
     @endsection
 
     @push('old-datatable-js')
-        
+    <script src="{{ asset('js/jquery-ui.js') }}"></script>
+    <script src="{{ asset('js/moment.min.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/5.0.8/jquery.inputmask.min.js"></script>
+    
     <script src="{{ asset('custom/js/jquery.dataTables.min.js') }}"></script>
     <script>
+        //ADD PRODUCT HANDLING
+        $("#name").autocomplete({
+            minLength: 0, // Trigger even when no input is entered
+            source: function(request, response) {
+                $.getJSON("{{ route('search.product.json') }}", {
+                    search: request.term, // Send the input value as 'search'
+                    type: 'sale'
+                }, response);
+            },
+            search: function() {
+                var term = this.value;
+                if (term.length == 0) {
+                    $("#product_id").val(''); // Clear product_id when input is empty
+                }
+                if (term.length < 2) {
+                    return false; // Don't search if input is less than 2 characters
+                }
+            },
+            focus: function(event, ui) {
+                $("#name").val(ui.item.label); // Focus does not select an item
+                return false;
+            },
+            select: function(event, ui) {
+                console.log(ui.item);
+                addOrUpdateRow(ui.item);
+                $("#name").val('');
+                return false; // Prevent default action
+            },
+        }).autocomplete("instance")._renderItem = function(ul, item) {
+            // Render the dropdown menu items
+            return $("<li>")
+                .append("<div>" + item.label + "<br>Stock: " + item.stock + ", Harga: " + item.purchase_price +
+                    "</div>")
+                .appendTo(ul);
+        };
         var dataTabelLang = {
             paginate: {previous: "<i class='fas fa-angle-left'>", next: "<i class='fas fa-angle-right'>"},
             lengthMenu: "{{__('Show')}} _MENU_ {{__('entries')}}",

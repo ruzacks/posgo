@@ -67,6 +67,7 @@ Route::resource('agencies', AgencyController::class)->middleware(['auth','XSS'])
 Route::resource('locations', LocationController::class)->middleware(['auth','XSS']);
 Route::resource('location-types', LocationTypeController::class)->middleware(['auth','XSS']);
 route::get('location-updatestatus',[LocationController::class, 'updateStatus'])->name('locations.updateStatus')->middleware(['auth', 'XSS']);
+Route::get('location-available/{location_id}', [LocationController::class, 'updateAvailable'])->name('location.available')->middleware(['auth', 'XSS']);
 
 Route::post('update-number-locations', [LocationController::class, 'numberOfLocationUpdate'])->middleware(['auth', 'XSS']);
 route::get('location-detail/{locationType}',[LocationController::class, 'detailLocations'])->name('locations.detail')->middleware(['auth', 'XSS']);
@@ -161,7 +162,9 @@ Route::get('get-location-sale/{location_id}', [SaleController::class, 'getLocati
 Route::post('process-location', [SaleController::class, 'inProcess'])->name('locations.inProcess')->middleware(['auth', 'XSS']);
 Route::post('reserve-location', [SaleController::class, 'reserveLocation'])->name('locations.reserve')->middleware(['auth', 'XSS']);
 
-Route::get('check-out', [SaleController::class, 'checkOut']);
+Route::post('check-out', [SaleController::class, 'checkOut']);
+
+Route::resource('sale-payment', SalePaymentController::class)->middleware(['auth','XSS']);
 
 Route::get('returned-items', [ProductsReturnController::class,'returnedItems'])->name('returned.items')->middleware(['auth','XSS']);
 // Route::get('returned-items', 'ProductsReturnController@returnedItems')->name('returned.items')->middleware(['auth', 'XSS']);
