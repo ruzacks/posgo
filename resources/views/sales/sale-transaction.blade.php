@@ -1173,7 +1173,7 @@
         });
     }
 
-    // setInterval(updateLocationsData, 1000);
+    setInterval(updateLocationsData, 1000);
 
 
     // Ticking Elapsed Time Counter
