@@ -1129,30 +1129,40 @@
 
                     if (row.length) {
                         // Update the third column with the status
-                        row.find('td').eq(2).text(element.status);
+                        const baseUrl = `${window.location.protocol}//${window.location.host}`; // Dynamically get the base URL
 
-                        // Update the fourth column with total or set it to 0
-                        if (element.latest_sale) {
-                            row.find('td').eq(3).text(
-                                `Rp.${element.latest_sale.total.toLocaleString()}.00`);
-                            row.find('td').eq(4).text(element.latest_sale.formatted_check_in);
-                            row.find('td.elapsed-time').attr('data-start', element.latest_sale
-                                .check_in);
+                        if (element.status === 'available') {
+                            // If the location status is 'available'
+                            row.find('td').eq(3).text('Rp.0.00'); // Set total to 0
+                            row.find('td').eq(4).text(''); // Clear check-in time
+                            row.find('td.elapsed-time').attr('data-start', ''); // Clear elapsed time start
                             row.find('td').eq(6).html(`
-                                    <a href="#" class="mx-3 btn-sm btn-success d-inline-flex align-items-center" title="Transaction" onclick="toggleWindow(${element.id})">
-                                        add-item/check-out
-                                    </a>
-                                `);
+                                <a href="${baseUrl}/sales?location_id=${element.id}" class="mx-3 btn-sm btn-primary d-inline-flex align-items-center" title="Transaction">
+                                    check-in
+                                </a>
+                            `); // Render "check-in" button
+                        } else if (element.latest_sale && element.latest_sale.formatted_check_out !== null) {
+                            // If there is a latest sale and check-out is not null
+                            row.find('td').eq(3).text(`Rp.${element.latest_sale.total.toLocaleString()}.00`); // Display sale total
+                            row.find('td').eq(4).text(element.latest_sale.formatted_check_in); // Display check-in time
+                            row.find('td.elapsed-time').attr('data-start', element.latest_sale.check_in); // Set elapsed time start
+                            row.find('td').eq(6).html(`
+                                <a href="${baseUrl}/location-available/${element.id}" class="mx-3 btn-sm btn-warning d-inline-flex align-items-center" title="Transaction">
+                                    make available
+                                </a>
+                            `); // Render "make available" button
                         } else {
-                            row.find('td').eq(3).text('Rp.0.00');
-                            row.find('td').eq(4).text('');
-                            row.find('td.elapsed-time').attr('data-start', '');
+                            // If there is a latest sale but check-out is null
+                            row.find('td').eq(3).text(`Rp.${element.latest_sale.total.toLocaleString()}.00`); // Display sale total
+                            row.find('td').eq(4).text(element.latest_sale.formatted_check_in); // Display check-in time
+                            row.find('td.elapsed-time').attr('data-start', element.latest_sale.check_in); // Set elapsed time start
                             row.find('td').eq(6).html(`
-                                    <a href="http://posgo.local/sales?location_id=${element.id}" class="mx-3 btn-sm btn-primary d-inline-flex align-items-center" title="Transaction">
-                                        check-in
-                                    </a>
-                                `);
+                                <a href="#" class="mx-3 btn-sm btn-success d-inline-flex align-items-center" title="Transaction" onclick="toggleWindow(${element.id})">
+                                    add-item/check-out
+                                </a>
+                            `); // Render "add-item/check-out" button
                         }
+
                     }
                 });
             },

@@ -157,7 +157,7 @@ class SaleController extends Controller
                     // return $packageDetail;
                     foreach ($packageDetail->fixed_products as $fixedProduct) {
                         $product = Product::with('unit')->where('id', $fixedProduct->productId)->first();
-                        
+                        $product->updateProductQuantity();
                         //STOCK CHECKING HERE
                         if($product->is_stock == 1){
                             if (!$product->hasSufficientStock($fixedProduct->quantity)) {
@@ -181,7 +181,7 @@ class SaleController extends Controller
                     foreach ($request->optional_products as $optionalProduct) {
                         foreach ($optionalProduct['selected'] as $selectedProduct) {
                             $product = Product::with('unit')->where('id', $selectedProduct['product_id'])->first();
-                            
+                            $product->updateProductQuantity();
                             //ADD STOCK CHECKING HERE
                             if($product->is_stock == 1){
                                 if (!$product->hasSufficientStock($selectedProduct['qty'])) {
@@ -253,6 +253,7 @@ class SaleController extends Controller
                     if($request->selled_items){
                         foreach ($request->selled_items as $selledItem) {
                             $product = Product::with('unit')->where('id', $selledItem['productId'])->first();
+                            $product->updateProductQuantity();
                             //ADD STOCK CHECKING HERE
                             if($product->is_stock == 1){
                                 if (!$product->hasSufficientStock($selledItem['quantity'])) {
@@ -352,7 +353,7 @@ class SaleController extends Controller
             if ($request->selled_items) {
                 foreach ($request->selled_items as $selledItem) {
                     $product = Product::with('unit')->where('id', $selledItem['id'])->firstOrFail();
-        
+                    $product->updateProductQuantity();
                     // TODO: Add stock checking here
                     if ($product->is_stock == 1) {
                         if (!$product->hasSufficientStock($selledItem['qty'])) {
@@ -765,7 +766,7 @@ class SaleController extends Controller
         if (($sale->total + $sale->tax) == $sale->paid) {
             // Mark the sale as checked out
             $sale->check_out = Carbon::now();
-            // $sale->save();
+            $sale->save();
 
             $selledTalents = SelledTalent::where('sell_id', $sale->id)->get();
 

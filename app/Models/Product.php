@@ -126,6 +126,18 @@ class Product extends Model
         return $totalquantity;
     }
 
+    public function updateProductQuantity()
+    {
+        // Calculate the total quantity
+        $totalQuantity = $this->getTotalProductQuantity();
+
+        // Update the quantity field of the product
+        $this->quantity = $totalQuantity;
+        $this->save();
+
+        return $this->quantity;
+    }
+
 
     public function getProductQuantityByBranch($data)
     {
