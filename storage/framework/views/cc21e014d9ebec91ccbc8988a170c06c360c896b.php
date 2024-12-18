@@ -111,125 +111,7 @@
 
                 </div>
 
-                <div class="col-md-9">
-                    <div class="card">
-                        <div class="card-header card-body table-border-style">
-                            <div class="table-responsive">
-                                <table class="table" id="pc-dt-simple">
-                                    <thead>
-                                        <tr>
-                                            <th>#</th>
-                                            <th><?php echo e(__('Location')); ?></th>
-                                            <th><?php echo e(__('Status')); ?></th>
-                                            <th><?php echo e(__('Sale')); ?></th>
-                                            <th><?php echo e(__('Check In')); ?></th>
-                                            <th><?php echo e(__('Check Out')); ?></th>
-                                            <th><?php echo e(__('Elapsed')); ?></th>
-                                            <th width="200px"><?php echo e(__('Action')); ?></th>
-                                        </tr>
-                                        <tr>
-                                            <td></td>
-                                            <td colspan="2">
-                                                <input type="text" id="codeFilter" class="form-control" placeholder="<?php echo e(__('Kode Lokasi')); ?>">
-                                            </td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <?php $__currentLoopData = $locations; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $location): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                            <?php
-                                                // Generate random check-in time within a specific range
-                                                $randomCheckIn = \Carbon\Carbon::now()->subDays(rand(0, 5))->setTime(rand(0, 23), rand(0, 59));
-                                                // Set check-out 2 hours after check-in
-                                                $randomCheckOut = $randomCheckIn->copy()->addHours(2);
-                                                // Determine color based on location status
-                                                $statusColor = '';
-                                                switch ($location->status) {
-                                                    case 'occupied':
-                                                        $checkInDisplay = $randomCheckIn->format('d M H:i');
-                                                        $checkOutDisplay = $randomCheckOut->format('d M H:i');
-                                                        $statusColor = 'text-success'; // Green for occupied
-                                                        $sale = 2000000;
-                                                        break;
-                                                    case 'booked':
-                                                        $checkInDisplay = $randomCheckIn->format('d M H:i');
-                                                        $checkOutDisplay = ''; // No check-out time for booked
-                                                        $statusColor = 'text-warning'; // Yellow for booked
-                                                        $sale = 300000;
-                                                        break;
-                                                    case 'available':
-                                                        $checkInDisplay = '';
-                                                        $checkOutDisplay = '';
-                                                        $statusColor = 'text-info'; // Blue for available
-                                                        $sale = 0;
-                                                        break;
-                                                    case 'maintenance':
-                                                        $checkInDisplay = '';
-                                                        $checkOutDisplay = '';
-                                                        $statusColor = 'text-secondary'; // Gray for maintenance
-                                                        $sale = 200000;
-                                                        break;
-                                                    default:
-                                                        $checkInDisplay = '';
-                                                        $checkOutDisplay = '';
-                                                        $statusColor = 'text-muted'; // Default for unknown status
-                                                        $sale = 0;
-                                                        break;
-                                                }
-                                            ?>
-                                            <tr>
-                                                <td><?php echo e($key + 1); ?></td>
-                                                <td class="code-cell"><?php echo e($location->code); ?></td>
-                                                <td class="<?php echo e($statusColor); ?>"><?php echo e($location->status); ?></td>
-                                                <td><?php echo e($sale); ?></td>
-                                                <td><?php echo e($checkInDisplay); ?></td>
-                                                <td><?php echo e($checkOutDisplay); ?></td>
-                                                <td class="elapsed-time" data-start="<?php echo e($randomCheckIn); ?>">
-                                                    00:00:00
-                                                </td>
-                                                <td class="Action">
-                                                    <div class="d-flex justify-content-start align-items-center gap-2">
-                                                        <?php if($location->is_active == 1): ?>
-                                                            <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('Edit Location')): ?>
-                                                                <div class="action-btn btn-info">
-                                                                    <a href="#" class="mx-3 btn btn-sm d-inline-flex align-items-center"
-                                                                        data-ajax-popup="true" title="<?php echo e(__('Edit Location')); ?>"
-                                                                        data-title="<?php echo e(__('Edit Location')); ?>" data-size="lg"
-                                                                        data-url="<?php echo e(route('locations.edit', $location->id)); ?>"
-                                                                        data-bs-toggle="tooltip" title="<?php echo e(__('Edit Location')); ?>">
-                                                                        <i class="ti ti-pencil text-white"></i>
-                                                                    </a>
-                                                                </div>
-                                                            <?php endif; ?>
-                                                                        
-                                                            <!-- Money Badge Button -->
-                                                            <div class="action-btn bg-primary">
-                                                                <a href="#"
-                                                                    class="bs-pass-para mx-3 btn btn-sm d-inline-flex align-items-center"
-                                                                    data-bs-toggle="tooltip"
-                                                                    title="<?php echo e(__('Transaction')); ?>">
-                                                                    <i class="ti ti-credit-card text-white"></i>
-                                                                </a>
-                                                            </div>
-                                                        <?php else: ?>
-                                                            <a href="#" class="btn btn-danger btn-sm">
-                                                                <i class="fa fa-lock"></i>
-                                                            </a>
-                                                        <?php endif; ?>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <?php echo $__env->make('sales.sale-transaction', ['locations' => $locations], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 
                 <div class="col-md-3">
                     <div class="card p-2 ">
@@ -330,11 +212,20 @@
 
 
     </div>
+
+    
+
+
+<!-- EasyUI Window (initially hidden) -->
+
+
+
 <?php $__env->stopSection(); ?>
 
 <?php $__env->startPush('scripts'); ?>
     <script src="<?php echo e(asset('assets/js/plugins/apexcharts.min.js')); ?>"></script>
     <script src="<?php echo e(asset('js/moment.min.js')); ?>"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/5.0.8/jquery.inputmask.min.js"></script>
 
     <script>
         (function() {
@@ -420,6 +311,8 @@
 <?php $__env->startPush('scripts'); ?>
     <script src="<?php echo e(asset('assets/js/plugins/main.min.js')); ?>"></script>
 
+    <script src="<?php echo e(asset('js/jquery-ui.js')); ?>"></script>
+
 
     <script type="text/javascript">
         (function() {
@@ -494,6 +387,50 @@
 
     <script>
 
+//ADD PRODUCT HANDLING
+$("#name").autocomplete({
+        minLength: 0, // Trigger even when no input is entered
+        source: function(request, response) {
+            $.getJSON("<?php echo e(route('search.product.json')); ?>", {
+                search: request.term, // Send the input value as 'search'
+                type: 'sale'
+            }, response);
+        },
+        search: function() {
+            var term = this.value;
+            if (term.length == 0) {
+                $("#product_id").val(''); // Clear product_id when input is empty
+            }
+            if (term.length < 2) {
+                return false; // Don't search if input is less than 2 characters
+            }
+        },
+        focus: function(event, ui) {
+            $("#name").val(ui.item.label); // Focus does not select an item
+            return false;
+        },
+        select: function(event, ui) {
+            console.log(ui.item);
+            addOrUpdateRow(ui.item);
+            $("#name").val('');
+            return false; // Prevent default action
+        },
+    }).autocomplete("instance")._renderItem = function(ul, item) {
+        // Render the dropdown menu items
+        return $("<li>")
+            .append("<div>" + item.label + "<br>Stock: " + item.stock + ", Harga: " + item.purchase_price +
+                "</div>")
+            .appendTo(ul);
+    };
+
+
+
+
+            // // Event listeners for quantity changes
+            // document.querySelectorAll("#additional-product-body .quantity-input").forEach(input => {
+            //     input.addEventListener("input", calculateTotals);
+            // });
+
         // Define the function that makes the AJAX call
         function fetchStockNotification(stockType) {
             $.ajax({
@@ -519,43 +456,7 @@
             fetchStockNotification(selectedStockType);
         });
 
-        // Ticking Elapsed Time Counter
-        function updateElapsedTime() {
-            document.querySelectorAll('.elapsed-time').forEach(function(element) {
-                const startTime = new Date(element.getAttribute('data-start')).getTime();
-                const now = new Date().getTime();
-                const elapsed = new Date(now - startTime);
-
-                const hours = String(elapsed.getUTCHours()).padStart(2, '0');
-                const minutes = String(elapsed.getUTCMinutes()).padStart(2, '0');
-                const seconds = String(elapsed.getUTCSeconds()).padStart(2, '0');
-
-                element.textContent = `${hours}:${minutes}:${seconds}`;
-            });
-        }
-
-        setInterval(updateElapsedTime, 1000);
-
-        function applyFilters() {
-            // let categoryFilter = document.getElementById('categoryFilter').value.toLowerCase();
-            // let nameFilter = document.getElementById('nameFilter').value.toLowerCase();
-            let codeFilter = document.getElementById('codeFilter').value.toLowerCase();
-            let rows = document.querySelectorAll('#pc-dt-simple tbody tr');
-
-            rows.forEach(row => {
-                // let category = row.querySelector('.category-cell').textContent.toLowerCase();
-                // let name = row.querySelector('.name-cell').textContent.toLowerCase();
-                let code = row.querySelector('.code-cell').textContent.toLowerCase();
-
-
-                // Display the row only if it matches both filters
-                row.style.display = (code.includes(codeFilter)) ? '' : 'none';
-            });
-        }
-
-        // document.getElementById('categoryFilter').addEventListener('keyup', applyFilters);
-        // document.getElementById('nameFilter').addEventListener('keyup', applyFilters);
-        document.getElementById('codeFilter').addEventListener('keyup', applyFilters);
+        
     </script>
 <?php $__env->stopPush(); ?>
 

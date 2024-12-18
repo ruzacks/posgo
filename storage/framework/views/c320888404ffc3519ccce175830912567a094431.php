@@ -10,8 +10,10 @@
                     data-bs-toggle="tooltip" 
                         data-bs-target=".multi-collapse" title="<?php echo e(__('Filter')); ?>"> <i class="ti ti-filter"></i> </a>
 
-        <a href="<?php echo e(route('Sale.export')); ?>" class="btn btn-sm btn-primary btn-icon m-1" data-bs-toggle="tooltip" title="<?php echo e(__('Export')); ?>">
-            <i class="ti ti-file-export"></i> 
+        <a href="#" class="btn btn-sm btn-primary btn-icon m-1" data-ajax-popup="true" data-bs-toggle="tooltip"
+            data-title="<?php echo e(__('Change Location')); ?>" title="<?php echo e(__('Create Sales')); ?>"
+            data-size="lg" data-url="<?php echo e(route('locations.getLocation')); ?>">
+            <i class="ti ti-file-export" title="<?php echo e(__('Change Location')); ?>"></i>
         </a>
 
    
@@ -99,48 +101,9 @@
                     </div>
                 </div>
 
-                <div class="card table-card">
-                    <div class="card-header card-body table-border-style">
-                        
-                    <div class="col-sm-12 table-responsive mt-3 table_over">
-                        <table class="table dataTable" id="myTable" role="grid">
-                            <thead class="thead-light">
-                                <tr role="row">
-                                    <th style="width: 277px;"><?php echo e(__('Invoice ID')); ?></th>
-                                    <th><?php echo e(__('Date')); ?></th>
-                                    <th><?php echo e(__('Sold By')); ?></th>
-                                    <th><?php echo e(__('Sold To')); ?></th>
-                                    <th><?php echo e(__('Items Sold')); ?></th>
-                                    <th><?php echo e(__('Total')); ?></th>
-                                    <th><?php echo e(__('Payment Status')); ?></th>
-                                    <th style="width: 180px;"><?php echo e(__('Action')); ?></th>
-                                </tr>
-                            </thead>
-                            <tbody>
+                <?php echo $__env->make('sales.sale-transaction', ['locations' => $locations], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 
-                            </tbody>
-                            <tfoot>
-                                <tr>
-                                    <td rowspan="1" colspan="1">
-                                        <h5 class="h6"><?php echo e(__('Grand Total')); ?></h5>
-                                    </td>
-                                    <td rowspan="1" colspan="1"></td>
-                                    <td rowspan="1" colspan="1"></td>
-                                    <td rowspan="1" colspan="1"></td>
-                                    <td rowspan="1" colspan="1">
-                                        <h5 class="h6" id="totalitems"></h5>
-                                    </td>
-                                    <td rowspan="1" colspan="1">
-                                        <h5 class="h6" id="totalcounts"></h5>
-                                    </td>
-                                    <td rowspan="1" colspan="1"></td>
-                                    <td rowspan="1" colspan="1"></td>
-                                </tr>
-                            </tfoot>
-                        </table>
-                    </div>
-                </div>
-                </div>
+                
 
             </div>
         </div>
@@ -148,9 +111,47 @@
     <?php $__env->stopSection(); ?>
 
     <?php $__env->startPush('old-datatable-js'); ?>
-        
+    <script src="<?php echo e(asset('js/jquery-ui.js')); ?>"></script>
+    <script src="<?php echo e(asset('js/moment.min.js')); ?>"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/5.0.8/jquery.inputmask.min.js"></script>
+    
     <script src="<?php echo e(asset('custom/js/jquery.dataTables.min.js')); ?>"></script>
     <script>
+        //ADD PRODUCT HANDLING
+        $("#name").autocomplete({
+            minLength: 0, // Trigger even when no input is entered
+            source: function(request, response) {
+                $.getJSON("<?php echo e(route('search.product.json')); ?>", {
+                    search: request.term, // Send the input value as 'search'
+                    type: 'sale'
+                }, response);
+            },
+            search: function() {
+                var term = this.value;
+                if (term.length == 0) {
+                    $("#product_id").val(''); // Clear product_id when input is empty
+                }
+                if (term.length < 2) {
+                    return false; // Don't search if input is less than 2 characters
+                }
+            },
+            focus: function(event, ui) {
+                $("#name").val(ui.item.label); // Focus does not select an item
+                return false;
+            },
+            select: function(event, ui) {
+                console.log(ui.item);
+                addOrUpdateRow(ui.item);
+                $("#name").val('');
+                return false; // Prevent default action
+            },
+        }).autocomplete("instance")._renderItem = function(ul, item) {
+            // Render the dropdown menu items
+            return $("<li>")
+                .append("<div>" + item.label + "<br>Stock: " + item.stock + ", Harga: " + item.purchase_price +
+                    "</div>")
+                .appendTo(ul);
+        };
         var dataTabelLang = {
             paginate: {previous: "<i class='fas fa-angle-left'>", next: "<i class='fas fa-angle-right'>"},
             lengthMenu: "<?php echo e(__('Show')); ?> _MENU_ <?php echo e(__('entries')); ?>",

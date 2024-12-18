@@ -244,7 +244,9 @@ Route::get('sold-monthly-analysis', [ReportController::class,'soldMonthlyAnalysi
 Route::get('filter-sold-daily-chart', [ReportController::class,'soldDailyChartFilter'])->name('sold.daily.chart.filter')->middleware(['auth','XSS']);
 Route::get('filter-sold-monthly-chart', [ReportController::class,'soldMonthlyChartFilter'])->name('sold.monthly.chart.filter')->middleware(['auth','XSS']);
 
-
+//new-report
+Route::get('report-stock', [ReportController::class, 'reportStock'])->name('report-stock')->middleware(['auth','XSS']);
+Route::post('import-report-stock', [ReportController::class, 'importReportStock'])->name('import.report.stock')->middleware(['auth','XSS']);
 
 
 Route::patch('update-payment-status/{slug}/{id}', [ReportController::class,'updatePaymentStatus'])->name('update.payment.status')->middleware(['auth','XSS']);

@@ -68,11 +68,11 @@
     <div class="row">
         <div class="form-group col-md-4">
             {{ Form::label('purchase_price', __('Purchase price') . ' (' . Auth::user()->currencySymbol() . ')', ['class' => 'col-form-label']) }}
-            {{ Form::number('purchase_price', null, ['class' => 'form-control', 'placeholder' => __('Enter new Purchase Price'), 'step' => '1000']) }}
+            {{ Form::number('purchase_price', null, ['class' => 'form-control', 'placeholder' => __('Enter new Purchase Price'), 'step' => '1']) }}
         </div>
         <div class="form-group col-md-4">
             {{ Form::label('sale_price', __('Selling price') . ' (' . Auth::user()->currencySymbol() . ')', ['class' => 'col-form-label']) }}
-            {{ Form::number('sale_price', null, ['class' => 'form-control', 'placeholder' => __('Enter new Selling Price'), 'step' => '1000']) }}
+            {{ Form::number('sale_price', null, ['class' => 'form-control', 'placeholder' => __('Enter new Selling Price'), 'step' => '1']) }}
         </div>
         <div class="form-group col-md-4">
             {{ Form::label('profit', __('Profit'), ['class' => 'col-form-label']) }}

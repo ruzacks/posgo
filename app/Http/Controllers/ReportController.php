@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use \Carbon\Carbon;
+use App\Exports\StockExport;
 use App\Models\Branch;
 use App\Models\Brand;
 use App\Models\CashRegister;
@@ -23,6 +24,7 @@ use App\Models\Vendor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ReportController extends Controller
 {
@@ -1079,5 +1081,24 @@ class ReportController extends Controller
         } else {
             return redirect()->back()->with('error', __('Permission denied.'));
         }
+    }
+
+    public function reportStock()
+    {
+        
+        $monthDates = Utility::getStartEndMonthDates();
+        $start_date = $monthDates['start_date'];
+        $end_date = $monthDates['end_date'];
+
+        return view('reports.report-stock', compact('start_date', 'end_date'));
+    }
+
+    public function importReportStock(Request $request)
+    {
+        $startDate = $request->start_date1;
+        $endDate = $request->due_date1;
+
+        // Export the stock report
+        return Excel::download(new StockExport($startDate, $endDate), 'initial_stock_report.xlsx');
     }
 }

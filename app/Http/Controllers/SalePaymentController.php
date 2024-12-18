@@ -23,7 +23,7 @@ class SalePaymentController extends Controller
     {
         $validatedData = $request->validate([
             'sale_id' => 'required|integer|exists:sales,id',
-            'pay_type' => 'required|string|in:card,cash',
+            'pay_type' => 'required',
             'card_number' => 'nullable|string|size:16',
             'amount' => 'required|numeric|min:0.01',
             'description' => 'nullable|string',

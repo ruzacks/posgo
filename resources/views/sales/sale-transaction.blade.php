@@ -206,20 +206,14 @@
         <div class="row">
             <div class="col-md-8">
                 <div class="card p-2">
-                    <div class="row mt-2">
+                    <div class="row form-group-window mt-2">
                         <div class="col-md-3">
-                            <div class="form-check form-check-inline">
-                                {{ Form::radio('pay_type', 'cash', null, ['class' => 'form-check-input', 'id' => 'cash_type']) }}
-                                {{ Form::label('cash_type', __('Cash'), ['class' => 'form-check-label']) }}
-                            </div>
+                                {{ Form::label('pay_type', __('Payment Type')) }}
                         </div>
-                        <div class="col-md-3">
-                            <div class="form-check form-check-inline">
-                                {{ Form::radio('pay_type', 'card', null, ['class' => 'form-check-input', 'id' => 'card_type']) }}
-                                {{ Form::label('card_type', __('Card'), ['class' => 'form-check-label']) }}
-                            </div>
+                        <div class="col-md-4">
+                            {{ Form::select('pay_type', ['cash' => __('Cash'), 'card' => __('Card'), 'qris' => 'QRIS', 'trans' => 'Transfer' ,'unpaid' => 'Belum Bayar'], null, ['class' => 'form-control form-window', 'id' => 'pay_type']) }}
                         </div>
-                        <div class="col-md-6 text-end">
+                        <div class="col-md-5 text-end">
                             <button class="btn btn-primary" onclick="makePayment()">BAYAR</button>
                             <a class="btn btn-primary" onclick="listPayment()"><i class="ti ti-wallet text-white"></i></a>
                         </div>
@@ -724,7 +718,7 @@
         const saleId = $('#sale_id').val();
 
         // Check payment type
-        const payType = $('input[name="pay_type"]:checked').val();
+        const payType = $('#pay_type').val();
         if (!payType) {
             return Swal.fire("Choose payment type", "Please select a payment type.", "warning");
         }
@@ -749,6 +743,9 @@
         const locationId = $('#location_id').val();
 
         const paymentDescription = $('#payment_description').val();
+        if (payType === 'unpaid' && !paymentDescription) {
+            return Swal.fire("Description Required", "Payment description cannot be empty for unpaid payments.", "warning");
+        }
 
         // Perform AJAX request to store payment
         $.ajax({

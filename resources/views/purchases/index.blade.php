@@ -94,7 +94,7 @@ if (\Auth::user()->type == 'Super Admin') {
     <style>
         .autocomplete-items {
             position: absolute;
-            border: 1px solid #d4d4d4;
+            /* border: 1px solid #d4d4d4; */
             border-top: none;
             z-index: 99;
             top: 100%;
@@ -108,7 +108,7 @@ if (\Auth::user()->type == 'Super Admin') {
         .autocomplete-items div {
             padding: 10px;
             cursor: pointer;
-            border-bottom: 1px solid #d4d4d4;
+            /* border-bottom: 1px solid #d4d4d4; */
         }
 
         .autocomplete-items div:hover {

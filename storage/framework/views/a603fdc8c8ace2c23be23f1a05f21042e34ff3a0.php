@@ -83,6 +83,14 @@ if (\Auth::user()->type == 'Super Admin') {
     <?php echo $__env->yieldPushContent('old-datatable-css'); ?>
     <?php echo $__env->yieldPushContent('stylesheets'); ?>
 
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>Window and Layout - jQuery EasyUI Demo</title>
+	<link rel="stylesheet" type="text/css" href="https://www.jeasyui.com/easyui/themes/default/easyui.css">
+	<link rel="stylesheet" type="text/css" href="https://www.jeasyui.com/easyui/themes/icon.css">
+	<script type="text/javascript" src="https://www.jeasyui.com/easyui/jquery.min.js"></script>
+	<script type="text/javascript" src="https://www.jeasyui.com/easyui/jquery.easyui.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/5.0.8/jquery.inputmask.min.js"></script>
+
 </head>
 
 

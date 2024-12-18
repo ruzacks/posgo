@@ -134,6 +134,26 @@ $cust_theme_bg = App\Models\Utility::getValByName('cust_theme_bg');
                         </ul>
                     </li>
                 @endif
+
+                @if (Gate::check('Manage User') || Gate::check('Manage Role') || Gate::check('Manage Permission'))
+                    <li class="dash-item dash-hasmenu">
+                        <a href="#!" class="dash-link"><span class="dash-micon"><i
+                                    class="ti ti-server"></i></span><span
+                                class="dash-mtext">{{ __('Reports') }}</span><span class="dash-arrow"><i
+                                    data-feather="chevron-right"></i></span></a>
+                        <ul class="dash-sub-item mx-2" style="display: none">
+
+                            @can('Manage Product')
+                                <li class="dash-item dash-hasmenu">
+                                    <a class="dash-link sub-item" href="{{ route('report-stock') }}">
+                                        <span class="dash-micon"><i class="ti ti-users"></i></span>{{ __('Report Stock') }}
+                                    </a>
+                                </li>
+                            @endcan
+
+                        </ul>
+                    </li>
+                @endif
             @endif
 
           
@@ -151,13 +171,13 @@ $cust_theme_bg = App\Models\Utility::getValByName('cust_theme_bg');
 
                     <ul class="dash-submenu">
 
-                        @can('Manage Product')
+                        @can('Manage Purchase')
                             <li class="dash-item dash-hasmenu">
                                 <a class="dash-link" href="{{ route('purchases.index') }}">{{ __('Add Purchase') }}</a>
                             </li>
                         @endcan
 
-                        @can('Manage Category')
+                        @can('Manage Purchase')
                      
                             <li class="dash-item dash-hasmenu">
                                 <a class="dash-link" href="{{ route('reports.purchases') }}">{{ __('Purchases') }}</a>
@@ -177,13 +197,39 @@ $cust_theme_bg = App\Models\Utility::getValByName('cust_theme_bg');
 
                     <ul class="dash-submenu">
 
-                        @can('Manage Product')
+                        @can('Manage Sales')
                             <li class="dash-item dash-hasmenu">
                                 <a class="dash-link" href="{{ route('sales.index') }}">{{ __('Add Sale') }}</a>
                             </li>
                         @endcan
 
-                        @can('Manage Category')
+                        @can('Manage Sales')
+                        
+                            <li class="dash-item dash-hasmenu">
+                                <a class="dash-link" href="{{ route('reports.sales') }}">{{ __('Sales') }}</a>
+                            </li>
+                        @endcan
+
+                    </ul>
+                </li>
+            @endcan
+
+            @can('Manage Sales')
+                <li class="dash-item dash-hasmenu">
+                    <a href="#" class="dash-link"><span class="dash-micon"><i class="ti ti-book"></i></span><span
+                            class="dash-mtext">{{ __('Reports') }}</span><span class="dash-arrow"><i
+                                data-feather="chevron-right"></i></span></a>
+
+
+                    <ul class="dash-submenu">
+
+                        @can('Manage Sales')
+                            <li class="dash-item dash-hasmenu">
+                                <a class="dash-link" href="{{ route('product.stock.analysis') }}">{{ __('Reports Stock') }}</a>
+                            </li>
+                        @endcan
+
+                        @can('Manage Sales')
                         
                             <li class="dash-item dash-hasmenu">
                                 <a class="dash-link" href="{{ route('reports.sales') }}">{{ __('Sales') }}</a>
