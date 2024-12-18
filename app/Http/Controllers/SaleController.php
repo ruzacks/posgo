@@ -155,72 +155,80 @@ class SaleController extends Controller
         
                     $packageDetail = PackageDetail::where('product_id', $request->package_id)->first();
                     // return $packageDetail;
-                    foreach ($packageDetail->fixed_products as $fixedProduct) {
-                        $product = Product::with('unit')->where('id', $fixedProduct->productId)->first();
-                        $product->updateProductQuantity();
-                        //STOCK CHECKING HERE
-                        if($product->is_stock == 1){
-                            if (!$product->hasSufficientStock($fixedProduct->quantity)) {
-                                return response()->json([
-                                    'status' => 400,
-                                    'message' => __('Insufficient stock for product: ') . $product->name,
-                                ]);
-                            }
-                        }
-                       
-                        $selledPackageItem = new SelledPackageItem();
-                        $selledPackageItem->selled_item_id = $selledItem->id;
-                        $selledPackageItem->product_id = $fixedProduct->productId;
-                        $selledPackageItem->price = $product->sale_price;
-                        $selledPackageItem->purchase_price = $product->purchase_price;
-                        $selledPackageItem->quantity = $fixedProduct->quantity;
-                        $selledPackageItem->unit = $product->unit->name;
-                        $selledPackageItem->save();
-                    }
-        
-                    foreach ($request->optional_products as $optionalProduct) {
-                        foreach ($optionalProduct['selected'] as $selectedProduct) {
-                            $product = Product::with('unit')->where('id', $selectedProduct['product_id'])->first();
+                    if($packageDetail){
+                        foreach ($packageDetail->fixed_products as $fixedProduct) {
+                            $product = Product::with('unit')->where('id', $fixedProduct->productId)->first();
                             $product->updateProductQuantity();
-                            //ADD STOCK CHECKING HERE
+                            //STOCK CHECKING HERE
                             if($product->is_stock == 1){
-                                if (!$product->hasSufficientStock($selectedProduct['qty'])) {
+                                if (!$product->hasSufficientStock($fixedProduct->quantity)) {
                                     return response()->json([
                                         'status' => 400,
                                         'message' => __('Insufficient stock for product: ') . $product->name,
                                     ]);
                                 }
                             }
-
+                           
                             $selledPackageItem = new SelledPackageItem();
                             $selledPackageItem->selled_item_id = $selledItem->id;
-                            $selledPackageItem->product_id = $selectedProduct['product_id'];
+                            $selledPackageItem->product_id = $fixedProduct->productId;
                             $selledPackageItem->price = $product->sale_price;
                             $selledPackageItem->purchase_price = $product->purchase_price;
-                            $selledPackageItem->quantity = $selectedProduct['qty'];
+                            $selledPackageItem->quantity = $fixedProduct->quantity;
                             $selledPackageItem->unit = $product->unit->name;
-        
                             $selledPackageItem->save();
                         }
                     }
-        
-                    foreach ($request->optional_talents as $optionalTalent) {
-                        $talent = Talent::with('talentGradeDetail')->where('id', $optionalTalent)->first();
-                        
-                        //TODO ADD TALENT STATUS CHECKING
 
-                        $talent->status = 'booked';
-                        $talent->save();
-                        
-                        $selledPackageTalent = new SelledPackageTalent();
-                        $selledPackageTalent->selled_item_id = $selledItem->id;
-                        $selledPackageTalent->talent_id = $talent->id;
-                        $selledPackageTalent->hour = $packageDetail->duration;
-                        $selledPackageTalent->talent_price = $talent->talentGradeDetail->talent_price;
-                        $selledPackageTalent->agency_price = $talent->talentGradeDetail->agency_price;
-                        $selledPackageTalent->office_price = $talent->talentGradeDetail->office_price;
-                        $selledPackageTalent->save();
-                        
+
+                    if($request->optional_products){
+                        foreach ($request->optional_products as $optionalProduct) {
+                            foreach ($optionalProduct['selected'] as $selectedProduct) {
+                                $product = Product::with('unit')->where('id', $selectedProduct['product_id'])->first();
+                                $product->updateProductQuantity();
+                                //ADD STOCK CHECKING HERE
+                                if($product->is_stock == 1){
+                                    if (!$product->hasSufficientStock($selectedProduct['qty'])) {
+                                        return response()->json([
+                                            'status' => 400,
+                                            'message' => __('Insufficient stock for product: ') . $product->name,
+                                        ]);
+                                    }
+                                }
+    
+                                $selledPackageItem = new SelledPackageItem();
+                                $selledPackageItem->selled_item_id = $selledItem->id;
+                                $selledPackageItem->product_id = $selectedProduct['product_id'];
+                                $selledPackageItem->price = $product->sale_price;
+                                $selledPackageItem->purchase_price = $product->purchase_price;
+                                $selledPackageItem->quantity = $selectedProduct['qty'];
+                                $selledPackageItem->unit = $product->unit->name;
+            
+                                $selledPackageItem->save();
+                            }
+                        }
+                    }
+                    
+                    if($request->optional_talents){
+
+                        foreach ($request->optional_talents as $optionalTalent) {
+                            $talent = Talent::with('talentGradeDetail')->where('id', $optionalTalent)->first();
+                            
+                            //TODO ADD TALENT STATUS CHECKING
+    
+                            $talent->status = 'booked';
+                            $talent->save();
+                            
+                            $selledPackageTalent = new SelledPackageTalent();
+                            $selledPackageTalent->selled_item_id = $selledItem->id;
+                            $selledPackageTalent->talent_id = $talent->id;
+                            $selledPackageTalent->hour = $packageDetail->duration;
+                            $selledPackageTalent->talent_price = $talent->talentGradeDetail->talent_price;
+                            $selledPackageTalent->agency_price = $talent->talentGradeDetail->agency_price;
+                            $selledPackageTalent->office_price = $talent->talentGradeDetail->office_price;
+                            $selledPackageTalent->save();
+                            
+                        }
                     }
                     $sale->type = 'paket';
                     $sale->total = $selledItem->price;
@@ -375,7 +383,7 @@ class SaleController extends Controller
         
                     $sale->total += $bookedItem->price * $bookedItem->quantity;
         
-                    if ($product->unit->name == 'PAKET') {
+                    if ($bookedItem->unit == 'PAKET') {
                         // Get the corresponding SelledPackageTalents for the previous package
                         $selledPackageTalents = SelledPackageTalent::where('selled_item_id', $prevPackageTalent)->get();
                         if ($selledPackageTalents->isNotEmpty()) {
@@ -383,6 +391,15 @@ class SaleController extends Controller
                                 // Update the selled_item_id for the package talents with the new selled_item_id
                                 $selledTalent->selled_item_id = $bookedItem->id; // Fix the extra $ sign here
                                 $selledTalent->save();
+                            }
+                        }
+
+                        $selledPackageItema = SelledPackageItem::where('selled_item_id', $prevPackageTalent)->get();
+                        if ($selledPackageItema->isNotEmpty()) {
+                            foreach ($selledPackageItema as $selledItem) {
+                                // Update the selled_item_id for the package talents with the new selled_item_id
+                                $selledItem->selled_item_id = $bookedItem->id; // Fix the extra $ sign here
+                                $selledItem->save();
                             }
                         }
                     }

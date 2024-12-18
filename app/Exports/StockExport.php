@@ -5,6 +5,7 @@ namespace App\Exports;
 use App\Models\Category;
 use App\Models\PurchasedItems;
 use App\Models\SelledItems;
+use App\Models\SelledPackageItem;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\FromCollection;
@@ -188,20 +189,30 @@ class StockExport implements FromCollection, WithHeadings, WithTitle, WithCustom
                 $masuk = PurchasedItems::whereHas('purchase', function ($query) {
                     $query->whereBetween('purchase_date', [$this->startDate, $this->endDate]);
                 })->where('product_id', $product->id)->sum('quantity');
-
+            
                 // Calculate outgoing (KELUAR) stock
                 $keluar = SelledItems::whereHas('sale', function ($query) {
                     $query->whereRaw('DATE(check_in) BETWEEN ? AND ?', [
                         $this->startDate,
                         $this->endDate
-                    ]);                
+                    ]);
+                })->where('product_id', $product->id)->sum('quantity');
+            
+                // Calculate outgoing (KELUAR) stock from packages
+                
+                $paketKeluar = SelledPackageItem::whereHas('selledItem.sale', function ($query) {
+                    $query->whereRaw('DATE(check_in) BETWEEN ? AND ?', [
+                        $this->startDate,
+                        $this->endDate
+                    ]);
                 })->where('product_id', $product->id)->sum('quantity');
 
                 // Calculate remaining stock (SISA)
-                $sisa = $masuk - $keluar;
-
+                $totalKeluar = $keluar + $paketKeluar;
+                $sisa = $masuk - $totalKeluar;
+            
                 // Append product data
-                $data[] = ['', $product->name, $masuk, $keluar, $sisa];
+                $data[] = ['', $product->name, $masuk, $totalKeluar, $sisa];
             }
         }
 

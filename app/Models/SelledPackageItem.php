@@ -10,6 +10,11 @@ class SelledPackageItem extends Model
     use HasFactory;
 
     public function product(){
-        return $this->hasOne('App\Models\Product', 'id', 'product_id');
+        return $this->belongsTo('App\Models\Product', 'product_id', 'id');
+    }
+
+    public function selledItem()
+    {
+        return $this->belongsTo(selledItems::class, 'selled_item_id', 'id');
     }
 }
